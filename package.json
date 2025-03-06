@@ -1,0 +1,12 @@
+{
+    "name": "@beda.software/mobile-item-controls",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "peerDependencies": {
+        "react": "*",
+        "react-native": "*",
+        "typescript": "*",
+        "@types/react": "*",
+        "@beda.software/fhir-questionnaire": "*"
+    }
+}
