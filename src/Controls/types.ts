@@ -11,3 +11,8 @@ export interface StringInputStyles {
     container?: StyleProp<ViewStyle>;
     value?: StyleProp<TextStyle>;
 }
+
+export interface InteferInputStyles {
+    container?: StyleProp<ViewStyle>;
+    value?: StyleProp<TextStyle>;
+}
