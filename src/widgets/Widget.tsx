@@ -1,22 +1,16 @@
 import { PropsWithChildren } from 'react';
 
-import {
-    Text,
-    View,
-    StyleSheet,
-    Button,
-    StyleProp,
-    TextStyle,
-} from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 import { WidgetStyles } from './types';
+import { renderText } from '../components/TextRender';
 
-export type WidgetProps = PropsWithChildren & {
+interface Props extends PropsWithChildren {
     title?: string;
     nextDisabled?: boolean;
     onPressNext?: () => void;
     continueButtonText?: string;
     widgetStyles?: WidgetStyles;
-};
+}
 
 export function Widget({
     children,
@@ -25,16 +19,20 @@ export function Widget({
     onPressNext,
     continueButtonText,
     widgetStyles,
-}: WidgetProps) {
+}: Props) {
     return (
-        <View style={widgetStyles?.wrapper ?? styles.main}>
+        <View style={widgetStyles?.wrapper ?? defaultStyles.main}>
             {title ? (
                 <View
                     style={
-                        widgetStyles?.titleContainer ?? styles.titleContainer
+                        widgetStyles?.titleContainer ??
+                        defaultStyles.titleContainer
                     }
                 >
-                    {renderTitle(title, widgetStyles?.titleText)}
+                    {renderText(
+                        title,
+                        widgetStyles?.titleText ?? defaultStyles.title
+                    )}
                 </View>
             ) : null}
             <View>{children}</View>
@@ -42,7 +40,7 @@ export function Widget({
                 <View
                     style={
                         widgetStyles?.continueButtonContainer ??
-                        styles.continueButtonContainer
+                        defaultStyles.continueButtonContainer
                     }
                 >
                     <Button
@@ -56,17 +54,7 @@ export function Widget({
     );
 }
 
-const renderTitle = (title: string, titleStyle?: StyleProp<TextStyle>) =>
-    title
-        .split('\n')
-        .filter(Boolean)
-        .map((textPart, index) => (
-            <Text key={index} style={titleStyle ?? styles.title}>
-                {textPart}
-            </Text>
-        ));
-
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
     main: {
         flex: 1,
         padding: 24,

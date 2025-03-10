@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
-
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { renderText } from '../components/TextRender';
 
 export type WidgetProps = PropsWithChildren & {
     title: string;
@@ -9,14 +9,8 @@ export type WidgetProps = PropsWithChildren & {
 export function Widget({ children, title }: WidgetProps) {
     return (
         <View>
-            <View>{renderTitle(title)}</View>
+            <View>{renderText(title)}</View>
             <View>{children}</View>
         </View>
     );
 }
-
-const renderTitle = (title: string) =>
-    title
-        .split('\n')
-        .filter(Boolean)
-        .map((textPart, index) => <Text key={index}>{textPart}</Text>);

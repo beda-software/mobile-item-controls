@@ -1,4 +1,4 @@
-import { TextStyle, StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export interface WidgetStyles {
     wrapper?: StyleProp<ViewStyle>;
@@ -12,7 +12,7 @@ export interface StringInputStyles {
     value?: StyleProp<TextStyle>;
 }
 
-export interface InteferInputStyles {
+export interface IntegerInputStyles {
     container?: StyleProp<ViewStyle>;
     value?: StyleProp<TextStyle>;
 }
