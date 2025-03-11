@@ -1,13 +1,12 @@
 import { QuestionnaireItem } from '@beda.software/fhir-questionnaire/contrib/aidbox';
 import { GroupItemProps } from '@beda.software/fhir-questionnaire/vendor/sdc-qrf';
-import React, { useCallback, useContext, useState } from 'react';
-import { Button, ScrollView, Text, View } from 'react-native';
-import { PagerViewContext } from '../context';
+import React, { useCallback, useState } from 'react';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { IntegerInput } from '../IntegerInput';
 import { StringInput } from '../StringInput';
+import { styles } from '../styles';
 
 export function Group({ parentPath, questionItem, context }: GroupItemProps) {
-    const navigation = useContext(PagerViewContext);
     const { item, text, helpText, repeats, linkId } = questionItem;
     const [items, setItems] = useState([{}]);
 
@@ -28,7 +27,6 @@ export function Group({ parentPath, questionItem, context }: GroupItemProps) {
                         parentPath={updatedParentPath}
                         questionItem={i}
                         key={`${i.linkId}-${index}`}
-                        useWidget={false}
                     />
                 );
             case 'integer':
@@ -38,7 +36,6 @@ export function Group({ parentPath, questionItem, context }: GroupItemProps) {
                         parentPath={updatedParentPath}
                         questionItem={i}
                         key={`${i.linkId}-${index}`}
-                        useWidget={false}
                     />
                 );
             case 'group':
@@ -57,9 +54,11 @@ export function Group({ parentPath, questionItem, context }: GroupItemProps) {
     };
 
     return (
-        <ScrollView>
-            {text && <Text>{text}</Text>}
-            {helpText && <Text>{helpText}</Text>}
+        <View style={styles.container}>
+            <View style={styles.textContainer}>
+                {text && <Text style={styles.text}>{text}</Text>}
+                {helpText && <Text>{helpText}</Text>}
+            </View>
 
             {item && (
                 <View>
@@ -73,13 +72,15 @@ export function Group({ parentPath, questionItem, context }: GroupItemProps) {
                 </View>
             )}
 
-            {repeats && <Button title="Add" onPress={addItem} />}
-
-            {!parentPath.length && (
-                <View>
-                    <Button title="Continue" onPress={navigation?.next!} />
-                </View>
+            {repeats && (
+                <TouchableOpacity
+                    activeOpacity={1}
+                    style={styles.addButtonContainer}
+                    onPress={addItem}
+                >
+                    <Text style={styles.addButtonText}>Add</Text>
+                </TouchableOpacity>
             )}
-        </ScrollView>
+        </View>
     );
 }

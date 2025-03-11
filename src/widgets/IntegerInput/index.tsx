@@ -2,35 +2,13 @@ import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import React, { useContext, useRef } from 'react';
-import {
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import React, { useRef } from 'react';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import { renderText } from '../../components/TextRender';
-import { PagerViewContext } from '../context';
-import { IntegerInputStyles, WidgetStyles } from '../types';
-import { Widget } from '../Widget';
+import { styles } from '../styles';
 
-interface Props extends QuestionItemProps {
-    useWidget?: boolean;
-    styles?: {
-        widget?: WidgetStyles;
-        integerInput?: IntegerInputStyles;
-    };
-}
-
-export function IntegerInput({
-    questionItem,
-    parentPath,
-    useWidget = true,
-    styles,
-}: Props) {
+export function IntegerInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
-    const navigation = useContext(PagerViewContext);
 
     const { value, onChange } = useFieldController<number>(
         [...parentPath, questionItem.linkId, 0, 'value', 'integer'],
@@ -46,25 +24,23 @@ export function IntegerInput({
         onChange(!Number.isNaN(parsedValue) ? parsedValue : undefined);
     };
 
-    const content = (
-        <View>
-            <View>
-                {!useWidget ? renderText(questionItem.text) : null}
+    return (
+        <View style={styles.container}>
+            <View style={styles.textContainer}>
+                {renderText(questionItem.text, styles.text)}
                 {renderText(questionItem.helpText)}
             </View>
+
             <TouchableOpacity
                 activeOpacity={1}
                 onPress={focusRef}
-                style={
-                    styles?.integerInput?.container ??
-                    defaultStyles.inputContainer
-                }
+                style={styles.inputContainer}
             >
                 <TextInput
                     ref={inputRef}
                     placeholder={questionItem.helpText}
                     multiline
-                    style={styles?.integerInput?.value ?? defaultStyles.input}
+                    style={styles.inputText}
                     value={value?.toString() || ''}
                     onChangeText={onChangeText}
                     keyboardType={'numeric'}
@@ -72,34 +48,4 @@ export function IntegerInput({
             </TouchableOpacity>
         </View>
     );
-
-    if (useWidget) {
-        return (
-            <Widget
-                title={questionItem.text!}
-                nextDisabled={value === undefined}
-                onPressNext={value !== undefined ? navigation?.next : focusRef}
-                widgetStyles={styles?.widget}
-            >
-                <ScrollView bounces={false}>{content}</ScrollView>
-            </Widget>
-        );
-    }
-
-    return content;
 }
-
-const defaultStyles = StyleSheet.create({
-    input: {
-        fontSize: 16,
-        width: '100%',
-    },
-    inputContainer: {
-        borderRadius: 16,
-        width: '100%',
-        backgroundColor: 'white',
-        padding: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
