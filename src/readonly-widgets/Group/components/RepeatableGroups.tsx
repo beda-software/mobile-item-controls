@@ -1,5 +1,5 @@
-import { useFieldController } from '@/packages/@beda.software/fhir-questionnaire';
-import { GroupItemProps } from '@/packages/@beda.software/fhir-questionnaire/vendor/sdc-qrf';
+import { useFieldController } from '@beda.software/fhir-questionnaire';
+import { GroupItemProps } from '@beda.software/fhir-questionnaire/vendor/sdc-qrf';
 import { RenderQuestionItems } from './RenderQuestionItems';
 
 export function RepeatableGroups({

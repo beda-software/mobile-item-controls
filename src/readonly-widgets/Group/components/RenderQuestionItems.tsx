@@ -1,4 +1,4 @@
-import { GroupItemProps } from '@/packages/@beda.software/fhir-questionnaire/vendor/sdc-qrf';
+import { GroupItemProps } from '@beda.software/fhir-questionnaire/vendor/sdc-qrf';
 import { QuestionItem } from './QuestionItem';
 
 interface Props extends GroupItemProps {
