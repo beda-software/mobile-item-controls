@@ -1,19 +1,23 @@
 import {
     QuestionItemProps,
     useFieldController,
+    getFieldErrorMessage,
 } from '@beda.software/fhir-questionnaire';
 import React, { useRef } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, TouchableOpacity, View, Text } from 'react-native';
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
 
 export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
 
-    const { value, onChange } = useFieldController<string>(
-        [...parentPath, questionItem.linkId, 0, 'value', 'string'],
-        questionItem
-    );
+    const field = useFieldController<string>(
+            [...parentPath, questionItem.linkId, 0, 'value', 'string'],
+            questionItem
+        );
+    const { value, onChange, fieldState } = field;
+
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     function focusRef() {
         inputRef.current?.focus();
@@ -39,6 +43,7 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
                     value={value}
                     onChangeText={onChange}
                 />
+                {error && <Text style={{ color: 'red'}}>{error}</Text>}
             </TouchableOpacity>
         </View>
     );
