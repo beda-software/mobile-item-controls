@@ -12,9 +12,9 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
 
     const field = useFieldController<string>(
-            [...parentPath, questionItem.linkId, 0, 'value', 'string'],
-            questionItem
-        );
+        [...parentPath, questionItem.linkId, 0, 'value', 'string'],
+        questionItem
+    );
     const { value, onChange, fieldState } = field;
 
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
@@ -43,8 +43,8 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
                     value={value}
                     onChangeText={onChange}
                 />
-                {error && <Text style={{ color: 'red'}}>{error}</Text>}
             </TouchableOpacity>
+            {error && <Text style={{ color: 'red' }}>{error}</Text>}
         </View>
     );
 }

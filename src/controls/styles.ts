@@ -3,13 +3,14 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
     container: {
         margin: 8,
+        gap: 8,
     },
     text: {
         fontSize: 16,
         fontWeight: 600,
     },
     textContainer: {
-        padding: 8,
+        gap: 8,
     },
     inputText: {
         fontSize: 16,
@@ -33,5 +34,29 @@ export const styles = StyleSheet.create({
         fontWeight: 600,
         color: 'white',
         textAlign: 'center',
+    },
+
+    // choice
+    selectOptionContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        backgroundColor: 'white',
+        padding: 16,
+        borderRadius: 16,
+        gap: 8,
+    },
+    selectBackground: {
+        width: 12,
+        height: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+    },
+    isSelectedBackground: {
+        backgroundColor: 'black',
+    },
+    selectText: {
+        fontSize: 16,
+        width: '100%',
     },
 });
