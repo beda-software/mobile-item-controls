@@ -36,7 +36,7 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
     return (
         <View style={styles.container}>
             <View>{renderText(questionItem.text, styles.text)}</View>
-            {questionItem.answerOption?.map((option, index) => (
+            {questionItem.answerOption?.map((option: Coding, index: number) => (
                 <ChoiceOption
                     key={index}
                     isSelected={isOptionSelected(option, value, repeats)}

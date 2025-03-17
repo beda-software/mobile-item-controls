@@ -2,27 +2,33 @@ import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { TextInput, TouchableOpacity, View, Text } from 'react-native';
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
+import { isValidDecimal } from '../utils';
 
-export function IntegerInput({ questionItem, parentPath }: QuestionItemProps) {
+export function DecimalInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
     const { linkId, unit } = questionItem;
 
     const { value, onChange } = useFieldController<number>(
-        [...parentPath, linkId, 0, 'value', 'integer'],
+        [...parentPath, linkId, 0, 'value', 'decimal'],
         questionItem
     );
+
+    const [inputValue, setInputValue] = useState(value?.toString() || '');
 
     function focusRef() {
         inputRef.current?.focus();
     }
 
-    const onChangeText = (inputValue: string) => {
-        const parsedValue = parseInt(inputValue, 10);
-        onChange(!Number.isNaN(parsedValue) ? parsedValue : undefined);
+    const onChangeText = (text: string) => {
+        if (isValidDecimal(text)) {
+            setInputValue(text);
+            const parsedValue = parseFloat(text);
+            onChange(!Number.isNaN(parsedValue) ? parsedValue : undefined);
+        }
     };
 
     return (
@@ -39,15 +45,14 @@ export function IntegerInput({ questionItem, parentPath }: QuestionItemProps) {
             >
                 <TextInput
                     ref={inputRef}
-                    placeholder={questionItem.helpText}
+                    keyboardType={'decimal-pad'}
                     style={styles.inputText}
-                    value={value?.toString() || ''}
+                    value={inputValue}
                     onChangeText={onChangeText}
-                    keyboardType={'numeric'}
                 />
             </TouchableOpacity>
 
-            {unit && <Text>{unit.display}</Text>}
+            {unit?.display && <Text>{unit.display}</Text>}
         </View>
     );
 }

@@ -1,29 +1,25 @@
 import {
     QuestionItemProps,
     useFieldController,
+    getFieldErrorMessage,
 } from '@beda.software/fhir-questionnaire';
 import React, { useRef } from 'react';
-import { TextInput, TouchableOpacity, View, Text } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
 
-export function IntegerInput({ questionItem, parentPath }: QuestionItemProps) {
+export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
-    const { linkId, unit } = questionItem;
+    const { linkId, rowsNumber = 3 } = questionItem;
+    const fieldName = [...parentPath, linkId, 0, 'value', 'string'];
 
-    const { value, onChange } = useFieldController<number>(
-        [...parentPath, linkId, 0, 'value', 'integer'],
-        questionItem
-    );
+    const field = useFieldController<string>(fieldName, questionItem);
+    const { value, onChange, fieldState } = field;
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     function focusRef() {
         inputRef.current?.focus();
     }
-
-    const onChangeText = (inputValue: string) => {
-        const parsedValue = parseInt(inputValue, 10);
-        onChange(!Number.isNaN(parsedValue) ? parsedValue : undefined);
-    };
 
     return (
         <View style={styles.container}>
@@ -39,15 +35,13 @@ export function IntegerInput({ questionItem, parentPath }: QuestionItemProps) {
             >
                 <TextInput
                     ref={inputRef}
-                    placeholder={questionItem.helpText}
-                    style={styles.inputText}
-                    value={value?.toString() || ''}
-                    onChangeText={onChangeText}
-                    keyboardType={'numeric'}
+                    style={[styles.inputText, { minHeight: rowsNumber * 22 }]}
+                    value={value}
+                    onChangeText={onChange}
+                    multiline
                 />
             </TouchableOpacity>
-
-            {unit && <Text>{unit.display}</Text>}
+            {error && <Text style={{ color: 'red' }}>{error}</Text>}
         </View>
     );
 }

@@ -7,6 +7,8 @@
         "react-native": "*",
         "typescript": "*",
         "@types/react": "*",
-        "@beda.software/fhir-questionnaire": "*"
+        "@beda.software/fhir-questionnaire": "*",
+        "sdc-qrf": "*",
+        "react-native-date-picker": "*"
     }
 }
