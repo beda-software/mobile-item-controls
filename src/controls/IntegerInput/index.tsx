@@ -3,15 +3,16 @@ import {
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 import React, { useRef } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, TouchableOpacity, View, Text } from 'react-native';
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
 
 export function IntegerInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
+    const { linkId, unit } = questionItem;
 
     const { value, onChange } = useFieldController<number>(
-        [...parentPath, questionItem.linkId, 0, 'value', 'integer'],
+        [...parentPath, linkId, 0, 'value', 'integer'],
         questionItem
     );
 
@@ -39,13 +40,14 @@ export function IntegerInput({ questionItem, parentPath }: QuestionItemProps) {
                 <TextInput
                     ref={inputRef}
                     placeholder={questionItem.helpText}
-                    multiline
                     style={styles.inputText}
                     value={value?.toString() || ''}
                     onChangeText={onChangeText}
                     keyboardType={'numeric'}
                 />
             </TouchableOpacity>
+
+            {unit && <Text>{unit.display}</Text>}
         </View>
     );
 }

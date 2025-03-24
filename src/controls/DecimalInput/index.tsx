@@ -1,27 +1,35 @@
 import {
     QuestionItemProps,
     useFieldController,
-    getFieldErrorMessage,
 } from '@beda.software/fhir-questionnaire';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { TextInput, TouchableOpacity, View, Text } from 'react-native';
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
+import { isValidDecimal } from '../utils';
 
-export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
+export function DecimalInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
+    const { linkId, unit } = questionItem;
 
-    const field = useFieldController<string>(
-        [...parentPath, questionItem.linkId, 0, 'value', 'string'],
+    const { value, onChange } = useFieldController<number>(
+        [...parentPath, linkId, 0, 'value', 'decimal'],
         questionItem
     );
-    const { value, onChange, fieldState } = field;
 
-    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
+    const [inputValue, setInputValue] = useState(value?.toString() || '');
 
     function focusRef() {
         inputRef.current?.focus();
     }
+
+    const onChangeText = (text: string) => {
+        if (isValidDecimal(text)) {
+            setInputValue(text);
+            const parsedValue = parseFloat(text);
+            onChange(!Number.isNaN(parsedValue) ? parsedValue : undefined);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -37,13 +45,14 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
             >
                 <TextInput
                     ref={inputRef}
-                    multiline
+                    keyboardType={'decimal-pad'}
                     style={styles.inputText}
-                    value={value}
-                    onChangeText={onChange}
+                    value={inputValue}
+                    onChangeText={onChangeText}
                 />
             </TouchableOpacity>
-            {error && <Text style={{ color: 'red' }}>{error}</Text>}
+
+            {unit?.display && <Text>{unit.display}</Text>}
         </View>
     );
 }
