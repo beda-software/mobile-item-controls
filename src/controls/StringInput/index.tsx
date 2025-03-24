@@ -37,7 +37,6 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
             >
                 <TextInput
                     ref={inputRef}
-                    placeholder={questionItem.helpText}
                     multiline
                     style={styles.inputText}
                     value={value}
