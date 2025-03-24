@@ -1,4 +1,4 @@
-import { GroupItemProps } from '@beda.software/fhir-questionnaire/vendor/sdc-qrf';
+import { GroupItemProps } from 'sdc-qrf';
 import React from 'react';
 import { RenderQuestionItems } from './components/RenderQuestionItems';
 import { RepeatableGroups } from './components/RepeatableGroups';

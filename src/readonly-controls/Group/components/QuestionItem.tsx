@@ -1,5 +1,5 @@
 import { QuestionnaireItem } from '@beda.software/fhir-questionnaire/contrib/aidbox';
-import { GroupItemProps } from '@beda.software/fhir-questionnaire/vendor/sdc-qrf';
+import { GroupItemProps } from 'sdc-qrf';
 import { View } from 'react-native';
 import { Group } from '..';
 import { IntegerInput } from '../../IntegerInput';

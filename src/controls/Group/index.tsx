@@ -1,7 +1,8 @@
 import React, { PropsWithChildren } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import { styles } from '../styles';
-import { GroupItemProps } from '@beda.software/fhir-questionnaire/vendor/sdc-qrf';
+import { GroupItemProps } from 'sdc-qrf';
+import { renderText } from '../../components/TextRender';
 
 interface Props extends PropsWithChildren<GroupItemProps> {
     addItem?: () => void;
@@ -19,8 +20,8 @@ export function Group({
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>
-                {text && <Text style={styles.text}>{text}</Text>}
-                {helpText && <Text>{helpText}</Text>}
+                {renderText(text, styles.text)}
+                {renderText(helpText)}
             </View>
 
             {item && <View>{children}</View>}
