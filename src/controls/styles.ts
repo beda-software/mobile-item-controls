@@ -59,4 +59,24 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         width: '100%',
     },
+    chip: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'lightgray',
+        borderRadius: 8,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        margin: 4,
+    },
+    chipText: {
+        marginRight: 6,
+    },
+    chipClose: {
+        paddingHorizontal: 4,
+    },
+    repeatsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+    },
 });

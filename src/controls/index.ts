@@ -8,4 +8,4 @@ export { Display } from './Display';
 export { DateTimeInput } from './DateTimeInput';
 export { BooleanInput } from './BooleanInput';
 export { TextControl } from './TextControl';
-// export { ReferenceControl } from './ReferenceControl';
+export { ReferenceControl } from './ReferenceControl';
