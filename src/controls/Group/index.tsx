@@ -6,6 +6,7 @@ import { renderText } from '../../components/TextRender';
 
 interface Props extends PropsWithChildren<GroupItemProps> {
     addItem?: () => void;
+    removeItem?: (index: number) => void;
     addButtonText?: string;
 }
 
@@ -13,9 +14,13 @@ export function Group({
     questionItem,
     children,
     addItem,
+    removeItem,
     addButtonText = 'Add',
 }: Props) {
     const { item, text, helpText, repeats } = questionItem;
+
+    const childrenArray = Array.isArray(children) ? children : [children];
+    const isRemovable = repeats && childrenArray.length > 1;
 
     return (
         <View style={styles.container}>
@@ -24,7 +29,23 @@ export function Group({
                 {renderText(helpText)}
             </View>
 
-            {item && <View>{children}</View>}
+            {item &&
+                childrenArray.map((child, index) => (
+                    <View key={index}>
+                        {isRemovable ? (
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                onPress={() => removeItem?.(index)}
+                                style={{ height: 14 }}
+                            >
+                                <Text style={{ textAlign: 'right' }}>X</Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <View style={{ height: 14 }} />
+                        )}
+                        {child}
+                    </View>
+                ))}
 
             {repeats && (
                 <TouchableOpacity
