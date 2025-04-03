@@ -45,9 +45,17 @@ Example:
 
 ```tsx
 import {
+    BooleanInput,
+    ChoiceInput,
+    DateTimeInput,
+    DecimalInput,
+    Display,
     Group,
     IntegerInput,
+    QuantityInput,
+    ReferenceControl,
     StringInput,
+    TextControl,
 } from '@beda.software/mobile-item-controls';
 
 export function QuestionnaireFormScreen({
@@ -69,6 +77,19 @@ export function QuestionnaireFormScreen({
                         widgetsByQuestionType={{
                             string: StringInput,
                             integer: IntegerInput,
+                            choice: ChoiceInput,
+                            display: Display,
+                            quantity: QuantityInput,
+                            decimal: DecimalInput,
+                            date: DateTimeInput,
+                            dateTime: DateTimeInput,
+                            time: DateTimeInput,
+                            boolean: BooleanInput,
+                            text: TextControl,
+                            reference: (questionItemProps) => {
+                                const { getFHIRResources } = serviceProvider;
+                                return ReferenceControl(questionItemProps, getFHIRResources);
+                            },
                         }}
                         groupItemComponent={Group}
                         FormWrapper={({ handleSubmit, items }) => (
