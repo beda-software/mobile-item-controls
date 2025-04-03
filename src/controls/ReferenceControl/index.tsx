@@ -90,11 +90,10 @@ function QuestionReferenceUnsafe({
     const onBlur = useCallback(() => {
         if (repeats) {
             Keyboard.dismiss();
-            setShowOptions(false);
         } else {
             if (!searchText.trim()) {
                 onChange([]);
-                return setShowOptions(false);
+                return;
             }
             if (isSuccess(optionsRD)) {
                 const matched = optionsRD.data?.find(
@@ -106,7 +105,6 @@ function QuestionReferenceUnsafe({
                     setSearchText(value?.[0]?.value?.Reference?.display || '');
                 }
             }
-            setShowOptions(false);
         }
     }, [repeats, searchText, onChange, setSearchText, optionsRD, value]);
 
