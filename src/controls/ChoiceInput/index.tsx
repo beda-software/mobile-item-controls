@@ -32,10 +32,12 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
         [onChange, onMultiChange, repeats]
     );
 
+    //TODO handle questionItem.answerValueSet
+
     return (
         <View style={styles.container}>
             <View>{renderText(text, styles.text)}</View>
-            {answerOption.map(
+            {answerOption?.map(
                 (option: QuestionnaireItemAnswerOption, index: React.Key) => (
                     <ChoiceOption
                         key={index}
