@@ -1,22 +1,16 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import { styles } from '../styles';
-import { GroupItemProps } from 'sdc-qrf';
 import { renderText } from '../../components/TextRender';
-
-interface Props extends PropsWithChildren<GroupItemProps> {
-    addItem?: () => void;
-    removeItem?: (index: number) => void;
-    addButtonText?: string;
-}
+import { GroupItemProps } from '@beda.software/fhir-questionnaire/components/QuestionnaireResponseForm/BaseQuestionnaireResponseForm/GroupComponent';
 
 export function Group({
     questionItem,
     children,
     addItem,
     removeItem,
-    addButtonText = 'Add',
-}: Props) {
+}: GroupItemProps) {
+    const addButtonText = 'Add';
     const { item, text, helpText, repeats } = questionItem;
 
     const childrenArray = Array.isArray(children) ? children : [children];
