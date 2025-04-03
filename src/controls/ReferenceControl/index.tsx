@@ -135,12 +135,24 @@ function QuestionReferenceUnsafe({
                 onBlur={onBlur}
             />
             {showOptions && (
-                <ReferenceOptionsList
-                    optionsRD={optionsRD}
-                    repeats={repeats}
-                    selectedReferences={selectedReferences || []}
-                    onSelectOption={onSelectOption}
-                />
+                <View
+                    style={{
+                        position: 'absolute',
+                        top: 82,
+                        backgroundColor: 'white',
+                        width: '100%',
+                        zIndex: 10,
+                        borderRadius: 16,
+                        padding: 16,
+                    }}
+                >
+                    <ReferenceOptionsList
+                        optionsRD={optionsRD}
+                        repeats={repeats}
+                        selectedReferences={selectedReferences || []}
+                        onSelectOption={onSelectOption}
+                    />
+                </View>
             )}
         </View>
     );
@@ -148,7 +160,7 @@ function QuestionReferenceUnsafe({
 
 export function ReferenceControl<
     R extends Resource = any,
-    IR extends Resource = any
+    IR extends Resource = any,
 >(props: AnswerReferenceProps<R, IR>, getFHIRResources: GetFHIRResources) {
     const { answerExpression, choiceColumn, linkId, repeats } =
         props.questionItem;

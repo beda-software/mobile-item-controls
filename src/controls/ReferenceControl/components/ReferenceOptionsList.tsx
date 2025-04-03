@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+
+import { QuestionnaireItemAnswerOption } from '@beda.software/fhir-questionnaire/contrib/aidbox';
 import { RenderRemoteData } from '@beda.software/fhir-react';
 import { RemoteDataResult } from '@beda.software/remote-data';
-import { QuestionnaireItemAnswerOption } from '@beda.software/fhir-questionnaire/contrib/aidbox';
 import { Reference } from 'fhir/r4b';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 interface ReferenceOptionsListProps {
     optionsRD: RemoteDataResult<any>;
@@ -42,10 +43,13 @@ export function ReferenceOptionsList({
                                 <TouchableOpacity
                                     key={index}
                                     onPress={() => onSelectOption(option)}
-                                    style={{backgroundColor: 'gray', padding: 10, margin: 10}}
+                                    style={{
+                                        paddingVertical: 10,
+                                        margin: 10,
+                                    }}
                                 >
                                     <Text>
-                                        {option.value?.Reference?.display || ''}
+                                        {option.value?.Reference?.display || 'Unnamed'}
                                     </Text>
                                 </TouchableOpacity>
                             ))

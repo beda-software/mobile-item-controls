@@ -4,6 +4,7 @@ export const styles = StyleSheet.create({
     container: {
         margin: 8,
         gap: 8,
+        position: 'relative',
     },
     text: {
         fontSize: 16,
