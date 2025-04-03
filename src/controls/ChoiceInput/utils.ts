@@ -41,7 +41,8 @@ export function isAnswerSelected(
         const code = (optionValue as Coding)?.code;
         if (repeats) {
             return (value as QuestionnaireItemAnswerOption[]).some((v) => {
-                return isCoding(v.value?.[key]) && v.value[key].code === code;
+                const value = v.value?.[key];
+                return isCoding(value) && value.code === code;
             });
         }
         return isCoding(value) && value.code === code;

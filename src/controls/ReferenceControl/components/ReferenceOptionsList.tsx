@@ -42,6 +42,7 @@ export function ReferenceOptionsList({
                                 <TouchableOpacity
                                     key={index}
                                     onPress={() => onSelectOption(option)}
+                                    style={{backgroundColor: 'gray', padding: 10, margin: 10}}
                                 >
                                     <Text>
                                         {option.value?.Reference?.display || ''}
