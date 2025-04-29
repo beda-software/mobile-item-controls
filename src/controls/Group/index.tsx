@@ -16,6 +16,10 @@ export function Group({
     const childrenArray = Array.isArray(children) ? children : [children];
     const isRemovable = repeats && childrenArray.length > 1;
 
+    if (questionItem.hidden) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>

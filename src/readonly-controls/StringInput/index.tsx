@@ -29,6 +29,10 @@ export function StringInput({
         </View>
     );
 
+    if (questionItem.hidden) {
+        return null;
+    }
+
     return useWidget ? (
         <Widget title={questionItem.text!}>{content}</Widget>
     ) : (

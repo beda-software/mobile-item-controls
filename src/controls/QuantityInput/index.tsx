@@ -55,6 +55,10 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
         });
     };
 
+    if (questionItem.hidden) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>

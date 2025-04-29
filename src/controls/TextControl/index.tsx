@@ -21,6 +21,10 @@ export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
         inputRef.current?.focus();
     }
 
+    if (questionItem.hidden) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>

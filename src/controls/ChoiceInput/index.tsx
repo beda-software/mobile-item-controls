@@ -34,6 +34,10 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
 
     //TODO handle questionItem.answerValueSet
 
+    if (questionItem.hidden) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <View>{renderText(text, styles.text)}</View>

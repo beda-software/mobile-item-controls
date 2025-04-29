@@ -25,6 +25,10 @@ export function IntegerInput({ questionItem, parentPath }: QuestionItemProps) {
         onChange(!Number.isNaN(parsedValue) ? parsedValue : undefined);
     };
 
+    if (questionItem.hidden) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>

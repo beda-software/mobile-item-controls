@@ -29,6 +29,10 @@ export function IntegerInput({
         </View>
     );
 
+    if (questionItem.hidden) {
+        return null;
+    }
+
     return useWidget ? (
         <Widget title={questionItem.text!}>{content}</Widget>
     ) : (
