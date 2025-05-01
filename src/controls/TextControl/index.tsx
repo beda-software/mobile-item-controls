@@ -1,16 +1,18 @@
+import React, { useRef } from 'react';
+
 import {
     QuestionItemProps,
     useFieldController,
     getFieldErrorMessage,
 } from '@beda.software/fhir-questionnaire';
-import React, { useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
+
 import { renderText } from '../../components/TextRender';
-import { styles } from '../styles';
+import { S, styles } from '../styles';
 
 export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
-    const { linkId, rowsNumber = 3 } = questionItem;
+    const { linkId, rowsNumber = 3, hidden, readOnly = false } = questionItem;
     const fieldName = [...parentPath, linkId, 0, 'value', 'string'];
 
     const field = useFieldController<string>(fieldName, questionItem);
@@ -18,10 +20,14 @@ export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     function focusRef() {
+        if (readOnly) {
+            return;
+        }
+
         inputRef.current?.focus();
     }
 
-    if (questionItem.hidden) {
+    if (hidden) {
         return null;
     }
 
@@ -32,19 +38,21 @@ export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
                 {renderText(questionItem.helpText)}
             </View>
 
-            <TouchableOpacity
+            <S.InputWrapper
                 activeOpacity={1}
                 onPress={focusRef}
-                style={styles.inputContainer}
+                $readOnly={readOnly}
             >
-                <TextInput
+                <S.TextInput
                     ref={inputRef}
-                    style={[styles.inputText, { minHeight: rowsNumber * 22 }]}
+                    style={[{ minHeight: rowsNumber * 22 }]}
                     value={value}
                     onChangeText={onChange}
                     multiline
+                    editable={!readOnly}
+                    $readOnly={readOnly}
                 />
-            </TouchableOpacity>
+            </S.InputWrapper>
             {error && <Text style={{ color: 'red' }}>{error}</Text>}
         </View>
     );

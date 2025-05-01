@@ -9,6 +9,7 @@
         "@types/react": "*",
         "@beda.software/fhir-questionnaire": "*",
         "sdc-qrf": "*",
-        "react-native-date-picker": "*"
+        "react-native-date-picker": "*",
+        "styled-components": "*"
     }
 }

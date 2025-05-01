@@ -1,18 +1,21 @@
+import React, { useRef } from 'react';
+
 import {
     QuestionItemProps,
     useFieldController,
     getFieldErrorMessage,
 } from '@beda.software/fhir-questionnaire';
-import React, { useRef } from 'react';
-import { TextInput, TouchableOpacity, View, Text } from 'react-native';
+import { TextInput, View, Text } from 'react-native';
+
 import { renderText } from '../../components/TextRender';
-import { styles } from '../styles';
+import { S, styles } from '../styles';
 
 export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
+    const { linkId, hidden, readOnly = false } = questionItem;
 
     const field = useFieldController<string>(
-        [...parentPath, questionItem.linkId, 0, 'value', 'string'],
+        [...parentPath, linkId, 0, 'value', 'string'],
         questionItem
     );
     const { value, onChange, fieldState } = field;
@@ -23,7 +26,7 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
         inputRef.current?.focus();
     }
 
-    if (questionItem.hidden) {
+    if (hidden) {
         return null;
     }
 
@@ -33,20 +36,20 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
                 {renderText(questionItem.text, styles.text)}
                 {renderText(questionItem.helpText)}
             </View>
-
-            <TouchableOpacity
+            <S.InputWrapper
                 activeOpacity={1}
                 onPress={focusRef}
-                style={styles.inputContainer}
+                $readOnly={readOnly}
             >
-                <TextInput
+                <S.TextInput
                     ref={inputRef}
                     multiline
-                    style={styles.inputText}
                     value={value}
                     onChangeText={onChange}
+                    editable={!readOnly}
+                    $readOnly={readOnly}
                 />
-            </TouchableOpacity>
+            </S.InputWrapper>
             {error && <Text style={{ color: 'red' }}>{error}</Text>}
         </View>
     );

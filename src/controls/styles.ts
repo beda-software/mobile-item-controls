@@ -1,4 +1,35 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
+import styled, { css } from 'styled-components/native';
+
+export const S = {
+    Container: styled.View`
+        margin: 8px;
+        gap: 8px;
+        position: relative;
+    `,
+    InputWrapper: styled.TouchableOpacity<{ $readOnly?: boolean }>`
+        border-radius: 16px;
+        width: 100%;
+        background-color: #fff;
+        padding: 16px;
+
+        ${({ $readOnly }) =>
+            $readOnly &&
+            css`
+                background-color: rgba(0, 0, 0, 0.04);
+            `}
+    `,
+    TextInput: styled(TextInput)<{ $readOnly?: boolean }>`
+        font-size: 16px;
+        width: 100%;
+
+        ${({ $readOnly }) =>
+            $readOnly &&
+            css`
+                color: rgba(0, 0, 0, 0.25);
+            `}
+    `,
+};
 
 export const styles = StyleSheet.create({
     container: {
