@@ -1,56 +1,168 @@
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
 import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import { QuestionnaireItemAnswerOption } from '@beda.software/fhir-questionnaire/contrib/aidbox';
-import React, { useCallback } from 'react';
-import { View } from 'react-native';
-import { renderText } from '../../components/TextRender';
-import { styles } from '../styles';
-import { ChoiceOption } from './ChoiceOption';
 import {
-    extractAnswerOptionValueKey,
-    getValuePath,
-    isAnswerSelected,
-} from './utils';
+    QuestionnaireItemAnswerOption,
+    QuestionnaireItemChoiceColumn,
+    QuestionnaireResponseItemAnswer,
+} from '@beda.software/fhir-questionnaire/contrib/aidbox';
+import { debounce } from 'lodash';
+import _ from 'lodash';
+import { getDisplay } from 'src/utils';
+
+import { Select } from '../../components/Select';
+import { ValueSetExpandProvider } from '../../contexts/valueset-expand';
 
 export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
-    const { repeats, answerOption, text, linkId } = questionItem;
+    const {
+        repeats,
+        answerOption,
+        text,
+        linkId,
+        answerValueSet,
+        choiceColumn,
+        entryFormat,
+    } = questionItem;
+    const fieldName = [...parentPath, linkId];
 
-    const { value, onChange, onMultiChange } = useFieldController(
-        repeats
-            ? [...parentPath, linkId]
-            : getValuePath(questionItem, parentPath),
+    const { value, onMultiChange } = useFieldController(
+        fieldName,
         questionItem
     );
-
-    const onSelect = useCallback(
-        (option: QuestionnaireItemAnswerOption) => {
-            const key = extractAnswerOptionValueKey(option);
-            repeats ? onMultiChange(option) : onChange(option.value?.[key]);
-        },
-        [onChange, onMultiChange, repeats]
-    );
-
-    //TODO handle questionItem.answerValueSet
 
     if (questionItem.hidden) {
         return null;
     }
 
+    if (answerValueSet) {
+        return (
+            <ChoiceQuestionValueSet
+                answerValueSet={answerValueSet}
+                value={value}
+                onChange={onMultiChange}
+                repeats={repeats}
+                placeholder={entryFormat}
+                choiceColumn={choiceColumn}
+                label={text}
+            />
+        );
+    }
+
     return (
-        <View style={styles.container}>
-            <View>{renderText(text, styles.text)}</View>
-            {answerOption?.map(
-                (option: QuestionnaireItemAnswerOption, index: React.Key) => (
-                    <ChoiceOption
-                        key={index}
-                        isSelected={isAnswerSelected(option, value, repeats)}
-                        onSelect={() => onSelect(option)}
-                        value={option.value}
-                    />
-                )
-            )}
-        </View>
+        <ChoiceQuestionSelect
+            options={answerOption!}
+            value={value}
+            onChange={onMultiChange}
+            repeats={repeats}
+            placeholder={entryFormat}
+            choiceColumn={choiceColumn}
+            label={text}
+        />
+    );
+}
+
+interface ChoiceQuestionValueSetProps {
+    answerValueSet: string;
+    value: QuestionnaireResponseItemAnswer[];
+    label?: string;
+    onChange: (option: any) => void;
+    repeats?: boolean;
+    placeholder?: string;
+    choiceColumn?: QuestionnaireItemChoiceColumn[];
+}
+
+export function ChoiceQuestionValueSet(props: ChoiceQuestionValueSetProps) {
+    const {
+        answerValueSet,
+        value,
+        onChange,
+        repeats = false,
+        placeholder,
+        choiceColumn,
+        label,
+    } = props;
+    const expand = useContext(ValueSetExpandProvider);
+
+    const loadOptions = useCallback(
+        async (searchText: string) => {
+            return expand(answerValueSet, searchText);
+        },
+        [answerValueSet, expand]
+    );
+
+    const debouncedLoadOptions = debounce((searchText) => {
+        (async () => await loadOptions(searchText))();
+    }, 500);
+
+    const [options, setOptions] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            const newOptions = await loadOptions('');
+            setOptions(newOptions);
+        })();
+    }, [loadOptions]);
+
+    return (
+        <Select<QuestionnaireItemAnswerOption>
+            value={value}
+            options={options}
+            onChange={(v) => onChange(v)}
+            isOptionSelected={(option) =>
+                !!value &&
+                value?.findIndex((v) => _.isEqual(v?.value, option.value)) !==
+                    -1
+            }
+            isMulti={repeats}
+            getOptionLabel={(o) =>
+                (getDisplay(o.value, choiceColumn) as string) || ''
+            }
+            placeholder={placeholder}
+            label={label}
+        />
+    );
+}
+
+interface ChoiceQuestionSelectProps {
+    value?: QuestionnaireResponseItemAnswer[];
+    label?: string;
+    onChange: (...option: any[]) => void;
+    options: QuestionnaireItemAnswerOption[];
+    repeats?: boolean;
+    placeholder?: string;
+    choiceColumn?: QuestionnaireItemChoiceColumn[];
+}
+
+export function ChoiceQuestionSelect(props: ChoiceQuestionSelectProps) {
+    const {
+        value,
+        onChange,
+        options,
+        repeats = false,
+        placeholder = `Select...`,
+        choiceColumn,
+        label,
+    } = props;
+
+    return (
+        <Select<QuestionnaireItemAnswerOption>
+            value={value}
+            options={options}
+            onChange={(v) => onChange(v)}
+            isOptionSelected={(option) =>
+                !!value &&
+                value?.findIndex((v) => _.isEqual(v?.value, option.value)) !==
+                    -1
+            }
+            isMulti={repeats}
+            getOptionLabel={(o) =>
+                (getDisplay(o.value, choiceColumn) as string) || ''
+            }
+            placeholder={placeholder}
+            label={label}
+        />
     );
 }

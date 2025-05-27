@@ -4,6 +4,7 @@ export { StringInput } from './StringInput';
 export { QuantityInput } from './QuantityInput';
 export { DecimalInput } from './DecimalInput';
 export { ChoiceInput } from './ChoiceInput';
+export { InlineChoiceControl } from './InlineChoiceControl';
 export { Display } from './Display';
 export { DateTimeInput } from './DateTimeInput';
 export { BooleanInput } from './BooleanInput';
