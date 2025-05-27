@@ -3,6 +3,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
     QuestionItemProps,
     useFieldController,
+    ValueSetExpandProvider,
 } from '@beda.software/fhir-questionnaire';
 import {
     QuestionnaireItemAnswerOption,
@@ -14,7 +15,6 @@ import _ from 'lodash';
 import { getDisplay } from 'src/utils';
 
 import { Select } from '../../components/Select';
-import { ValueSetExpandProvider } from '../../contexts/valueset-expand';
 
 export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
     const {
