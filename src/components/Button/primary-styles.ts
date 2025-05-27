@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components/native';
 
 import { buttonContainerStyles, buttonTextStyles } from './styles';
-import { ButtonSize, ButtonType, IconPosition } from './types';
+import { ButtonSize, ButtonType } from './types';
 
 export const PrimaryButtonStyles = {
     Container: styled.TouchableOpacity<{
@@ -47,10 +47,5 @@ export const PrimaryButtonStyles = {
 
             return '#fff';
         }};
-    `,
-    Icon: styled.View<{
-        $position: IconPosition;
-    }>`
-        tint-color: #fff;
     `,
 };

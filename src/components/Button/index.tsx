@@ -1,7 +1,7 @@
 import React from 'react';
 
 import _ from 'lodash';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Image } from 'react-native';
 
 import { DefaultButtonStyles } from './default-styles';
 import { LinkButtonStyles } from './link-styles';
@@ -11,6 +11,7 @@ import { ButtonProps, ButtonType } from './types';
 
 export function Button(props: ButtonProps) {
     const {
+        style,
         type = 'default',
         loading = false,
         ghost = false,
@@ -24,17 +25,38 @@ export function Button(props: ButtonProps) {
     } = props;
     const isDisabled = disabled || loading;
 
-    const stylesMap: { [key in ButtonType]: any } = {
-        default: DefaultButtonStyles,
-        primary: PrimaryButtonStyles,
-        link: LinkButtonStyles,
-        text: TextButtonStyles,
+    const stylesMap: {
+        [key in ButtonType]: {
+            styles: any;
+        };
+    } = {
+        default: {
+            styles: DefaultButtonStyles,
+        },
+        primary: {
+            styles: PrimaryButtonStyles,
+        },
+        link: {
+            styles: LinkButtonStyles,
+        },
+        text: {
+            styles: TextButtonStyles,
+        },
     };
 
-    const S = stylesMap[type];
+    const S = stylesMap[type].styles;
+
+    const renderIcon = () => {
+        if (!icon) {
+            return null;
+        }
+
+        return <Image source={icon} />;
+    };
 
     return (
         <S.Container
+            style={style}
             $type={type}
             $ghost={ghost}
             $danger={danger}
@@ -43,23 +65,25 @@ export function Button(props: ButtonProps) {
             onPress={isDisabled ? undefined : onPress}
             activeOpacity={isDisabled ? 1 : 0.7}
         >
-            {loading && (
-                <S.Icon $position="start">
-                    <ActivityIndicator size="small" />
-                </S.Icon>
-            )}
+            {loading && <ActivityIndicator size="small" />}
 
-            {!loading && icon && iconPosition === 'start' && <S.Icon $position="start">{icon}</S.Icon>}
+            {!loading && iconPosition === 'start' && renderIcon()}
 
             {_.isString(children) ? (
-                <S.Text $type={type} $ghost={ghost} $danger={danger} $disabled={isDisabled} $size={size}>
+                <S.Text
+                    $type={type}
+                    $ghost={ghost}
+                    $danger={danger}
+                    $disabled={isDisabled}
+                    $size={size}
+                >
                     {children}
                 </S.Text>
             ) : (
                 children
             )}
 
-            {!loading && icon && iconPosition === 'end' && <S.Icon $position="end">{icon}</S.Icon>}
+            {!loading && iconPosition === 'end' && renderIcon()}
         </S.Container>
     );
 }

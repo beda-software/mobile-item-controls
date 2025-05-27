@@ -1,7 +1,7 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 
 import { buttonContainerStyles, buttonTextStyles } from './styles';
-import { ButtonSize, ButtonType, IconPosition } from './types';
+import { ButtonSize, ButtonType } from './types';
 
 export const LinkButtonStyles = {
     Container: styled.TouchableOpacity<{
@@ -10,6 +10,12 @@ export const LinkButtonStyles = {
         $danger: boolean;
     }>`
         ${buttonContainerStyles}
+
+        ${({ disabled }) =>
+            disabled &&
+            css`
+                opacity: ${disabled ? 0.65 : 1};
+            `}
     `,
     Text: styled.Text<{
         $type: ButtonType;
@@ -21,20 +27,11 @@ export const LinkButtonStyles = {
         ${buttonTextStyles}
 
         color: ${(props) => {
-            if (props.$disabled) {
-                return 'rgba(0, 0, 0, 0.25)';
-            }
-
             if (props.$danger) {
                 return '#FF4D4F';
             }
 
             return props.theme.colors.primary.color_6;
         }};
-    `,
-    Icon: styled.View<{
-        $position: IconPosition;
-    }>`
-        tint-color: #fff;
     `,
 };

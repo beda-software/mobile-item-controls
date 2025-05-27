@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/native';
 
-import { ButtonSize, ButtonType, IconPosition } from './types';
+import { ButtonSize, ButtonType } from './types';
 
 // Design tokens
 export const COLORS = {
@@ -68,10 +68,10 @@ export const S = {
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        gap: 8px;
         border-radius: 4px;
         padding: ${(props) => SIZES[props.$size].padding};
 
-        /* Background color */
         background-color: ${(props) => {
             if (props.$ghost) return 'transparent';
 
@@ -86,7 +86,6 @@ export const S = {
             }
         }};
 
-        /* Border style */
         border: ${(props) => {
             switch (props.$type) {
                 case 'primary':
@@ -110,7 +109,6 @@ export const S = {
     }>`
         font-size: ${(props) => SIZES[props.$size].fontSize};
 
-        /* Text color */
         color: ${(props) => {
             if (props.disabled) {
                 return props.$type === 'default' ? COLORS.textDisabled : COLORS.white;
@@ -132,11 +130,5 @@ export const S = {
 
         font-weight: ${(props) => (props.$type === 'primary' ? 'bold' : 'normal')};
         text-decoration: ${(props) => (props.$type === 'link' ? 'underline' : 'none')};
-    `,
-    Icon: styled.View<{
-        $position: IconPosition;
-    }>`
-        margin-left: ${(props) => (props.$position === 'end' ? '8px' : '0')};
-        margin-right: ${(props) => (props.$position === 'start' ? '8px' : '0')};
     `,
 };
