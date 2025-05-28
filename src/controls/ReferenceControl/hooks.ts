@@ -1,14 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { parseFhirQueryExpression, QuestionItemProps } from 'sdc-qrf';
 
 import { useFieldController } from '@beda.software/fhir-questionnaire';
-import {
-    AidboxReference,
-    Bundle,
-    QuestionnaireItemAnswerOption,
-    QuestionnaireResponseItemAnswer,
-    Resource,
-} from '@beda.software/fhir-questionnaire/contrib/aidbox';
 import {
     extractBundleResources,
     getReference,
@@ -21,6 +13,14 @@ import {
     RemoteDataResult,
     success,
 } from '@beda.software/remote-data';
+import { Bundle, Reference, Resource } from 'fhir/r4b';
+import {
+    AnswerValue,
+    FormAnswerItems,
+    parseFhirQueryExpression,
+    QuestionItemProps,
+} from 'sdc-qrf';
+
 import { evaluate } from './utils';
 
 export type GetFHIRResources = <R_3 extends Resource>(
@@ -31,22 +31,18 @@ export type GetFHIRResources = <R_3 extends Resource>(
 
 export type AnswerReferenceProps<
     R extends Resource,
-    IR extends Resource
+    IR extends Resource,
 > = QuestionItemProps & {
     overrideGetDisplay?: (
         resource: R,
         includedResources: ResourcesMap<R | IR>
     ) => string;
-    overrideGetLabel?: (
-        o:
-            | QuestionnaireItemAnswerOption['value']
-            | QuestionnaireResponseItemAnswer['value']
-    ) => React.ReactElement | string;
+    overrideGetLabel?: (o: AnswerValue) => React.ReactElement | string;
 };
 
 export function useAnswerReference<
     R extends Resource = any,
-    IR extends Resource = any
+    IR extends Resource = any,
 >(
     {
         questionItem,
@@ -67,7 +63,7 @@ export function useAnswerReference<
     } = questionItem;
 
     const fieldPath = [...parentPath, linkId];
-    const fieldController = useFieldController(fieldPath, questionItem);
+    const fieldController = useFieldController<FormAnswerItems[]>(fieldPath, questionItem);
 
     const getDisplay = useMemo(() => {
         if (overrideGetDisplay) {
@@ -94,7 +90,7 @@ export function useAnswerReference<
     const optionsRD = useLoadOptions(
         resourceType as any,
         {
-            ...(typeof searchParams === 'string' ? {} : searchParams ?? {}),
+            ...(typeof searchParams === 'string' ? {} : (searchParams ?? {})),
             _ilike: debouncedSearchText,
         },
         referenceResource,
@@ -111,13 +107,13 @@ export function useAnswerReference<
         choiceColumn,
         repeats,
         entryFormat,
-        text,
+        text: text ?? '',
     };
 }
 
-type LoadResourceOption<R extends Resource> = {
+type LoadResourceOption = {
     value: {
-        Reference: AidboxReference<R>;
+        Reference: Reference;
     };
 };
 
@@ -132,7 +128,7 @@ function useLoadOptions<R extends Resource, IR extends Resource = any>(
     getFHIRResources: GetFHIRResources
 ) {
     const [result, setResult] =
-        useState<RemoteDataResult<LoadResourceOption<R>[], any>>();
+        useState<RemoteDataResult<LoadResourceOption[], any>>();
 
     useEffect(() => {
         const loadOptions = async () => {
@@ -158,7 +154,7 @@ function useLoadOptions<R extends Resource, IR extends Resource = any>(
                         },
                     }));
                 }
-            ) as RemoteDataResult<LoadResourceOption<R>[], any>;
+            ) as RemoteDataResult<LoadResourceOption[], any>;
             setResult(r);
         };
         loadOptions();

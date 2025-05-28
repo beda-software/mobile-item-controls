@@ -1,38 +1,38 @@
+import { Coding } from 'fhir/r4b';
 import {
-    Coding,
-    QuestionnaireItem,
-    QuestionnaireItemAnswerOption,
-    QuestionnaireItemAnswerOptionValue,
-} from '@beda.software/fhir-questionnaire/contrib/aidbox';
+    FormAnswerItems,
+    AnswerValue,
+    FCEQuestionnaireItem,
+    toAnswerValue,
+} from 'sdc-qrf';
 
-export function extractAnswerOptionValueKey(
-    option: QuestionnaireItemAnswerOption
-) {
-    return Object.keys(
-        option.value || {}
-    )[0] as keyof QuestionnaireItemAnswerOptionValue;
+export function extractAnswerOptionValueKey(option: FormAnswerItems) {
+    return Object.keys(option.value || {})[0] as keyof AnswerValue;
 }
 
-export function extractKeyFromValue(value: QuestionnaireItemAnswerOptionValue) {
-    return Object.keys(value)[0] as keyof QuestionnaireItemAnswerOptionValue;
+export function extractKeyFromValue(value: AnswerValue) {
+    return Object.keys(value)[0] as keyof AnswerValue;
 }
 
-export function getValuePath(item: QuestionnaireItem, parentPath: string[]) {
-    const value = item.answerOption?.[0].value;
+export function getValuePath(item: FCEQuestionnaireItem, parentPath: string[]) {
+    if (!item.answerOption?.[0]) {
+        return [];
+    }
+    const value = toAnswerValue(item.answerOption[0], 'value');
     if (!value) return [];
     const key = extractKeyFromValue(value);
     return [...parentPath, item.linkId, '0', 'value', key];
 }
 
 function isCoding(
-    value?: QuestionnaireItemAnswerOption[] | Coding
-): value is Coding {
+    value?: FormAnswerItems[] | Coding
+): value is Coding{
     return typeof value === 'object' && 'code' in value;
 }
 
 export function isAnswerSelected(
-    option: QuestionnaireItemAnswerOption,
-    value?: QuestionnaireItemAnswerOption[] | Coding,
+    option: FormAnswerItems,
+    value?: FormAnswerItems[] | Coding,
     repeats?: boolean
 ): boolean {
     const key = extractAnswerOptionValueKey(option);
@@ -40,7 +40,7 @@ export function isAnswerSelected(
     if (key === 'Coding') {
         const code = (optionValue as Coding)?.code;
         if (repeats) {
-            return (value as QuestionnaireItemAnswerOption[]).some((v) => {
+            return (value as FormAnswerItems[]).some((v) => {
                 const value = v.value?.[key];
                 return isCoding(value) && value.code === code;
             });
@@ -48,15 +48,15 @@ export function isAnswerSelected(
         return isCoding(value) && value.code === code;
     }
     return repeats
-        ? (value as QuestionnaireItemAnswerOption[]).some(
+        ? (value as FormAnswerItems[]).some(
               (option) => option.value?.[key] === optionValue
           )
         : value === optionValue;
 }
 
 export function getAnswerDisplay(
-    key: keyof QuestionnaireItemAnswerOptionValue,
-    answerOptionValue?: QuestionnaireItemAnswerOptionValue
+    key: keyof AnswerValue,
+    answerOptionValue?: AnswerValue
 ): string {
     if (!answerOptionValue) return '';
     if (key === 'Coding') {

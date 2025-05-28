@@ -1,13 +1,15 @@
-import { QuestionnaireItemAnswerOptionValue } from '@beda.software/fhir-questionnaire/contrib/aidbox';
 import React from 'react';
+
 import { Text, TouchableOpacity, View } from 'react-native';
+import { AnswerValue } from 'sdc-qrf';
+
 import { styles } from '../styles';
 import { extractKeyFromValue, getAnswerDisplay } from './utils';
 
 interface ChoiceOptionProps {
     isSelected: boolean;
     onSelect: () => void;
-    value?: QuestionnaireItemAnswerOptionValue;
+    value?: AnswerValue;
 }
 
 export const ChoiceOption = ({

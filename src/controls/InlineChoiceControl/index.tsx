@@ -1,10 +1,13 @@
+import React, { useCallback } from 'react';
+
 import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import { QuestionnaireItemAnswerOption } from '@beda.software/fhir-questionnaire/contrib/aidbox';
-import React, { useCallback } from 'react';
+import { Coding } from 'fhir/r4b';
 import { View } from 'react-native';
+import { FormAnswerItems, toAnswerValue } from 'sdc-qrf';
+
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
 import { ChoiceOption } from './ChoiceOption';
@@ -14,10 +17,15 @@ import {
     isAnswerSelected,
 } from './utils';
 
-export function InlineChoiceControl({ questionItem, parentPath }: QuestionItemProps) {
+export function InlineChoiceControl({
+    questionItem,
+    parentPath,
+}: QuestionItemProps) {
     const { repeats, answerOption, text, linkId } = questionItem;
 
-    const { value, onChange, onMultiChange } = useFieldController(
+    const { value, onChange, onMultiChange } = useFieldController<
+        FormAnswerItems[] | Coding
+    >(
         repeats
             ? [...parentPath, linkId]
             : getValuePath(questionItem, parentPath),
@@ -25,9 +33,11 @@ export function InlineChoiceControl({ questionItem, parentPath }: QuestionItemPr
     );
 
     const onSelect = useCallback(
-        (option: QuestionnaireItemAnswerOption) => {
+        (option: FormAnswerItems) => {
             const key = extractAnswerOptionValueKey(option);
-            repeats ? onMultiChange(option) : onChange(option.value?.[key]);
+            repeats
+                ? onMultiChange(option)
+                : onChange(option.value?.[key] as Coding);
         },
         [onChange, onMultiChange, repeats]
     );
@@ -41,16 +51,28 @@ export function InlineChoiceControl({ questionItem, parentPath }: QuestionItemPr
     return (
         <View style={styles.container}>
             <View>{renderText(text, styles.text)}</View>
-            {answerOption?.map(
-                (option: QuestionnaireItemAnswerOption, index: React.Key) => (
+            {answerOption?.map((option, index: React.Key) => {
+                const answer = toAnswerValue(option, 'value')!;
+
+                return (
                     <ChoiceOption
                         key={index}
-                        isSelected={isAnswerSelected(option, value, repeats)}
-                        onSelect={() => onSelect(option)}
-                        value={option.value}
+                        isSelected={isAnswerSelected(
+                            {
+                                value: answer,
+                            },
+                            value,
+                            repeats
+                        )}
+                        onSelect={() =>
+                            onSelect({
+                                value: answer,
+                            })
+                        }
+                        value={answer}
                     />
-                )
-            )}
+                );
+            })}
         </View>
     );
 }

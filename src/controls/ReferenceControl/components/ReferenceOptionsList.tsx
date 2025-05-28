@@ -1,16 +1,16 @@
 import React from 'react';
 
-import { QuestionnaireItemAnswerOption } from '@beda.software/fhir-questionnaire/contrib/aidbox';
 import { RenderRemoteData } from '@beda.software/fhir-react';
 import { RemoteDataResult } from '@beda.software/remote-data';
 import { Reference } from 'fhir/r4b';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { FormAnswerItems } from 'sdc-qrf';
 
 interface ReferenceOptionsListProps {
     optionsRD: RemoteDataResult<any>;
     repeats?: boolean;
     selectedReferences: string[];
-    onSelectOption: (option: QuestionnaireItemAnswerOption) => void;
+    onSelectOption: (option: FormAnswerItems) => void;
 }
 
 export function ReferenceOptionsList({
@@ -25,7 +25,7 @@ export function ReferenceOptionsList({
             renderFailure={RemoteDataFailureState}
             renderLoading={RemoteDataLoadingState}
         >
-            {(options: QuestionnaireItemAnswerOption[]) => {
+            {(options: FormAnswerItems[]) => {
                 const filtered = options.filter((option) => {
                     const reference = (option?.value?.Reference as Reference)
                         ?.reference;

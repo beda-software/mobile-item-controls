@@ -1,6 +1,5 @@
-import { QuestionnaireItemAnswerOption } from '@beda.software/fhir-questionnaire/contrib/aidbox';
-
 import fhirpath, { Context, Model, Path, UserInvocationTable } from 'fhirpath';
+import { FormAnswerItems } from 'sdc-qrf';
 
 const FHIRPATH_EVALUATE_INVOCATION_TABLE: UserInvocationTable = {};
 
@@ -28,7 +27,7 @@ export function evaluate(
 
 export function transformResource(
     resource: any
-): QuestionnaireItemAnswerOption {
+): FormAnswerItems {
     if (!resource?.value?.Reference?.reference) {
         return resource;
     }
@@ -40,8 +39,7 @@ export function transformResource(
     return {
         value: {
             Reference: {
-                resourceType: resourceType,
-                id: id,
+                reference: `${resourceType}/${id}`,
                 display: resource.value.Reference.display,
             },
         },

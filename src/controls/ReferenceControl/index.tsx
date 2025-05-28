@@ -1,27 +1,27 @@
-import {
-    QuestionnaireItemAnswerOption,
-    Resource,
-} from '@beda.software/fhir-questionnaire/contrib/aidbox';
-import { isSuccess, RemoteDataResult } from '@beda.software/remote-data';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { isSuccess, RemoteDataResult } from '@beda.software/remote-data';
+import { Resource } from 'fhir/r4b';
 import { ControllerFieldState, Noop, RefCallBack } from 'react-hook-form';
 import { Keyboard, View } from 'react-native';
+import { FormAnswerItems } from 'sdc-qrf';
+
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
+import { ReferenceInput } from './components/ReferenceInput';
+import { ReferenceOptionsList } from './components/ReferenceOptionsList';
 import {
     AnswerReferenceProps,
     GetFHIRResources,
     useAnswerReference,
 } from './hooks';
-import { ReferenceInput } from './components/ReferenceInput';
-import { ReferenceOptionsList } from './components/ReferenceOptionsList';
 import { transformResource } from './utils';
 
 interface QuestionReferenceUnsafeProps {
     fieldController: {
-        value: QuestionnaireItemAnswerOption[];
-        onChange: (value: QuestionnaireItemAnswerOption[]) => void;
-        onMultiChange: (option: QuestionnaireItemAnswerOption) => void;
+        value: FormAnswerItems[] | undefined;
+        onChange: (value: FormAnswerItems[]) => void;
+        onMultiChange: (option: FormAnswerItems) => void;
         fieldState: ControllerFieldState;
         disabled: boolean | undefined;
         onBlur: Noop;
@@ -50,22 +50,18 @@ function QuestionReferenceUnsafe({
 
     const selectedReferences = value?.map((v) => {
         const ref = v.value?.Reference;
-        return ref?.resourceType && ref?.id
-            ? `${ref.resourceType}/${ref.id}`
-            : '';
+        return ref?.reference ?? '';
     });
 
     const onSelectOption = useCallback(
-        (option: QuestionnaireItemAnswerOption) => {
+        (option: FormAnswerItems) => {
             const display = option.value?.Reference?.display || '';
             const transformed = transformResource(option);
             if (repeats) {
                 const ref = transformed.value?.Reference;
-                const alreadyExists = value.some(
+                const alreadyExists = value?.some(
                     (item) =>
-                        item.value?.Reference?.id === ref?.id &&
-                        item.value?.Reference?.resourceType ===
-                            ref?.resourceType
+                        item.value?.Reference?.reference === ref?.reference
                 );
                 if (!alreadyExists) {
                     onMultiChange(transformed);
@@ -82,7 +78,7 @@ function QuestionReferenceUnsafe({
 
     const onRemove = useCallback(
         (index: number) => {
-            onMultiChange(value[index]);
+            onMultiChange(value![index]);
         },
         [onMultiChange, value]
     );
@@ -97,7 +93,7 @@ function QuestionReferenceUnsafe({
             }
             if (isSuccess(optionsRD)) {
                 const matched = optionsRD.data?.find(
-                    (option: QuestionnaireItemAnswerOption) =>
+                    (option: FormAnswerItems) =>
                         option?.value?.Reference?.display?.toLowerCase() ===
                         searchText.trim().toLowerCase()
                 );

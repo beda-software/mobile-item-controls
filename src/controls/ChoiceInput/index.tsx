@@ -5,13 +5,13 @@ import {
     useFieldController,
     ValueSetExpandProvider,
 } from '@beda.software/fhir-questionnaire';
-import {
-    QuestionnaireItemAnswerOption,
-    QuestionnaireItemChoiceColumn,
-    QuestionnaireResponseItemAnswer,
-} from '@beda.software/fhir-questionnaire/contrib/aidbox';
 import { debounce } from 'lodash';
 import _ from 'lodash';
+import {
+    FCEQuestionnaireItemChoiceColumn,
+    FormAnswerItems,
+    toAnswerValue,
+} from 'sdc-qrf';
 import { getDisplay } from 'src/utils';
 
 import { Select } from '../../components/Select';
@@ -28,7 +28,7 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
     } = questionItem;
     const fieldName = [...parentPath, linkId];
 
-    const { value, onMultiChange } = useFieldController(
+    const { value, onMultiChange } = useFieldController<FormAnswerItems[]>(
         fieldName,
         questionItem
     );
@@ -53,7 +53,9 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
 
     return (
         <ChoiceQuestionSelect
-            options={answerOption!}
+            options={(answerOption ?? []).map((option) => ({
+                value: toAnswerValue(option, 'value')!,
+            }))}
             value={value}
             onChange={onMultiChange}
             repeats={repeats}
@@ -66,12 +68,12 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
 
 interface ChoiceQuestionValueSetProps {
     answerValueSet: string;
-    value: QuestionnaireResponseItemAnswer[];
+    value: FormAnswerItems[] | undefined;
     label?: string;
     onChange: (option: any) => void;
     repeats?: boolean;
     placeholder?: string;
-    choiceColumn?: QuestionnaireItemChoiceColumn[];
+    choiceColumn?: FCEQuestionnaireItemChoiceColumn[];
 }
 
 export function ChoiceQuestionValueSet(props: ChoiceQuestionValueSetProps) {
@@ -107,7 +109,7 @@ export function ChoiceQuestionValueSet(props: ChoiceQuestionValueSetProps) {
     }, [loadOptions]);
 
     return (
-        <Select<QuestionnaireItemAnswerOption>
+        <Select<FormAnswerItems>
             value={value}
             options={options}
             onChange={(v) => onChange(v)}
@@ -127,13 +129,13 @@ export function ChoiceQuestionValueSet(props: ChoiceQuestionValueSetProps) {
 }
 
 interface ChoiceQuestionSelectProps {
-    value?: QuestionnaireResponseItemAnswer[];
+    value: FormAnswerItems[] | undefined;
     label?: string;
     onChange: (...option: any[]) => void;
-    options: QuestionnaireItemAnswerOption[];
+    options: FormAnswerItems[];
     repeats?: boolean;
     placeholder?: string;
-    choiceColumn?: QuestionnaireItemChoiceColumn[];
+    choiceColumn?: FCEQuestionnaireItemChoiceColumn[];
 }
 
 export function ChoiceQuestionSelect(props: ChoiceQuestionSelectProps) {
@@ -148,7 +150,7 @@ export function ChoiceQuestionSelect(props: ChoiceQuestionSelectProps) {
     } = props;
 
     return (
-        <Select<QuestionnaireItemAnswerOption>
+        <Select<FormAnswerItems>
             value={value}
             options={options}
             onChange={(v) => onChange(v)}

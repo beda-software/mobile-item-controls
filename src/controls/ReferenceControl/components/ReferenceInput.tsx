@@ -1,10 +1,12 @@
 import React from 'react';
+
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { QuestionnaireItemAnswerOption } from '@beda.software/fhir-questionnaire/contrib/aidbox';
+import { FormAnswerItems } from 'sdc-qrf';
+
 import { styles } from '../../styles';
 
 interface ReferenceInputProps {
-    value: QuestionnaireItemAnswerOption[];
+    value: FormAnswerItems[] | undefined;
     searchText: string;
     setSearchText: (text: string) => void;
     setShowOptions: (show: boolean) => void;
@@ -27,7 +29,7 @@ export function ReferenceInput({
             style={[styles.inputContainer, repeats && styles.repeatsContainer]}
         >
             {repeats &&
-                value.map((item, index) => (
+                value?.map((item, index) => (
                     <View key={index} style={styles.chip}>
                         <Text style={styles.chipText}>
                             {item.value?.Reference?.display || ''}
