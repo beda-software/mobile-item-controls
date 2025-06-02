@@ -17,6 +17,29 @@ export const lightTheme: DefaultTheme = {
     },
     spacing: {},
     typography: {},
+    components: {
+        Global: {
+            colorBgContainer: 'white',
+            colorBgContainerDisabled: '#FFFFFF80',
+            colorBorder: '#00000026',
+            colorBorderDisabled: '#00000026',
+            colorText: 'black',
+            colorTextDescription: 'black',
+            colorTextDisabled: '#00000080',
+            colorErrorText: '#FF4D4F',
+            borderRadius: 16,
+            borderWidth: 1,
+            fontSize: 16,
+            lineHeight: 16,
+        },
+        Input: {
+            activeBg: 'white',
+            activeBorderColor: '#3366FF',
+            addonBg: '#FAFAFA',
+            paddingBlock: 12,
+            paddingInline: 12,
+        },
+    },
 };
 
 export const darkTheme: DefaultTheme = {
@@ -33,6 +56,29 @@ export const darkTheme: DefaultTheme = {
             color_8: '#7FA3F3',
             color_9: '#A8C5F8',
             color_10: '#D2E2FA',
+        },
+    },
+    components: {
+        Global: {
+            colorBgContainer: 'white',
+            colorBgContainerDisabled: '#FFFFFF80',
+            colorBorder: '#00000026',
+            colorBorderDisabled: '#00000026',
+            colorText: 'black',
+            colorTextDescription: 'black',
+            colorTextDisabled: '#00000080',
+            colorErrorText: '#FF4D4F',
+            borderRadius: 16,
+            borderWidth: 1,
+            fontSize: 16,
+            lineHeight: 16,
+        },
+        Input: {
+            activeBg: 'white',
+            activeBorderColor: '#3366FF',
+            addonBg: '#FAFAFA',
+            paddingBlock: 12,
+            paddingInline: 12,
         },
     },
 };

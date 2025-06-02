@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 import {
+    getFieldErrorMessage,
     QuestionItemProps,
     useFieldController,
-    getFieldErrorMessage,
 } from '@beda.software/fhir-questionnaire';
-import { TextInput, View, Text } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
 import { renderText } from '../../components/TextRender';
 import { S, styles } from '../styles';
@@ -13,6 +13,8 @@ import { S, styles } from '../styles';
 export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
     const { linkId, hidden, readOnly = false } = questionItem;
+
+    const [isFocused, setIsFocused] = useState(false);
 
     const field = useFieldController<string>(
         [...parentPath, linkId, 0, 'value', 'string'],
@@ -40,12 +42,15 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
                 activeOpacity={1}
                 onPress={focusRef}
                 $readOnly={readOnly}
+                $active={isFocused}
             >
                 <S.TextInput
                     ref={inputRef}
                     multiline
                     value={value}
                     onChangeText={onChange}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
                     editable={!readOnly}
                     $readOnly={readOnly}
                 />

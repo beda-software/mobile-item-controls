@@ -1,5 +1,5 @@
 import { StyleSheet, TextInput } from 'react-native';
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
 
 export const S = {
     Container: styled.View`
@@ -7,27 +7,37 @@ export const S = {
         gap: 8px;
         position: relative;
     `,
-    InputWrapper: styled.TouchableOpacity<{ $readOnly?: boolean }>`
-        border-radius: 16px;
-        width: 100%;
-        background-color: #fff;
-        padding: 16px;
-
-        ${({ $readOnly }) =>
-            $readOnly &&
-            css`
-                background-color: rgba(0, 0, 0, 0.04);
-            `}
+    InputWrapper: styled.TouchableOpacity<{
+        $readOnly?: boolean;
+        $active?: boolean;
+    }>`
+        border-radius: ${({ theme }) => theme.components.Global.borderRadius}px;
+        border-width: ${({ theme }) => theme.components.Global.borderWidth}px;
+        border-color: ${({ theme, $readOnly, $active }) =>
+            ($active ? theme.components.Input.activeBorderColor : undefined) ??
+            ($readOnly
+                ? theme.components.Global.colorBorderDisabled
+                : theme.components.Global.colorBorder)};
+        padding-block: ${({ theme }) => theme.components.Input.paddingBlock}px;
+        padding-inline: ${({ theme }) =>
+            theme.components.Input.paddingInline}px;
+        background-color: ${({ theme, $readOnly, $active }) =>
+            ($active ? theme.components.Input.activeBg : undefined) ??
+            ($readOnly
+                ? theme.components.Global.colorBgContainerDisabled
+                : theme.components.Global.colorBgContainer)};
     `,
     TextInput: styled(TextInput)<{ $readOnly?: boolean }>`
-        font-size: 16px;
-        width: 100%;
-
-        ${({ $readOnly }) =>
-            $readOnly &&
-            css`
-                color: rgba(0, 0, 0, 0.25);
-            `}
+        font-size: ${({ theme }) =>
+            theme.components.Input.inputFontSize ??
+            theme.components.Global.fontSize}px;
+        line-height: ${({ theme }) =>
+            theme.components.Input.inputLineHeight ??
+            theme.components.Global.lineHeight}px;
+        color: ${({ theme, $readOnly }) =>
+            $readOnly
+                ? theme.components.Global.colorTextDisabled
+                : theme.components.Global.colorText};
     `,
 };
 
