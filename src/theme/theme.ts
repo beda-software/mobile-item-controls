@@ -30,7 +30,6 @@ export const lightTheme: DefaultTheme = {
             borderRadius: 16,
             borderWidth: 1,
             fontSize: 16,
-            lineHeight: 16,
         },
         Input: {
             activeBg: 'white',
@@ -71,12 +70,8 @@ export const darkTheme: DefaultTheme = {
             borderRadius: 16,
             borderWidth: 1,
             fontSize: 16,
-            lineHeight: 16,
         },
         Input: {
-            activeBg: 'white',
-            activeBorderColor: '#3366FF',
-            addonBg: '#FAFAFA',
             paddingBlock: 12,
             paddingInline: 12,
         },

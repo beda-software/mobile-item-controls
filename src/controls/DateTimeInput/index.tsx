@@ -1,15 +1,17 @@
+import React, { useState } from 'react';
+
 import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, View } from 'react-native';
 import DatePicker from 'react-native-date-picker';
+
 import { renderText } from '../../components/TextRender';
-import { styles } from '../styles';
+import { S, styles } from '../styles';
 
 export function DateTimeInput({ questionItem, parentPath }: QuestionItemProps) {
-    const { linkId, type } = questionItem;
+    const { linkId, type, readOnly } = questionItem;
     const field = [...parentPath, linkId, 0, 'value', type];
     const { value, onChange } = useFieldController<string>(field, questionItem);
 
@@ -33,15 +35,16 @@ export function DateTimeInput({ questionItem, parentPath }: QuestionItemProps) {
                 {renderText(questionItem.helpText)}
             </View>
 
-            <TouchableOpacity
+            <S.InputWrapper
                 activeOpacity={1}
                 onPress={() => setShowPicker(true)}
-                style={styles.inputContainer}
+                $readOnly={readOnly}
+                $active={showPicker}
             >
                 <Text style={styles.inputText}>
                     {formatDateValue(date, type)}
                 </Text>
-            </TouchableOpacity>
+            </S.InputWrapper>
 
             {showPicker && (
                 <DatePicker

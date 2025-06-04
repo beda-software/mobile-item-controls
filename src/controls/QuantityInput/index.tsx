@@ -1,20 +1,19 @@
+import React, { useRef, useState } from 'react';
+
 import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import React, { useRef, useState } from 'react';
-import { TextInput, TouchableOpacity, View, Text } from 'react-native';
+import { Coding, Quantity } from 'fhir/r4b';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+
 import { renderText } from '../../components/TextRender';
-import { styles } from '../styles';
-import {
-    Coding,
-    Quantity,
-} from '@beda.software/fhir-questionnaire/contrib/aidbox';
+import { S, styles } from '../styles';
 import { isValidDecimal } from '../utils';
 
 export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
-    const { linkId, unitOption } = questionItem;
+    const { linkId, unitOption, readOnly } = questionItem;
     const fieldName = [...parentPath, linkId, 0, 'value', 'Quantity'];
     const { value, onChange } = useFieldController<Quantity>(
         fieldName,
@@ -24,8 +23,11 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
     const [numericValue, setNumericValue] = useState<string>(
         value?.value?.toString() || ''
     );
-    const [selectedUnit, setSelectedUnit] = useState<Coding>(unitOption?.[0]);
+    const [selectedUnit, setSelectedUnit] = useState<Coding | undefined>(
+        unitOption?.[0]
+    );
     const [showUnitList, setShowUnitList] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
 
     function focusRef() {
         inputRef.current?.focus();
@@ -37,9 +39,9 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
             const parsedValue = parseFloat(inputValue);
             onChange({
                 value: !Number.isNaN(parsedValue) ? parsedValue : undefined,
-                unit: selectedUnit.display,
-                system: selectedUnit.system,
-                code: selectedUnit.code,
+                unit: selectedUnit?.display,
+                system: selectedUnit?.system,
+                code: selectedUnit?.code,
             });
         }
     };
@@ -65,21 +67,23 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
                 {renderText(questionItem.text, styles.text)}
                 {renderText(questionItem.helpText)}
             </View>
-
-            <TouchableOpacity
+            <S.InputWrapper
                 activeOpacity={1}
                 onPress={focusRef}
-                style={styles.inputContainer}
+                $readOnly={readOnly}
+                $active={isFocused}
             >
-                <TextInput
+                <S.TextInput
                     ref={inputRef}
                     keyboardType={'decimal-pad'}
-                    style={styles.inputText}
                     value={numericValue}
                     onChangeText={onValueChange}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    editable={!readOnly}
+                    $readOnly={readOnly}
                 />
-            </TouchableOpacity>
-
+            </S.InputWrapper>
             {unitOption && unitOption.length > 1 ? (
                 <View>
                     <TouchableOpacity

@@ -31,14 +31,12 @@ declare module 'styled-components/native' {
                 borderRadius: number;
                 borderWidth: number;
                 fontSize: number;
-                lineHeight: number;
             };
             Input: {
-                activeBg: string;
-                activeBorderColor: string;
+                activeBg?: string;
+                activeBorderColor?: string;
                 addonBg?: string;
-                inputFontSize?: number;
-                inputLineHeight?: number;
+                fontSize?: number;
                 paddingBlock: number;
                 paddingInline: number;
             };

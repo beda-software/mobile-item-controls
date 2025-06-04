@@ -29,11 +29,8 @@ export const S = {
     `,
     TextInput: styled(TextInput)<{ $readOnly?: boolean }>`
         font-size: ${({ theme }) =>
-            theme.components.Input.inputFontSize ??
+            theme.components.Input.fontSize ??
             theme.components.Global.fontSize}px;
-        line-height: ${({ theme }) =>
-            theme.components.Input.inputLineHeight ??
-            theme.components.Global.lineHeight}px;
         color: ${({ theme, $readOnly }) =>
             $readOnly
                 ? theme.components.Global.colorTextDisabled

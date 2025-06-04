@@ -46,7 +46,6 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
             >
                 <S.TextInput
                     ref={inputRef}
-                    multiline
                     value={value}
                     onChangeText={onChange}
                     onFocus={() => setIsFocused(true)}
