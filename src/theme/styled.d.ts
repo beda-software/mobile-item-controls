@@ -40,6 +40,16 @@ declare module 'styled-components/native' {
                 paddingBlock: number;
                 paddingInline: number;
             };
+            InlineChoice: {
+                colorBorder?: string;
+                selectedBg?: string;
+                selectedBorderColor?: string;
+                fontSize?: number;
+                borderRadius?: number;
+                paddingBlock: number;
+                paddingInline: number;
+                gap: number;
+            };
         };
     }
 }

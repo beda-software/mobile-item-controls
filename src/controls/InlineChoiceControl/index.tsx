@@ -21,7 +21,7 @@ export function InlineChoiceControl({
     questionItem,
     parentPath,
 }: QuestionItemProps) {
-    const { repeats, answerOption, text, linkId } = questionItem;
+    const { repeats, answerOption, text, linkId, readOnly } = questionItem;
 
     const { value, onChange, onMultiChange } = useFieldController<
         FormAnswerItems[] | Coding
@@ -57,6 +57,8 @@ export function InlineChoiceControl({
                 return (
                     <ChoiceOption
                         key={index}
+                        readOnly={!!readOnly}
+                        multiselect={!!repeats}
                         isSelected={isAnswerSelected(
                             {
                                 value: answer,

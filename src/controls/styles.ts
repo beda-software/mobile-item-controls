@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import styled from 'styled-components/native';
 
 export const S = {
@@ -35,6 +35,87 @@ export const S = {
             $readOnly
                 ? theme.components.Global.colorTextDisabled
                 : theme.components.Global.colorText};
+    `,
+    InlineChoiceWrapper: styled.TouchableOpacity<{
+        $readOnly?: boolean;
+        $active?: boolean;
+    }>`
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: ${({ theme }) => theme.components.InlineChoice.gap}px;
+        border-radius: ${({ theme }) =>
+            theme.components.InlineChoice.borderRadius ??
+            theme.components.Global.borderRadius}px;
+        border-width: ${({ theme }) => theme.components.Global.borderWidth}px;
+        border-color: ${({ theme, $readOnly, $active }) =>
+            ($active
+                ? theme.components.InlineChoice.selectedBorderColor
+                : undefined) ??
+            ($readOnly
+                ? theme.components.Global.colorBorderDisabled
+                : (theme.components.InlineChoice.colorBorder ??
+                  theme.components.Global.colorBorder))};
+        padding-block: ${({ theme }) =>
+            theme.components.InlineChoice.paddingBlock}px;
+        padding-inline: ${({ theme }) =>
+            theme.components.InlineChoice.paddingInline}px;
+        background-color: ${({ theme, $readOnly, $active }) =>
+            ($active ? theme.components.InlineChoice.selectedBg : undefined) ??
+            ($readOnly
+                ? theme.components.Global.colorBgContainerDisabled
+                : theme.components.Global.colorBgContainer)};
+    `,
+    InlineChoiceCheckMark: styled(View)<{
+        $readOnly?: boolean;
+        $active?: boolean;
+        $radio?: boolean;
+    }>`
+        align-items: center;
+        justify-content: center;
+        height: 16px;
+        width: 16px;
+        border-radius: ${({ $radio }) => ($radio ? 8 : 4)}px;
+        border-width: 1px;
+        border-color: ${({ theme, $readOnly, $active }) =>
+            ($active
+                ? theme.components.InlineChoice.selectedBorderColor
+                : undefined) ??
+            ($readOnly
+                ? theme.components.Global.colorBorderDisabled
+                : (theme.components.InlineChoice.colorBorder ??
+                  theme.components.Global.colorBorder))};
+        background-color: ${({ theme, $readOnly, $active, $radio }) =>
+            ($active && $radio
+                ? theme.components.InlineChoice.selectedBorderColor
+                : undefined) ??
+            ($readOnly
+                ? theme.components.Global.colorBgContainerDisabled
+                : theme.components.Global.colorBgContainer)};
+    `,
+    InlineChoiceCheckMarkChecked: styled(View)<{
+        $readOnly?: boolean;
+        $active?: boolean;
+        $radio?: boolean;
+    }>`
+        height: 8px;
+        width: 8px;
+        border-radius: ${({ $radio }) => ($radio ? 8 : 0)}px;
+        border-width: 1px;
+        border-color: ${({ theme, $readOnly, $active }) =>
+            ($active
+                ? theme.components.InlineChoice.selectedBorderColor
+                : undefined) ??
+            ($readOnly
+                ? theme.components.Global.colorBgContainerDisabled
+                : theme.components.Global.colorBgContainer)};
+        background-color: ${({ theme, $readOnly, $active, $radio }) =>
+            ($active && !$radio
+                ? theme.components.InlineChoice.selectedBorderColor
+                : undefined) ??
+            ($readOnly
+                ? theme.components.Global.colorBgContainerDisabled
+                : theme.components.Global.colorBgContainer)};
     `,
 };
 

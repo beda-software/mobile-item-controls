@@ -38,6 +38,15 @@ export const lightTheme: DefaultTheme = {
             paddingBlock: 12,
             paddingInline: 12,
         },
+        InlineChoice: {
+            colorBorder: '#F0F0F0',
+            selectedBg: '#F0F6FF',
+            selectedBorderColor: '#3366FF',
+            borderRadius: 12,
+            paddingBlock: 16,
+            paddingInline: 16,
+            gap: 8,
+        },
     },
 };
 
@@ -74,6 +83,15 @@ export const darkTheme: DefaultTheme = {
         Input: {
             paddingBlock: 12,
             paddingInline: 12,
+        },
+        InlineChoice: {
+            colorBorder: '#F0F0F0',
+            selectedBg: '#F0F6FF',
+            selectedBorderColor: '#3366FF',
+            borderRadius: 12,
+            paddingBlock: 16,
+            paddingInline: 16,
+            gap: 8,
         },
     },
 };
