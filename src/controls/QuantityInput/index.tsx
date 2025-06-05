@@ -1,23 +1,34 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 import { Coding, Quantity } from 'fhir/r4b';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, View } from 'react-native';
+import { ExtensionIdentifier } from 'sdc-qrf/dist/converter/extensions';
 
+import { Select } from '../../components/Select';
 import { renderText } from '../../components/TextRender';
 import { S, styles } from '../styles';
 import { isValidDecimal } from '../utils';
 
 export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
-    const { linkId, unitOption, readOnly } = questionItem;
+    const { linkId, readOnly } = questionItem;
     const fieldName = [...parentPath, linkId, 0, 'value', 'Quantity'];
     const { value, onChange } = useFieldController<Quantity>(
         fieldName,
         questionItem
+    );
+
+    const unitOption = useMemo(
+        () =>
+            questionItem.extension
+                ?.filter((ext) => ext.url === ExtensionIdentifier.UnitOption)
+                ?.map((ext) => ext.valueCoding)
+                ?.filter((unit): unit is Coding => unit !== undefined),
+        [questionItem.extension]
     );
 
     const [numericValue, setNumericValue] = useState<string>(
@@ -26,7 +37,6 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
     const [selectedUnit, setSelectedUnit] = useState<Coding | undefined>(
         unitOption?.[0]
     );
-    const [showUnitList, setShowUnitList] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
     function focusRef() {
@@ -48,7 +58,6 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
 
     const onUnitChange = (unit: Coding) => {
         setSelectedUnit(unit);
-        setShowUnitList(false);
         onChange({
             value: parseFloat(numericValue) || undefined,
             unit: unit.display,
@@ -83,32 +92,19 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
                     editable={!readOnly}
                     $readOnly={readOnly}
                 />
+                <S.TextInputAddon $readOnly={readOnly}>
+                    <Select<Coding>
+                        value={selectedUnit}
+                        options={unitOption ?? []}
+                        onChange={onUnitChange}
+                        isOptionSelected={(option) =>
+                            option.code === selectedUnit?.code
+                        }
+                        isMulti={false}
+                        getOptionLabel={(o) => o.display ?? 'N/A'}
+                    />
+                </S.TextInputAddon>
             </S.InputWrapper>
-            {unitOption && unitOption.length > 1 ? (
-                <View>
-                    <TouchableOpacity
-                        onPress={() => setShowUnitList(!showUnitList)}
-                    >
-                        <Text>
-                            {'> ' + selectedUnit?.display || 'Select Unit'}
-                        </Text>
-                    </TouchableOpacity>
-                    {showUnitList && (
-                        <View>
-                            {unitOption.map((item: Coding) => (
-                                <TouchableOpacity
-                                    key={item.code}
-                                    onPress={() => onUnitChange(item)}
-                                >
-                                    <Text>{item.display}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-                </View>
-            ) : (
-                selectedUnit?.display && <Text>{selectedUnit.display}</Text>
-            )}
         </View>
     );
 }

@@ -41,6 +41,27 @@ export const S = {
                 ? theme.components.Global.colorTextDisabled
                 : theme.components.Global.colorText};
     `,
+    TextInputAddon: styled(View)<{ $readOnly?: boolean }>`
+        align-items: center;
+        justify-content: center;
+        margin-top: -${({ theme }) => theme.components.Input.paddingBlock}px;
+        margin-bottom: -${({ theme }) => theme.components.Input.paddingBlock}px;
+        margin-right: -${({ theme }) => theme.components.Input.paddingInline}px;
+        padding-block: ${({ theme }) => theme.components.Input.paddingBlock}px;
+        padding-inline: ${({ theme }) =>
+            theme.components.Input.paddingInline}px;
+        background-color: ${({ theme, $readOnly }) =>
+            $readOnly
+                ? theme.components.Global.colorBgContainerDisabled
+                : (theme.components.Input.addonBg ??
+                    theme.components.Global.colorBgContainer)};
+        border-top-right-radius: ${({ theme }) =>
+            theme.components.Input.borderRadius ??
+            theme.components.Global.borderRadius}px;
+        border-bottom-right-radius: ${({ theme }) =>
+            theme.components.Input.borderRadius ??
+            theme.components.Global.borderRadius}px;
+    `,
     InlineChoiceWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;
         $active?: boolean;
