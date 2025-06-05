@@ -4,7 +4,7 @@ import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import { Text, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 
 import { renderText } from '../../components/TextRender';
 import { S, styles } from '../styles';
@@ -12,7 +12,7 @@ import { isValidDecimal } from '../utils';
 
 export function DecimalInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
-    const { linkId, unit, readOnly } = questionItem;
+    const { linkId, readOnly } = questionItem;
 
     const { value, onChange } = useFieldController<number>(
         [...parentPath, linkId, 0, 'value', 'decimal'],
@@ -57,7 +57,6 @@ export function DecimalInput({ questionItem, parentPath }: QuestionItemProps) {
                     $readOnly={readOnly}
                 />
             </S.InputWrapper>
-            {unit?.display && <Text>{unit.display}</Text>}
         </View>
     );
 }
