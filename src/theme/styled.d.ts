@@ -36,6 +36,7 @@ declare module 'styled-components/native' {
                 activeBg?: string;
                 activeBorderColor?: string;
                 addonBg?: string;
+                borderRadius?: number;
                 fontSize?: number;
                 paddingBlock: number;
                 paddingInline: number;

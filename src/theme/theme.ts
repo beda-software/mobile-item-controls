@@ -35,6 +35,7 @@ export const lightTheme: DefaultTheme = {
             activeBg: 'white',
             activeBorderColor: '#3366FF',
             addonBg: '#FAFAFA',
+            borderRadius: 8,
             paddingBlock: 12,
             paddingInline: 12,
         },

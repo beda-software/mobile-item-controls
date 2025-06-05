@@ -11,7 +11,9 @@ export const S = {
         $readOnly?: boolean;
         $active?: boolean;
     }>`
-        border-radius: ${({ theme }) => theme.components.Global.borderRadius}px;
+        border-radius: ${({ theme }) =>
+            theme.components.Input.borderRadius ??
+            theme.components.Global.borderRadius}px;
         border-width: ${({ theme }) => theme.components.Global.borderWidth}px;
         border-color: ${({ theme, $readOnly, $active }) =>
             ($active ? theme.components.Input.activeBorderColor : undefined) ??
