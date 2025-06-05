@@ -11,6 +11,8 @@ export const S = {
         $readOnly?: boolean;
         $active?: boolean;
     }>`
+        display: flex;
+        flex-direction: row;
         border-radius: ${({ theme }) =>
             theme.components.Input.borderRadius ??
             theme.components.Global.borderRadius}px;
@@ -30,6 +32,7 @@ export const S = {
                 : theme.components.Global.colorBgContainer)};
     `,
     TextInput: styled(TextInput)<{ $readOnly?: boolean }>`
+        flex: 1;
         font-size: ${({ theme }) =>
             theme.components.Input.fontSize ??
             theme.components.Global.fontSize}px;

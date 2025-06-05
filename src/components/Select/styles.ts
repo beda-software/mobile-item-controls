@@ -2,10 +2,8 @@ import styled from 'styled-components/native';
 
 export const S = {
     SelectContainer: styled.TouchableOpacity`
-        border-width: 1px;
-        border-color: #ccc;
-        border-radius: 4px;
-        padding: 12px 16px;
+        flex-grow: 1;
+        gap: 4px;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;

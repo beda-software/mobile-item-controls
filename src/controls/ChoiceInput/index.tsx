@@ -5,8 +5,8 @@ import {
     useFieldController,
     ValueSetExpandProvider,
 } from '@beda.software/fhir-questionnaire';
-import { debounce } from 'lodash';
 import _ from 'lodash';
+import { View } from 'react-native';
 import {
     FCEQuestionnaireItemChoiceColumn,
     FormAnswerItems,
@@ -15,6 +15,8 @@ import {
 import { getDisplay } from 'src/utils';
 
 import { Select } from '../../components/Select';
+import { renderText } from '../../components/TextRender';
+import { S, styles } from '../styles';
 
 export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
     const {
@@ -37,32 +39,42 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
         return null;
     }
 
-    if (answerValueSet) {
-        return (
-            <ChoiceQuestionValueSet
-                answerValueSet={answerValueSet}
-                value={value}
-                onChange={onMultiChange}
-                repeats={repeats}
-                placeholder={entryFormat}
-                choiceColumn={choiceColumn}
-                label={text}
-            />
-        );
-    }
-
     return (
-        <ChoiceQuestionSelect
-            options={(answerOption ?? []).map((option) => ({
-                value: toAnswerValue(option, 'value')!,
-            }))}
-            value={value}
-            onChange={onMultiChange}
-            repeats={repeats}
-            placeholder={entryFormat}
-            choiceColumn={choiceColumn}
-            label={text}
-        />
+        <View style={styles.container}>
+            <View style={styles.textContainer}>
+                {renderText(questionItem.text, styles.text)}
+                {renderText(questionItem.helpText)}
+            </View>
+            <S.InputWrapper
+                activeOpacity={1}
+                $readOnly={questionItem.readOnly}
+                $active={false}
+            >
+                {answerValueSet ? (
+                    <ChoiceQuestionValueSet
+                        answerValueSet={answerValueSet}
+                        value={value}
+                        onChange={onMultiChange}
+                        repeats={repeats}
+                        placeholder={entryFormat}
+                        choiceColumn={choiceColumn}
+                        label={text}
+                    />
+                ) : (
+                    <ChoiceQuestionSelect
+                        options={(answerOption ?? []).map((option) => ({
+                            value: toAnswerValue(option, 'value')!,
+                        }))}
+                        value={value}
+                        onChange={onMultiChange}
+                        repeats={repeats}
+                        placeholder={entryFormat}
+                        choiceColumn={choiceColumn}
+                        label={text}
+                    />
+                )}
+            </S.InputWrapper>
+        </View>
     );
 }
 
@@ -94,10 +106,6 @@ export function ChoiceQuestionValueSet(props: ChoiceQuestionValueSetProps) {
         },
         [answerValueSet, expand]
     );
-
-    const debouncedLoadOptions = debounce((searchText) => {
-        (async () => await loadOptions(searchText))();
-    }, 500);
 
     const [options, setOptions] = useState([]);
 
