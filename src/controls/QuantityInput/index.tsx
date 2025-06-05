@@ -79,16 +79,22 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
                     $readOnly={readOnly}
                 />
                 <S.TextInputAddon $readOnly={readOnly}>
-                    <Select<Coding>
-                        value={selectedUnit}
-                        options={questionItem?.unitOption ?? []}
-                        onChange={onUnitChange}
-                        isOptionSelected={(option) =>
-                            option.code === selectedUnit?.code
-                        }
-                        isMulti={false}
-                        getOptionLabel={(o) => o.display ?? 'N/A'}
-                    />
+                    {(questionItem.unitOption?.length ?? 0) > 1 ? (
+                        <Select<Coding>
+                            value={selectedUnit}
+                            options={questionItem?.unitOption ?? []}
+                            onChange={onUnitChange}
+                            isOptionSelected={(option) =>
+                                option.code === selectedUnit?.code
+                            }
+                            isMulti={false}
+                            getOptionLabel={(o) => o.display ?? 'N/A'}
+                        />
+                    ) : (
+                        <S.TextInputAddonText>
+                            {selectedUnit?.display}
+                        </S.TextInputAddonText>
+                    )}
                 </S.TextInputAddon>
             </S.InputWrapper>
         </View>

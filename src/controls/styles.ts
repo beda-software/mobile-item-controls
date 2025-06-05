@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import styled from 'styled-components/native';
 
 export const S = {
@@ -54,13 +54,22 @@ export const S = {
             $readOnly
                 ? theme.components.Global.colorBgContainerDisabled
                 : (theme.components.Input.addonBg ??
-                    theme.components.Global.colorBgContainer)};
+                  theme.components.Global.colorBgContainer)};
         border-top-right-radius: ${({ theme }) =>
             theme.components.Input.borderRadius ??
             theme.components.Global.borderRadius}px;
         border-bottom-right-radius: ${({ theme }) =>
             theme.components.Input.borderRadius ??
             theme.components.Global.borderRadius}px;
+    `,
+    TextInputAddonText: styled(Text)<{ $readOnly?: boolean }>`
+        font-size: ${({ theme }) =>
+            theme.components.Input.fontSize ??
+            theme.components.Global.fontSize}px;
+        color: ${({ theme, $readOnly }) =>
+            $readOnly
+                ? theme.components.Global.colorTextDisabled
+                : theme.components.Global.colorText};
     `,
     InlineChoiceWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;
