@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import {
     QuestionItemProps,
@@ -6,7 +6,6 @@ import {
 } from '@beda.software/fhir-questionnaire';
 import { Coding, Quantity } from 'fhir/r4b';
 import { TextInput, View } from 'react-native';
-import { ExtensionIdentifier } from 'sdc-qrf/dist/converter/extensions';
 
 import { Select } from '../../components/Select';
 import { renderText } from '../../components/TextRender';
@@ -22,20 +21,11 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
         questionItem
     );
 
-    const unitOption = useMemo(
-        () =>
-            questionItem.extension
-                ?.filter((ext) => ext.url === ExtensionIdentifier.UnitOption)
-                ?.map((ext) => ext.valueCoding)
-                ?.filter((unit): unit is Coding => unit !== undefined),
-        [questionItem.extension]
-    );
-
     const [numericValue, setNumericValue] = useState<string>(
         value?.value?.toString() || ''
     );
     const [selectedUnit, setSelectedUnit] = useState<Coding | undefined>(
-        unitOption?.[0]
+        questionItem.unitOption?.[0]
     );
     const [isFocused, setIsFocused] = useState(false);
 
@@ -91,7 +81,7 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
                 <S.TextInputAddon $readOnly={readOnly}>
                     <Select<Coding>
                         value={selectedUnit}
-                        options={unitOption ?? []}
+                        options={questionItem?.unitOption ?? []}
                         onChange={onUnitChange}
                         isOptionSelected={(option) =>
                             option.code === selectedUnit?.code
