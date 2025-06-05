@@ -12,7 +12,7 @@ import { S, styles } from '../styles';
 
 export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
-    const { linkId, hidden, readOnly = false } = questionItem;
+    const { linkId, readOnly = false } = questionItem;
 
     const [isFocused, setIsFocused] = useState(false);
 
@@ -26,10 +26,6 @@ export function StringInput({ questionItem, parentPath }: QuestionItemProps) {
 
     function focusRef() {
         inputRef.current?.focus();
-    }
-
-    if (hidden) {
-        return null;
     }
 
     return (

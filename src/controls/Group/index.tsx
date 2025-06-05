@@ -1,8 +1,10 @@
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
-import { styles } from '../styles';
-import { renderText } from '../../components/TextRender';
+
 import { GroupItemProps } from '@beda.software/fhir-questionnaire/components/QuestionnaireResponseForm/BaseQuestionnaireResponseForm/GroupComponent';
+import { Text, View, TouchableOpacity } from 'react-native';
+
+import { renderText } from '../../components/TextRender';
+import { styles } from '../styles';
 
 export function Group({
     questionItem,
@@ -15,10 +17,6 @@ export function Group({
 
     const childrenArray = Array.isArray(children) ? children : [children];
     const isRemovable = repeats && childrenArray.length > 1;
-
-    if (questionItem.hidden) {
-        return null;
-    }
 
     return (
         <View style={styles.container}>

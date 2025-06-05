@@ -12,7 +12,7 @@ import { S, styles } from '../styles';
 
 export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
     const inputRef = useRef<TextInput>(null);
-    const { linkId, rowsNumber = 3, hidden, readOnly = false } = questionItem;
+    const { linkId, rowsNumber = 3, readOnly = false } = questionItem;
     const fieldName = [...parentPath, linkId, 0, 'value', 'string'];
 
     const [isFocused, setIsFocused] = useState(false);
@@ -27,10 +27,6 @@ export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
         }
 
         inputRef.current?.focus();
-    }
-
-    if (hidden) {
-        return null;
     }
 
     return (

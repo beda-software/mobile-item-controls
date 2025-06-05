@@ -7,10 +7,6 @@ import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
 
 export function Display({ questionItem }: QuestionItemProps) {
-    if (questionItem.hidden) {
-        return null;
-    }
-
     return (
         <View style={styles.container}>
             {renderText(questionItem.text, styles.text)}

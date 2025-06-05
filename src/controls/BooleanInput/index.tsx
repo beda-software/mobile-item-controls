@@ -1,9 +1,11 @@
+import React from 'react';
+
 import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import React from 'react';
 import { View, Switch } from 'react-native';
+
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
 
@@ -14,10 +16,6 @@ export function BooleanInput({ questionItem, parentPath }: QuestionItemProps) {
         field,
         questionItem
     );
-
-    if (questionItem.hidden) {
-        return null;
-    }
 
     return (
         <View style={styles.container}>

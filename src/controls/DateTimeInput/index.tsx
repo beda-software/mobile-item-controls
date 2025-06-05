@@ -24,10 +24,6 @@ export function DateTimeInput({ questionItem, parentPath }: QuestionItemProps) {
         setShowPicker(false);
     };
 
-    if (questionItem.hidden) {
-        return null;
-    }
-
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>

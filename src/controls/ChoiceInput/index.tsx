@@ -35,10 +35,6 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
         questionItem
     );
 
-    if (questionItem.hidden) {
-        return null;
-    }
-
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>
