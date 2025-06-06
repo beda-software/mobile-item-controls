@@ -103,6 +103,10 @@ export function ChoiceQuestionValueSet(props: ChoiceQuestionValueSetProps) {
         [answerValueSet, expand]
     );
 
+    const debouncedLoadOptions = _.debounce((searchText: string) => {
+        loadOptions(searchText).then(setOptions);
+    }, 500);
+
     const [options, setOptions] = useState([]);
 
     useEffect(() => {
@@ -117,6 +121,7 @@ export function ChoiceQuestionValueSet(props: ChoiceQuestionValueSetProps) {
             value={value}
             options={options}
             onChange={(v) => onChange(v)}
+            onSearch={debouncedLoadOptions}
             isOptionSelected={(option) =>
                 !!value &&
                 value?.findIndex((v) => _.isEqual(v?.value, option.value)) !==
