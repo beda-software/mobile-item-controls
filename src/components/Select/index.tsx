@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { FlatList, Image, Modal } from 'react-native';
 
@@ -9,6 +9,7 @@ interface SelectProps<T> {
     options: T[];
     value?: any;
     onChange: (option: T) => void;
+    onSearch?: (search: string) => void;
     placeholder?: string;
     isOptionSelected?: ((option: T, selectValue: any) => boolean) | undefined;
     isMulti?: boolean;
@@ -20,6 +21,7 @@ export function Select<T = any>(props: SelectProps<T>) {
         options,
         value,
         onChange,
+        onSearch,
         placeholder = 'Select an option',
         label,
         isOptionSelected,
@@ -29,8 +31,18 @@ export function Select<T = any>(props: SelectProps<T>) {
     const [modalVisible, setModalVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const selectedOptions = options.filter((option) =>
-        isOptionSelected?.(option, value)
+    const selectedOptions = useMemo(
+        () => options.filter((option) => isOptionSelected?.(option, value)),
+        [isOptionSelected, options, value]
+    );
+
+    const filteredOptions = useMemo(
+        () =>
+            options.filter(
+                (option) =>
+                    getOptionLabel?.(option)?.includes(searchQuery) ?? true
+            ),
+        [getOptionLabel, options, searchQuery]
     );
 
     function handleOptionSelect(option: T) {
@@ -93,13 +105,19 @@ export function Select<T = any>(props: SelectProps<T>) {
                         <S.SelectModalSearchInputWrapper>
                             <S.SelectModalSearchInput
                                 placeholder="Search..."
-                                value={searchQuery}
-                                onChangeText={setSearchQuery}
+                                onChangeText={useCallback(
+                                    (search: string) => {
+                                        onSearch
+                                            ? onSearch(search)
+                                            : setSearchQuery(search);
+                                    },
+                                    [onSearch]
+                                )}
                             />
                         </S.SelectModalSearchInputWrapper>
 
                         <FlatList
-                            data={options}
+                            data={filteredOptions}
                             keyExtractor={(item) => JSON.stringify(item)}
                             // eslint-disable-next-line react-native/no-inline-styles
                             style={{ flex: 1 }}
