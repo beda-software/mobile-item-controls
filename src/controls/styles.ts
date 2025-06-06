@@ -152,6 +152,103 @@ export const S = {
                 ? theme.components.Global.colorBgContainerDisabled
                 : theme.components.Global.colorBgContainer)};
     `,
+    SelectInputWrapper: styled.TouchableOpacity`
+        flex-grow: 1;
+        gap: 4px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    `,
+    SelectInput: styled.View``,
+    SelectInputMultipleOptionsWrapper: styled.View`
+        flex-direction: row;
+        gap: 4px;
+    `,
+    SelectInputMultipleOptionsItem: styled.View`
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+        padding: 6px 8px;
+        border-radius: 6px;
+        background-color: #f0f0f0;
+    `,
+    SelectInputText: styled.Text`
+        font-size: 16px;
+        color: #333;
+    `,
+    SelectInputDropdownIcon: styled.View`
+        width: 0;
+        height: 0;
+        background-color: transparent;
+        border-style: solid;
+        border-left-width: 6px;
+        border-right-width: 6px;
+        border-top-width: 6px;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-top-color: #333;
+    `,
+    SelectModalWrapper: styled.View`
+        flex: 1;
+    `,
+    SelectModalHeaderWrapper: styled.View`
+        display: flex;
+        padding: 11px 16px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        border-bottom-width: 1px;
+        border-bottom-color: #f0f0f0;
+    `,
+    SelectModalHeaderTitleText: styled.Text`
+        font-size: 16px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 24px;
+    `,
+    SelectModalHeaderCloseButton: styled.TouchableOpacity`
+        width: 34px;
+        height: 34px;
+        justify-content: center;
+        align-items: center;
+    `,
+    SelectModalContentWrapper: styled.View`
+        flex: 1;
+        width: 100%;
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+    `,
+    SelectModalSearchInputWrapper: styled.View`
+        margin-bottom: 10px;
+        border-bottom-width: 1px;
+        border-bottom-color: #eee;
+    `,
+    SelectModalSearchInput: styled.TextInput`
+        padding: 10px;
+        font-size: 16px;
+    `,
+    SelectModalContentItem: styled.TouchableOpacity`
+        padding: 15px 10px;
+        border-bottom-width: 1px;
+        border-bottom-color: #eee;
+    `,
+    SelectModalContentItemText: styled.Text`
+        font-size: 16px;
+        color: #333;
+    `,
+    SelectModalFooterCloseButton: styled.TouchableOpacity`
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        align-items: center;
+    `,
+    SelectModalFooterCloseButtonText: styled.Text`
+        font-size: 16px;
+        color: #333;
+    `,
 };
 
 export const styles = StyleSheet.create({

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { Modal, FlatList, Image } from 'react-native';
+import { FlatList, Image, Modal } from 'react-native';
 
-import { S } from './styles';
+import { S } from '../../controls/styles';
 
 interface SelectProps<T> {
     label?: string;
@@ -33,11 +33,6 @@ export function Select<T = any>(props: SelectProps<T>) {
         isOptionSelected?.(option, value)
     );
 
-    // const filteredOptions = options.filter((option) =>
-    //     option.label.toLowerCase().includes(searchQuery.toLowerCase())
-    // );
-    const filteredOptions = options;
-
     function handleOptionSelect(option: T) {
         onChange(option);
         setSearchQuery('');
@@ -49,77 +44,85 @@ export function Select<T = any>(props: SelectProps<T>) {
 
     return (
         <>
-            <S.SelectContainer onPress={() => setModalVisible(true)}>
-                <S.SelectField>
+            <S.SelectInputWrapper onPress={() => setModalVisible(true)}>
+                <S.SelectInput>
                     {selectedOptions.length ? (
                         <>
                             {isMulti ? (
-                                <S.MultiOptions>
+                                <S.SelectInputMultipleOptionsWrapper>
                                     {selectedOptions.map((o) => (
-                                        <S.MultiOption
+                                        <S.SelectInputMultipleOptionsItem
                                             key={`option-${JSON.stringify(o)}`}
                                         >
-                                            <S.SelectText>
+                                            <S.SelectInputText>
                                                 {getOptionLabel?.(o)}
-                                            </S.SelectText>
-                                        </S.MultiOption>
+                                            </S.SelectInputText>
+                                        </S.SelectInputMultipleOptionsItem>
                                     ))}
-                                </S.MultiOptions>
+                                </S.SelectInputMultipleOptionsWrapper>
                             ) : (
-                                <S.SelectText>
+                                <S.SelectInputText>
                                     {getOptionLabel?.(selectedOptions[0])}
-                                </S.SelectText>
+                                </S.SelectInputText>
                             )}
                         </>
                     ) : (
-                        <S.SelectText>{placeholder}</S.SelectText>
+                        <S.SelectInputText>{placeholder}</S.SelectInputText>
                     )}
-                </S.SelectField>
-                <S.SelectIcon />
-            </S.SelectContainer>
+                </S.SelectInput>
+                <S.SelectInputDropdownIcon />
+            </S.SelectInputWrapper>
 
             <Modal
                 visible={modalVisible}
                 animationType="fade"
                 presentationStyle="formSheet"
             >
-                <S.ModalContainer>
-                    <S.ModalHeader>
-                        <S.ModalHeaderTitle>{label}</S.ModalHeaderTitle>
-                        <S.CloseButton onPress={() => setModalVisible(false)}>
+                <S.SelectModalWrapper>
+                    <S.SelectModalHeaderWrapper>
+                        <S.SelectModalHeaderTitleText>
+                            {label}
+                        </S.SelectModalHeaderTitleText>
+                        <S.SelectModalHeaderCloseButton
+                            onPress={() => setModalVisible(false)}
+                        >
                             <Image source={require('./images/close.png')} />
-                        </S.CloseButton>
-                    </S.ModalHeader>
-                    <S.ModalContent>
-                        <S.SearchContainer>
-                            <S.SearchInput
+                        </S.SelectModalHeaderCloseButton>
+                    </S.SelectModalHeaderWrapper>
+                    <S.SelectModalContentWrapper>
+                        <S.SelectModalSearchInputWrapper>
+                            <S.SelectModalSearchInput
                                 placeholder="Search..."
                                 value={searchQuery}
                                 onChangeText={setSearchQuery}
                             />
-                        </S.SearchContainer>
+                        </S.SelectModalSearchInputWrapper>
 
                         <FlatList
-                            data={filteredOptions}
+                            data={options}
                             keyExtractor={(item) => JSON.stringify(item)}
                             // eslint-disable-next-line react-native/no-inline-styles
                             style={{ flex: 1 }}
                             renderItem={({ item }: { item: T }) => (
-                                <S.OptionItem
+                                <S.SelectModalContentItem
                                     onPress={() => handleOptionSelect(item)}
                                 >
-                                    <S.OptionText>
+                                    <S.SelectModalContentItemText>
                                         {getOptionLabel?.(item)}
-                                    </S.OptionText>
-                                </S.OptionItem>
+                                    </S.SelectModalContentItemText>
+                                </S.SelectModalContentItem>
                             )}
                         />
 
-                        <S.CloseButton2 onPress={() => setModalVisible(false)}>
-                            <S.CloseButton2Text>Close</S.CloseButton2Text>
-                        </S.CloseButton2>
-                    </S.ModalContent>
-                </S.ModalContainer>
+                        <S.SelectModalFooterCloseButton
+                            onPress={() => setModalVisible(false)}
+                        >
+                            <S.SelectModalFooterCloseButtonText>
+                                Close
+                            </S.SelectModalFooterCloseButtonText>
+                        </S.SelectModalFooterCloseButton>
+                    </S.SelectModalContentWrapper>
+                </S.SelectModalWrapper>
             </Modal>
         </>
     );
