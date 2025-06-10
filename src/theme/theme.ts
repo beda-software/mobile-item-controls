@@ -32,18 +32,22 @@ export const lightTheme: DefaultTheme = {
             fontSize: 16,
         },
         Input: {
+            Global: {
+                borderRadius: 8,
+            },
             activeBg: 'white',
             activeBorderColor: '#3366FF',
             addonBg: '#FAFAFA',
-            borderRadius: 8,
             paddingBlock: 12,
             paddingInline: 12,
         },
         InlineChoice: {
-            colorBorder: '#F0F0F0',
+            Global: {
+                colorBorder: '#F0F0F0',
+                borderRadius: 12,
+            },
             selectedBg: '#F0F6FF',
             selectedBorderColor: '#3366FF',
-            borderRadius: 12,
             paddingBlock: 16,
             paddingInline: 16,
             gap: 8,
@@ -82,14 +86,22 @@ export const darkTheme: DefaultTheme = {
             fontSize: 16,
         },
         Input: {
+            Global: {
+                borderRadius: 8,
+            },
+            activeBg: 'white',
+            activeBorderColor: '#3366FF',
+            addonBg: '#FAFAFA',
             paddingBlock: 12,
             paddingInline: 12,
         },
         InlineChoice: {
-            colorBorder: '#F0F0F0',
+            Global: {
+                colorBorder: '#F0F0F0',
+                borderRadius: 12,
+            },
             selectedBg: '#F0F6FF',
             selectedBorderColor: '#3366FF',
-            borderRadius: 12,
             paddingBlock: 16,
             paddingInline: 16,
             gap: 8,

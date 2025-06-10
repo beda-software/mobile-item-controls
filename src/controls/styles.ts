@@ -14,62 +14,74 @@ export const S = {
         display: flex;
         flex-direction: row;
         border-radius: ${({ theme }) =>
-            theme.components.Input.borderRadius ??
+            theme.components.Input?.Global?.borderRadius ??
             theme.components.Global.borderRadius}px;
-        border-width: ${({ theme }) => theme.components.Global.borderWidth}px;
+        border-width: ${({ theme }) =>
+            theme.components.Input?.Global?.borderWidth ??
+            theme.components.Global.borderWidth}px;
         border-color: ${({ theme, $readOnly, $active }) =>
-            ($active ? theme.components.Input.activeBorderColor : undefined) ??
+            ($active ? theme.components.Input?.activeBorderColor : undefined) ??
             ($readOnly
-                ? theme.components.Global.colorBorderDisabled
-                : theme.components.Global.colorBorder)};
-        padding-block: ${({ theme }) => theme.components.Input.paddingBlock}px;
+                ? (theme.components.Input?.Global?.colorBorderDisabled ??
+                  theme.components.Global.colorBorderDisabled)
+                : (theme.components.Input?.Global?.colorBorder ??
+                  theme.components.Global.colorBorder))};
+        padding-block: ${({ theme }) => theme.components.Input?.paddingBlock}px;
         padding-inline: ${({ theme }) =>
-            theme.components.Input.paddingInline}px;
+            theme.components.Input?.paddingInline}px;
         background-color: ${({ theme, $readOnly, $active }) =>
-            ($active ? theme.components.Input.activeBg : undefined) ??
+            ($active ? theme.components.Input?.activeBg : undefined) ??
             ($readOnly
-                ? theme.components.Global.colorBgContainerDisabled
-                : theme.components.Global.colorBgContainer)};
+                ? (theme.components.Input?.Global?.colorBgContainerDisabled ??
+                  theme.components.Global.colorBgContainerDisabled)
+                : (theme.components.Input?.Global?.colorBgContainer ??
+                  theme.components.Global.colorBgContainer))};
     `,
     TextInput: styled(TextInput)<{ $readOnly?: boolean }>`
         flex: 1;
         font-size: ${({ theme }) =>
-            theme.components.Input.fontSize ??
+            theme.components.Input?.Global?.fontSize ??
             theme.components.Global.fontSize}px;
         color: ${({ theme, $readOnly }) =>
             $readOnly
-                ? theme.components.Global.colorTextDisabled
-                : theme.components.Global.colorText};
+                ? (theme.components.Input?.Global?.colorTextDisabled ??
+                  theme.components.Global.colorTextDisabled)
+                : (theme.components.Input?.Global?.colorText ??
+                  theme.components.Global.colorText)};
     `,
     TextInputAddon: styled(View)<{ $readOnly?: boolean }>`
         align-items: center;
         justify-content: center;
-        margin-top: -${({ theme }) => theme.components.Input.paddingBlock}px;
-        margin-bottom: -${({ theme }) => theme.components.Input.paddingBlock}px;
-        margin-right: -${({ theme }) => theme.components.Input.paddingInline}px;
-        padding-block: ${({ theme }) => theme.components.Input.paddingBlock}px;
+        margin-top: -${({ theme }) => theme.components.Input?.paddingBlock}px;
+        margin-bottom: -${({ theme }) => theme.components.Input?.paddingBlock}px;
+        margin-right: -${({ theme }) => theme.components.Input?.paddingInline}px;
+        padding-block: ${({ theme }) => theme.components.Input?.paddingBlock}px;
         padding-inline: ${({ theme }) =>
-            theme.components.Input.paddingInline}px;
+            theme.components.Input?.paddingInline}px;
         background-color: ${({ theme, $readOnly }) =>
             $readOnly
-                ? theme.components.Global.colorBgContainerDisabled
-                : (theme.components.Input.addonBg ??
+                ? (theme.components.Input?.Global?.colorBgContainerDisabled ??
+                  theme.components.Global?.colorBgContainerDisabled)
+                : (theme.components.Input?.addonBg ??
+                  theme.components.Input?.Global?.colorBgContainer ??
                   theme.components.Global.colorBgContainer)};
         border-top-right-radius: ${({ theme }) =>
-            theme.components.Input.borderRadius ??
+            theme.components.Input?.Global?.borderRadius ??
             theme.components.Global.borderRadius}px;
         border-bottom-right-radius: ${({ theme }) =>
-            theme.components.Input.borderRadius ??
+            theme.components.Input?.Global?.borderRadius ??
             theme.components.Global.borderRadius}px;
     `,
     TextInputAddonText: styled(Text)<{ $readOnly?: boolean }>`
         font-size: ${({ theme }) =>
-            theme.components.Input.fontSize ??
+            theme.components.Input?.Global?.fontSize ??
             theme.components.Global.fontSize}px;
         color: ${({ theme, $readOnly }) =>
             $readOnly
-                ? theme.components.Global.colorTextDisabled
-                : theme.components.Global.colorText};
+                ? (theme.components.Input?.Global?.colorTextDisabled ??
+                  theme.components.Global.colorTextDisabled)
+                : (theme.components.Input?.Global?.colorText ??
+                  theme.components.Global.colorText)};
     `,
     InlineChoiceWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;
@@ -78,25 +90,25 @@ export const S = {
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: ${({ theme }) => theme.components.InlineChoice.gap}px;
+        gap: ${({ theme }) => theme.components.InlineChoice?.gap}px;
         border-radius: ${({ theme }) =>
-            theme.components.InlineChoice.borderRadius ??
+            theme.components.InlineChoice?.Global?.borderRadius ??
             theme.components.Global.borderRadius}px;
         border-width: ${({ theme }) => theme.components.Global.borderWidth}px;
         border-color: ${({ theme, $readOnly, $active }) =>
             ($active
-                ? theme.components.InlineChoice.selectedBorderColor
+                ? theme.components.InlineChoice?.selectedBorderColor
                 : undefined) ??
             ($readOnly
                 ? theme.components.Global.colorBorderDisabled
-                : (theme.components.InlineChoice.colorBorder ??
+                : (theme.components.InlineChoice?.Global?.colorBorder ??
                   theme.components.Global.colorBorder))};
         padding-block: ${({ theme }) =>
-            theme.components.InlineChoice.paddingBlock}px;
+            theme.components.InlineChoice?.paddingBlock}px;
         padding-inline: ${({ theme }) =>
-            theme.components.InlineChoice.paddingInline}px;
+            theme.components.InlineChoice?.paddingInline}px;
         background-color: ${({ theme, $readOnly, $active }) =>
-            ($active ? theme.components.InlineChoice.selectedBg : undefined) ??
+            ($active ? theme.components.InlineChoice?.selectedBg : undefined) ??
             ($readOnly
                 ? theme.components.Global.colorBgContainerDisabled
                 : theme.components.Global.colorBgContainer)};
@@ -114,15 +126,15 @@ export const S = {
         border-width: 1px;
         border-color: ${({ theme, $readOnly, $active }) =>
             ($active
-                ? theme.components.InlineChoice.selectedBorderColor
+                ? theme.components.InlineChoice?.selectedBorderColor
                 : undefined) ??
             ($readOnly
                 ? theme.components.Global.colorBorderDisabled
-                : (theme.components.InlineChoice.colorBorder ??
+                : (theme.components.InlineChoice?.Global?.colorBorder ??
                   theme.components.Global.colorBorder))};
         background-color: ${({ theme, $readOnly, $active, $radio }) =>
             ($active && $radio
-                ? theme.components.InlineChoice.selectedBorderColor
+                ? theme.components.InlineChoice?.selectedBorderColor
                 : undefined) ??
             ($readOnly
                 ? theme.components.Global.colorBgContainerDisabled
@@ -139,20 +151,23 @@ export const S = {
         border-width: 1px;
         border-color: ${({ theme, $readOnly, $active }) =>
             ($active
-                ? theme.components.InlineChoice.selectedBorderColor
+                ? theme.components.InlineChoice?.selectedBorderColor
                 : undefined) ??
             ($readOnly
                 ? theme.components.Global.colorBgContainerDisabled
                 : theme.components.Global.colorBgContainer)};
         background-color: ${({ theme, $readOnly, $active, $radio }) =>
             ($active && !$radio
-                ? theme.components.InlineChoice.selectedBorderColor
+                ? theme.components.InlineChoice?.selectedBorderColor
                 : undefined) ??
             ($readOnly
                 ? theme.components.Global.colorBgContainerDisabled
                 : theme.components.Global.colorBgContainer)};
     `,
-    SelectInputWrapper: styled.TouchableOpacity`
+    SelectInputWrapper: styled.TouchableOpacity<{
+        $readOnly?: boolean;
+        $active?: boolean;
+    }>`
         flex-grow: 1;
         gap: 4px;
         flex-direction: row;

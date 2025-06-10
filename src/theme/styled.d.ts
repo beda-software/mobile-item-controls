@@ -32,21 +32,40 @@ declare module 'styled-components/native' {
                 borderWidth: number;
                 fontSize: number;
             };
-            Input: {
+            Input?: {
+                Global?: {
+                    colorBgContainer?: string;
+                    colorBgContainerDisabled?: string;
+                    colorBorder?: string;
+                    colorBorderDisabled?: string;
+                    colorText?: string;
+                    colorTextDescription?: string;
+                    colorTextDisabled?: string;
+                    borderRadius?: number;
+                    borderWidth?: number;
+                    fontSize?: number;
+                };
                 activeBg?: string;
                 activeBorderColor?: string;
                 addonBg?: string;
-                borderRadius?: number;
-                fontSize?: number;
                 paddingBlock: number;
                 paddingInline: number;
             };
-            InlineChoice: {
-                colorBorder?: string;
+            InlineChoice?: {
+                Global?: {
+                    colorBgContainer?: string;
+                    colorBgContainerDisabled?: string;
+                    colorBorder?: string;
+                    colorBorderDisabled?: string;
+                    colorText?: string;
+                    colorTextDescription?: string;
+                    colorTextDisabled?: string;
+                    borderRadius?: number;
+                    borderWidth?: number;
+                    fontSize?: number;
+                };
                 selectedBg?: string;
                 selectedBorderColor?: string;
-                fontSize?: number;
-                borderRadius?: number;
                 paddingBlock: number;
                 paddingInline: number;
                 gap: number;
