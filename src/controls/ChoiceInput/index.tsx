@@ -122,11 +122,6 @@ export function ChoiceQuestionValueSet(props: ChoiceQuestionValueSetProps) {
             options={options}
             onChange={(v) => onChange(v)}
             onSearch={debouncedLoadOptions}
-            isOptionSelected={(option) =>
-                !!value &&
-                value?.findIndex((v) => _.isEqual(v?.value, option.value)) !==
-                    -1
-            }
             isMulti={repeats}
             getOptionLabel={(o) =>
                 (getDisplay(o.value, choiceColumn) as string) || ''
@@ -163,11 +158,6 @@ export function ChoiceQuestionSelect(props: ChoiceQuestionSelectProps) {
             value={value}
             options={options}
             onChange={(v) => onChange(v)}
-            isOptionSelected={(option) =>
-                !!value &&
-                value?.findIndex((v) => _.isEqual(v?.value, option.value)) !==
-                    -1
-            }
             isMulti={repeats}
             getOptionLabel={(o) =>
                 (getDisplay(o.value, choiceColumn) as string) || ''

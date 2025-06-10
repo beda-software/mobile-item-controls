@@ -25,7 +25,7 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
         value?.value?.toString() || ''
     );
     const [selectedUnit, setSelectedUnit] = useState<Coding | undefined>(
-        questionItem.unitOption?.[0]
+        value ?? questionItem.unitOption?.[0]
     );
     const [isFocused, setIsFocused] = useState(false);
 
@@ -81,12 +81,13 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
                 <S.TextInputAddon $readOnly={readOnly}>
                     {(questionItem.unitOption?.length ?? 0) > 1 ? (
                         <Select<Coding>
-                            value={selectedUnit}
+                            value={
+                                selectedUnit !== undefined
+                                    ? [selectedUnit]
+                                    : undefined
+                            }
                             options={questionItem?.unitOption ?? []}
                             onChange={onUnitChange}
-                            isOptionSelected={(option) =>
-                                option.code === selectedUnit?.code
-                            }
                             isMulti={false}
                             getOptionLabel={(o) => o.display ?? 'N/A'}
                         />

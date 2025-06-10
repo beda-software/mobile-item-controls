@@ -7,11 +7,10 @@ import { S } from '../../controls/styles';
 interface SelectProps<T> {
     label?: string;
     options: T[];
-    value?: any;
+    value?: T[];
     onChange: (option: T) => void;
     onSearch?: (search: string) => void;
     placeholder?: string;
-    isOptionSelected?: ((option: T, selectValue: any) => boolean) | undefined;
     isMulti?: boolean;
     getOptionLabel?: (option: T) => string;
 }
@@ -24,17 +23,11 @@ export function Select<T = any>(props: SelectProps<T>) {
         onSearch,
         placeholder = 'Select an option',
         label,
-        isOptionSelected,
         getOptionLabel,
         isMulti,
     } = props;
     const [modalVisible, setModalVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-
-    const selectedOptions = useMemo(
-        () => options.filter((option) => isOptionSelected?.(option, value)),
-        [isOptionSelected, options, value]
-    );
 
     const filteredOptions = useMemo(
         () =>
@@ -58,11 +51,11 @@ export function Select<T = any>(props: SelectProps<T>) {
         <>
             <S.SelectInputWrapper onPress={() => setModalVisible(true)}>
                 <S.SelectInput>
-                    {selectedOptions.length ? (
+                    {value?.length ? (
                         <>
                             {isMulti ? (
                                 <S.SelectInputMultipleOptionsWrapper>
-                                    {selectedOptions.map((o) => (
+                                    {value?.map((o) => (
                                         <S.SelectInputMultipleOptionsItem
                                             key={`option-${JSON.stringify(o)}`}
                                         >
@@ -74,7 +67,7 @@ export function Select<T = any>(props: SelectProps<T>) {
                                 </S.SelectInputMultipleOptionsWrapper>
                             ) : (
                                 <S.SelectInputText>
-                                    {getOptionLabel?.(selectedOptions[0])}
+                                    {getOptionLabel?.(value?.[0])}
                                 </S.SelectInputText>
                             )}
                         </>
