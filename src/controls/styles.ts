@@ -7,6 +7,17 @@ export const S = {
         gap: 8px;
         position: relative;
     `,
+    ContainerQuestionTextWrapper: styled.View`
+        gap: 8px;
+    `,
+    ContainerQuestionText: styled.Text`
+        font-size: 16px;
+        font-weight: 600;
+    `,
+    ContainerQuestionHelpText: styled.Text``,
+    ContainerErrorText: styled.Text`
+        color: red;
+    `,
     InputWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;
         $active?: boolean;
@@ -163,6 +174,9 @@ export const S = {
             ($readOnly
                 ? theme.components.Global.colorBgContainerDisabled
                 : theme.components.Global.colorBgContainer)};
+    `,
+    InlineChoiceOptionText: styled.Text`
+        font-size: 16px;
     `,
     SelectInputWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;

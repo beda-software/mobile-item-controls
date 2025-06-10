@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { Text } from 'react-native';
 import { AnswerValue } from 'sdc-qrf';
 
-import { S, styles } from '../styles';
+import { S } from '../styles';
 import { extractKeyFromValue, getAnswerDisplay } from './utils';
 
 interface ChoiceOptionProps {
@@ -40,9 +39,9 @@ export const ChoiceOption = ({
                     $radio={!multiselect}
                 />
             </S.InlineChoiceCheckMark>
-            <Text style={styles.selectText}>
+            <S.InlineChoiceOptionText>
                 {key ? getAnswerDisplay(key, value) : ''}
-            </Text>
+            </S.InlineChoiceOptionText>
         </S.InlineChoiceWrapper>
     );
 };

@@ -1,10 +1,8 @@
 import React, { PropsWithChildren } from 'react';
 
 import { QuestionItemProps } from '@beda.software/fhir-questionnaire';
-import { Text, View } from 'react-native';
 
-import { renderText } from '../../components/TextRender';
-import { S, styles } from '../styles';
+import { S } from '../styles';
 
 export interface BaseControlProps extends PropsWithChildren<QuestionItemProps> {
     onFocus?: () => void;
@@ -24,11 +22,17 @@ export function BaseControl({
     const { readOnly } = questionItem;
 
     return (
-        <View style={styles.container}>
-            <View style={styles.textContainer}>
-                {renderText(questionItem.text, styles.text)}
-                {renderText(questionItem.helpText)}
-            </View>
+        <S.Container>
+            <S.ContainerQuestionTextWrapper>
+                <S.ContainerQuestionText>
+                    {questionItem.text}
+                </S.ContainerQuestionText>
+                {questionItem.helpText !== undefined ? (
+                    <S.ContainerQuestionHelpText>
+                        {questionItem.helpText}
+                    </S.ContainerQuestionHelpText>
+                ) : null}
+            </S.ContainerQuestionTextWrapper>
             {customLayout ? (
                 children
             ) : (
@@ -41,7 +45,7 @@ export function BaseControl({
                     {children}
                 </S.InputWrapper>
             )}
-            {error && <Text style={{ color: 'red' }}>{error}</Text>}
-        </View>
+            {error && <S.ContainerErrorText>{error}</S.ContainerErrorText>}
+        </S.Container>
     );
 }
