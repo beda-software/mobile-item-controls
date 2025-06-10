@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { useFieldController } from '@beda.software/fhir-questionnaire';
 import {
     extractBundleResources,
     getReference,
@@ -8,14 +7,9 @@ import {
     SearchParams,
     WithId,
 } from '@beda.software/fhir-react';
+import { isSuccess, RemoteDataResult } from '@beda.software/remote-data';
+import { Bundle, Resource } from 'fhir/r4b';
 import {
-    mapSuccess,
-    RemoteDataResult,
-    success,
-} from '@beda.software/remote-data';
-import { Bundle, Reference, Resource } from 'fhir/r4b';
-import {
-    AnswerValue,
     FormAnswerItems,
     parseFhirQueryExpression,
     QuestionItemProps,
@@ -29,54 +23,24 @@ export type GetFHIRResources = <R_3 extends Resource>(
     extraPath?: string
 ) => Promise<RemoteDataResult<Bundle<WithId<R_3>>>>;
 
-export type AnswerReferenceProps<
-    R extends Resource,
-    IR extends Resource,
-> = QuestionItemProps & {
-    overrideGetDisplay?: (
-        resource: R,
-        includedResources: ResourcesMap<R | IR>
-    ) => string;
-    overrideGetLabel?: (o: AnswerValue) => React.ReactElement | string;
-};
-
-export function useAnswerReference<
+export function useReferences<
     R extends Resource = any,
     IR extends Resource = any,
 >(
-    {
-        questionItem,
-        parentPath,
-        context,
-        overrideGetDisplay,
-    }: AnswerReferenceProps<R, IR>,
+    { questionItem, context }: QuestionItemProps,
     getFHIRResources: GetFHIRResources
 ) {
-    const {
-        linkId,
-        repeats,
-        answerExpression,
-        choiceColumn,
-        text,
-        entryFormat,
-        referenceResource,
-    } = questionItem;
-
-    const fieldPath = [...parentPath, linkId];
-    const fieldController = useFieldController<FormAnswerItems[]>(fieldPath, questionItem);
+    const { answerExpression, choiceColumn, text, referenceResource } =
+        questionItem;
 
     const getDisplay = useMemo(() => {
-        if (overrideGetDisplay) {
-            return overrideGetDisplay;
-        }
-
         return (resource: R, includedResources: ResourcesMap<R | IR>) =>
             evaluate(resource, choiceColumn![0]!.path!, {
                 ...context,
                 ...includedResources,
                 resource,
             })[0];
-    }, [choiceColumn, context, overrideGetDisplay]);
+    }, [choiceColumn, context]);
 
     // TODO: add support for fhirpath and application/x-fhir-query
     const expression = answerExpression!.expression!;
@@ -84,40 +48,26 @@ export function useAnswerReference<
         return parseFhirQueryExpression(expression, context);
     }, [expression, context]);
 
-    const [searchText, setSearchText] = useState('');
-    const debouncedSearchText = useDebouncedValue(searchText, 500);
-
-    const optionsRD = useLoadOptions(
-        resourceType as any,
-        {
-            ...(typeof searchParams === 'string' ? {} : (searchParams ?? {})),
-            _ilike: debouncedSearchText,
-        },
-        referenceResource,
-        getDisplay,
-        getFHIRResources
-    );
-
     return {
-        fieldController,
-        searchText,
-        setSearchText,
-        debouncedSearchText,
-        optionsRD,
+        loadOptions: (searchText: string) =>
+            loadOptions(
+                resourceType as any,
+                {
+                    ...(typeof searchParams === 'string'
+                        ? {}
+                        : (searchParams ?? {})),
+                    _ilike: searchText,
+                },
+                referenceResource,
+                getDisplay,
+                getFHIRResources
+            ),
         choiceColumn,
-        repeats,
-        entryFormat,
         text: text ?? '',
     };
 }
 
-type LoadResourceOption = {
-    value: {
-        Reference: Reference;
-    };
-};
-
-function useLoadOptions<R extends Resource, IR extends Resource = any>(
+async function loadOptions<R extends Resource, IR extends Resource = any>(
     query: R['resourceType'],
     searchParams: SearchParams,
     referenceResource: Array<string> | undefined,
@@ -126,54 +76,31 @@ function useLoadOptions<R extends Resource, IR extends Resource = any>(
         includedResources: ResourcesMap<R | IR>
     ) => string,
     getFHIRResources: GetFHIRResources
-) {
-    const [result, setResult] =
-        useState<RemoteDataResult<LoadResourceOption[], any>>();
+): Promise<FormAnswerItems[]> {
+    const bundleResponse = await getFHIRResources<R | IR>(query, searchParams);
 
-    useEffect(() => {
-        const loadOptions = async () => {
-            const r = mapSuccess(
-                await getFHIRResources<R | IR>(query, searchParams),
-                (bundle) => {
-                    const resourcesMap = extractBundleResources(bundle);
-                    let resourceType = query;
-                    if (referenceResource && referenceResource.length === 1) {
-                        resourceType = referenceResource![0]!;
-                    }
-                    if (resourceType.endsWith('/$has')) {
-                        resourceType = resourceType?.slice(0, -5);
-                    }
-                    return resourcesMap[resourceType].map((resource) => ({
-                        value: {
-                            Reference: {
-                                ...getReference(
-                                    resource,
-                                    getDisplayFn(resource as R, resourcesMap)
-                                ),
-                            },
-                        },
-                    }));
-                }
-            ) as RemoteDataResult<LoadResourceOption[], any>;
-            setResult(r);
-        };
-        loadOptions();
-    }, [query, JSON.stringify(searchParams), referenceResource, getDisplayFn]);
-    return result || success({});
-}
+    if (!isSuccess(bundleResponse)) {
+        return Promise.reject(bundleResponse.error);
+    }
 
-function useDebouncedValue<T>(value: T, delay: number): T {
-    const [debouncedValue, setDebouncedValue] = useState(value);
+    const bundle = bundleResponse.data;
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedValue(value);
-        }, delay);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [value, delay]);
-
-    return debouncedValue;
+    const resourcesMap = extractBundleResources(bundle);
+    let resourceType = query;
+    if (referenceResource && referenceResource.length === 1) {
+        resourceType = referenceResource![0]!;
+    }
+    if (resourceType.endsWith('/$has')) {
+        resourceType = resourceType?.slice(0, -5);
+    }
+    return resourcesMap[resourceType].map((resource) => ({
+        value: {
+            Reference: {
+                ...getReference(
+                    resource,
+                    getDisplayFn(resource as R, resourcesMap)
+                ),
+            },
+        },
+    }));
 }
