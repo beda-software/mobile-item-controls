@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 
 import {
+    getFieldErrorMessage,
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
-import { renderText } from '../../components/TextRender';
-import { S, styles } from '../styles';
+import { BaseControl } from '../BaseControl';
+import { styles } from '../styles';
 
-export function DateTimeInput({ questionItem, parentPath }: QuestionItemProps) {
-    const { linkId, type, readOnly } = questionItem;
-    const field = [...parentPath, linkId, 0, 'value', type];
-    const { value, onChange } = useFieldController<string>(field, questionItem);
+export function DateTimeInput(props: QuestionItemProps) {
+    const { questionItem, parentPath } = props;
+    const { linkId, type } = questionItem;
+    const fieldPath = [...parentPath, linkId, 0, 'value', type];
+    const field = useFieldController<string>(fieldPath, questionItem);
+    const { value, onChange, fieldState } = field;
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     const [showPicker, setShowPicker] = useState(false);
     const [date, setDate] = useState(parseDateValue(value, type));
@@ -25,23 +29,13 @@ export function DateTimeInput({ questionItem, parentPath }: QuestionItemProps) {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.textContainer}>
-                {renderText(questionItem.text, styles.text)}
-                {renderText(questionItem.helpText)}
-            </View>
-
-            <S.InputWrapper
-                activeOpacity={1}
-                onPress={() => setShowPicker(true)}
-                $readOnly={readOnly}
-                $active={showPicker}
-            >
-                <Text style={styles.inputText}>
-                    {formatDateValue(date, type)}
-                </Text>
-            </S.InputWrapper>
-
+        <BaseControl
+            {...props}
+            onFocus={() => setShowPicker(true)}
+            isActive={showPicker}
+            error={error}
+        >
+            <Text style={styles.inputText}>{formatDateValue(date, type)}</Text>
             {showPicker && (
                 <DatePicker
                     modal
@@ -52,7 +46,7 @@ export function DateTimeInput({ questionItem, parentPath }: QuestionItemProps) {
                     onCancel={() => setShowPicker(false)}
                 />
             )}
-        </View>
+        </BaseControl>
     );
 }
 

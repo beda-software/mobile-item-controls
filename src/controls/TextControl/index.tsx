@@ -5,12 +5,13 @@ import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import { Text, TextInput, View } from 'react-native';
+import { TextInput } from 'react-native';
 
-import { renderText } from '../../components/TextRender';
-import { S, styles } from '../styles';
+import { BaseControl } from '../BaseControl';
+import { S } from '../styles';
 
-export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
+export function TextControl(props: QuestionItemProps) {
+    const { questionItem, parentPath } = props;
     const inputRef = useRef<TextInput>(null);
     const { linkId, rowsNumber = 3, readOnly = false } = questionItem;
     const fieldName = [...parentPath, linkId, 0, 'value', 'string'];
@@ -30,30 +31,23 @@ export function TextControl({ questionItem, parentPath }: QuestionItemProps) {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.textContainer}>
-                {renderText(questionItem.text, styles.text)}
-                {renderText(questionItem.helpText)}
-            </View>
-            <S.InputWrapper
-                activeOpacity={1}
-                onPress={focusRef}
+        <BaseControl
+            {...props}
+            onFocus={focusRef}
+            isActive={isFocused}
+            error={error}
+        >
+            <S.TextInput
+                ref={inputRef}
+                style={[{ minHeight: rowsNumber * 22 }]}
+                value={value}
+                onChangeText={onChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                multiline
+                editable={!readOnly}
                 $readOnly={readOnly}
-                $active={isFocused}
-            >
-                <S.TextInput
-                    ref={inputRef}
-                    style={[{ minHeight: rowsNumber * 22 }]}
-                    value={value}
-                    onChangeText={onChange}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    multiline
-                    editable={!readOnly}
-                    $readOnly={readOnly}
-                />
-            </S.InputWrapper>
-            {error && <Text style={{ color: 'red' }}>{error}</Text>}
-        </View>
+            />
+        </BaseControl>
     );
 }

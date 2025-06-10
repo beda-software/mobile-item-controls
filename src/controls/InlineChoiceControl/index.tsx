@@ -1,36 +1,33 @@
 import React, { useCallback } from 'react';
 
 import {
+    getFieldErrorMessage,
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 import { Coding } from 'fhir/r4b';
-import { View } from 'react-native';
 import { FormAnswerItems, toAnswerValue } from 'sdc-qrf';
 
-import { renderText } from '../../components/TextRender';
-import { styles } from '../styles';
 import { ChoiceOption } from './ChoiceOption';
 import {
     extractAnswerOptionValueKey,
     getValuePath,
     isAnswerSelected,
 } from './utils';
+import { BaseControl } from '../BaseControl';
 
-export function InlineChoiceControl({
-    questionItem,
-    parentPath,
-}: QuestionItemProps) {
-    const { repeats, answerOption, text, linkId, readOnly } = questionItem;
+export function InlineChoiceControl(props: QuestionItemProps) {
+    const { questionItem, parentPath } = props;
+    const { repeats, answerOption, linkId, readOnly } = questionItem;
 
-    const { value, onChange, onMultiChange } = useFieldController<
-        FormAnswerItems[] | Coding
-    >(
+    const field = useFieldController<FormAnswerItems[] | Coding>(
         repeats
             ? [...parentPath, linkId]
             : getValuePath(questionItem, parentPath),
         questionItem
     );
+    const { value, onChange, onMultiChange, fieldState } = field;
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     const onSelect = useCallback(
         (option: FormAnswerItems) => {
@@ -43,8 +40,7 @@ export function InlineChoiceControl({
     );
 
     return (
-        <View style={styles.container}>
-            <View>{renderText(text, styles.text)}</View>
+        <BaseControl {...props} error={error} customLayout={true}>
             {answerOption?.map((option, index: React.Key) => {
                 const answer = toAnswerValue(option, 'value')!;
 
@@ -69,6 +65,6 @@ export function InlineChoiceControl({
                     />
                 );
             })}
-        </View>
+        </BaseControl>
     );
 }

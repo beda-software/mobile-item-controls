@@ -1,29 +1,25 @@
 import React from 'react';
 
 import {
+    getFieldErrorMessage,
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import { View, Switch } from 'react-native';
+import { Switch } from 'react-native';
 
-import { renderText } from '../../components/TextRender';
-import { styles } from '../styles';
+import { BaseControl } from '../BaseControl';
 
-export function BooleanInput({ questionItem, parentPath }: QuestionItemProps) {
-    const { linkId, text } = questionItem;
-    const field = [...parentPath, linkId, 0, 'value', 'boolean'];
-    const { value, onChange } = useFieldController<boolean>(
-        field,
-        questionItem
-    );
+export function BooleanInput(props: QuestionItemProps) {
+    const { questionItem, parentPath } = props;
+    const { linkId } = questionItem;
+    const fieldName = [...parentPath, linkId, 0, 'value', 'boolean'];
+    const field = useFieldController<boolean>(fieldName, questionItem);
+    const { value, onChange, fieldState } = field;
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     return (
-        <View style={styles.container}>
-            <View style={styles.textContainer}>
-                {renderText(text, styles.text)}
-                {renderText(questionItem.helpText)}
-            </View>
+        <BaseControl {...props} error={error}>
             <Switch value={Boolean(value)} onValueChange={onChange} />
-        </View>
+        </BaseControl>
     );
 }

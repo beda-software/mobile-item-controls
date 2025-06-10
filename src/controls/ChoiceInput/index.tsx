@@ -1,12 +1,12 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
+    getFieldErrorMessage,
     QuestionItemProps,
     useFieldController,
     ValueSetExpandProvider,
 } from '@beda.software/fhir-questionnaire';
 import _ from 'lodash';
-import { View } from 'react-native';
 import {
     FCEQuestionnaireItemChoiceColumn,
     FormAnswerItems,
@@ -15,10 +15,10 @@ import {
 import { getDisplay } from 'src/utils';
 
 import { Select } from '../../components/Select';
-import { renderText } from '../../components/TextRender';
-import { S, styles } from '../styles';
+import { BaseControl } from '../BaseControl';
 
-export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
+export function ChoiceInput(props: QuestionItemProps) {
+    const { questionItem, parentPath } = props;
     const {
         repeats,
         answerOption,
@@ -30,47 +30,39 @@ export function ChoiceInput({ questionItem, parentPath }: QuestionItemProps) {
     } = questionItem;
     const fieldName = [...parentPath, linkId];
 
-    const { value, onMultiChange } = useFieldController<FormAnswerItems[]>(
+    const field = useFieldController<FormAnswerItems[]>(
         fieldName,
         questionItem
     );
+    const { value, onMultiChange, fieldState } = field;
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     return (
-        <View style={styles.container}>
-            <View style={styles.textContainer}>
-                {renderText(questionItem.text, styles.text)}
-                {renderText(questionItem.helpText)}
-            </View>
-            <S.InputWrapper
-                activeOpacity={1}
-                $readOnly={questionItem.readOnly}
-                $active={false}
-            >
-                {answerValueSet ? (
-                    <ChoiceQuestionValueSet
-                        answerValueSet={answerValueSet}
-                        value={value}
-                        onChange={onMultiChange}
-                        repeats={repeats}
-                        placeholder={entryFormat}
-                        choiceColumn={choiceColumn}
-                        label={text}
-                    />
-                ) : (
-                    <ChoiceQuestionSelect
-                        options={(answerOption ?? []).map((option) => ({
-                            value: toAnswerValue(option, 'value')!,
-                        }))}
-                        value={value}
-                        onChange={onMultiChange}
-                        repeats={repeats}
-                        placeholder={entryFormat}
-                        choiceColumn={choiceColumn}
-                        label={text}
-                    />
-                )}
-            </S.InputWrapper>
-        </View>
+        <BaseControl {...props} error={error}>
+            {answerValueSet ? (
+                <ChoiceQuestionValueSet
+                    answerValueSet={answerValueSet}
+                    value={value}
+                    onChange={onMultiChange}
+                    repeats={repeats}
+                    placeholder={entryFormat}
+                    choiceColumn={choiceColumn}
+                    label={text}
+                />
+            ) : (
+                <ChoiceQuestionSelect
+                    options={(answerOption ?? []).map((option) => ({
+                        value: toAnswerValue(option, 'value')!,
+                    }))}
+                    value={value}
+                    onChange={onMultiChange}
+                    repeats={repeats}
+                    placeholder={entryFormat}
+                    choiceColumn={choiceColumn}
+                    label={text}
+                />
+            )}
+        </BaseControl>
     );
 }
 

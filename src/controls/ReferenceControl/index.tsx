@@ -5,14 +5,12 @@ import {
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 import _ from 'lodash';
-import { View } from 'react-native';
 import { FCEQuestionnaireItemChoiceColumn, FormAnswerItems } from 'sdc-qrf';
 import { getDisplay } from 'src/utils';
 
-import { renderText } from '../../components/TextRender';
-import { S, styles } from '../styles';
 import { GetFHIRResources, useReferences } from './hooks';
 import { Select } from '../../components/Select';
+import { BaseControl } from '../BaseControl';
 
 export function ReferenceControl(
     props: QuestionItemProps,
@@ -46,27 +44,17 @@ function ReferenceInput(
     );
 
     return (
-        <View style={styles.container}>
-            <View style={styles.textContainer}>
-                {renderText(questionItem.text, styles.text)}
-                {renderText(questionItem.helpText)}
-            </View>
-            <S.InputWrapper
-                activeOpacity={1}
-                $readOnly={questionItem.readOnly}
-                $active={false}
-            >
-                <ReferenceInputSelect
-                    loadOptions={references.loadOptions}
-                    value={value}
-                    onChange={onMultiChange}
-                    repeats={repeats}
-                    placeholder={entryFormat}
-                    choiceColumn={choiceColumn}
-                    label={text}
-                />
-            </S.InputWrapper>
-        </View>
+        <BaseControl {...props}>
+            <ReferenceInputSelect
+                loadOptions={references.loadOptions}
+                value={value}
+                onChange={onMultiChange}
+                repeats={repeats}
+                placeholder={entryFormat}
+                choiceColumn={choiceColumn}
+                label={text}
+            />
+        </BaseControl>
     );
 }
 

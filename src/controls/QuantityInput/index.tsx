@@ -1,25 +1,26 @@
 import React, { useRef, useState } from 'react';
 
 import {
+    getFieldErrorMessage,
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 import { Coding, Quantity } from 'fhir/r4b';
-import { TextInput, View } from 'react-native';
+import { TextInput } from 'react-native';
 
 import { Select } from '../../components/Select';
-import { renderText } from '../../components/TextRender';
-import { S, styles } from '../styles';
+import { BaseControl } from '../BaseControl';
+import { S } from '../styles';
 import { isValidDecimal } from '../utils';
 
-export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
+export function QuantityInput(props: QuestionItemProps) {
+    const { questionItem, parentPath } = props;
     const inputRef = useRef<TextInput>(null);
     const { linkId, readOnly } = questionItem;
     const fieldName = [...parentPath, linkId, 0, 'value', 'Quantity'];
-    const { value, onChange } = useFieldController<Quantity>(
-        fieldName,
-        questionItem
-    );
+    const field = useFieldController<Quantity>(fieldName, questionItem);
+    const { value, onChange, fieldState } = field;
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     const [numericValue, setNumericValue] = useState<string>(
         value?.value?.toString() || ''
@@ -57,47 +58,41 @@ export function QuantityInput({ questionItem, parentPath }: QuestionItemProps) {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.textContainer}>
-                {renderText(questionItem.text, styles.text)}
-                {renderText(questionItem.helpText)}
-            </View>
-            <S.InputWrapper
-                activeOpacity={1}
-                onPress={focusRef}
+        <BaseControl
+            {...props}
+            onFocus={focusRef}
+            isActive={isFocused}
+            error={error}
+        >
+            <S.TextInput
+                ref={inputRef}
+                keyboardType={'decimal-pad'}
+                value={numericValue}
+                onChangeText={onValueChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                editable={!readOnly}
                 $readOnly={readOnly}
-                $active={isFocused}
-            >
-                <S.TextInput
-                    ref={inputRef}
-                    keyboardType={'decimal-pad'}
-                    value={numericValue}
-                    onChangeText={onValueChange}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    editable={!readOnly}
-                    $readOnly={readOnly}
-                />
-                <S.TextInputAddon $readOnly={readOnly}>
-                    {(questionItem.unitOption?.length ?? 0) > 1 ? (
-                        <Select<Coding>
-                            value={
-                                selectedUnit !== undefined
-                                    ? [selectedUnit]
-                                    : undefined
-                            }
-                            options={questionItem?.unitOption ?? []}
-                            onChange={onUnitChange}
-                            isMulti={false}
-                            getOptionLabel={(o) => o.display ?? 'N/A'}
-                        />
-                    ) : (
-                        <S.TextInputAddonText>
-                            {selectedUnit?.display}
-                        </S.TextInputAddonText>
-                    )}
-                </S.TextInputAddon>
-            </S.InputWrapper>
-        </View>
+            />
+            <S.TextInputAddon $readOnly={readOnly}>
+                {(questionItem.unitOption?.length ?? 0) > 1 ? (
+                    <Select<Coding>
+                        value={
+                            selectedUnit !== undefined
+                                ? [selectedUnit]
+                                : undefined
+                        }
+                        options={questionItem?.unitOption ?? []}
+                        onChange={onUnitChange}
+                        isMulti={false}
+                        getOptionLabel={(o) => o.display ?? 'N/A'}
+                    />
+                ) : (
+                    <S.TextInputAddonText>
+                        {selectedUnit?.display}
+                    </S.TextInputAddonText>
+                )}
+            </S.TextInputAddon>
+        </BaseControl>
     );
 }

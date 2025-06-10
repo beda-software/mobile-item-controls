@@ -1,16 +1,9 @@
 import React from 'react';
 
 import { QuestionItemProps } from '@beda.software/fhir-questionnaire';
-import { View } from 'react-native';
 
-import { renderText } from '../../components/TextRender';
-import { styles } from '../styles';
+import { BaseControl } from '../BaseControl';
 
-export function Display({ questionItem }: QuestionItemProps) {
-    return (
-        <View style={styles.container}>
-            {renderText(questionItem.text, styles.text)}
-            {renderText(questionItem.helpText)}
-        </View>
-    );
+export function Display(props: QuestionItemProps) {
+    return <BaseControl {...props} />;
 }
