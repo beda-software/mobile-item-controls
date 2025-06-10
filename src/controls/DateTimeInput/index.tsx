@@ -20,7 +20,9 @@ export function DateTimeInput(props: QuestionItemProps) {
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     const [showPicker, setShowPicker] = useState(false);
-    const [date, setDate] = useState(parseDateValue(value, type));
+    const [date, setDate] = useState(
+        value !== undefined ? parseDateValue(value, type) : undefined
+    );
 
     const onConfirm = (selectedDate: Date) => {
         setDate(selectedDate);
@@ -35,12 +37,14 @@ export function DateTimeInput(props: QuestionItemProps) {
             isActive={showPicker}
             error={error}
         >
-            <Text style={styles.inputText}>{formatDateValue(date, type)}</Text>
+            <Text style={styles.inputText}>
+                {date !== undefined ? formatDateValue(date, type) : undefined}
+            </Text>
             {showPicker && (
                 <DatePicker
                     modal
                     open={showPicker}
-                    date={date}
+                    date={date ?? new Date()}
                     mode={getPickerMode(type)}
                     onConfirm={onConfirm}
                     onCancel={() => setShowPicker(false)}
