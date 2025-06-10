@@ -23,7 +23,6 @@ export function DecimalInput(props: QuestionItemProps) {
     const { value, onChange, fieldState } = field;
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
-    const [inputValue, setInputValue] = useState(value?.toString() || '');
     const [isFocused, setIsFocused] = useState(false);
 
     function focusRef() {
@@ -32,7 +31,6 @@ export function DecimalInput(props: QuestionItemProps) {
 
     const onChangeText = (text: string) => {
         if (isValidDecimal(text)) {
-            setInputValue(text);
             const parsedValue = parseFloat(text);
             onChange(!Number.isNaN(parsedValue) ? parsedValue : undefined);
         }
@@ -48,7 +46,7 @@ export function DecimalInput(props: QuestionItemProps) {
             <S.TextInput
                 ref={inputRef}
                 keyboardType={'decimal-pad'}
-                value={inputValue}
+                value={value?.toString()}
                 onChangeText={onChangeText}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}

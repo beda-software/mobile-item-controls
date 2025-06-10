@@ -22,9 +22,6 @@ export function QuantityInput(props: QuestionItemProps) {
     const { value, onChange, fieldState } = field;
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
-    const [numericValue, setNumericValue] = useState<string>(
-        value?.value?.toString() || ''
-    );
     const [selectedUnit, setSelectedUnit] = useState<Coding | undefined>(
         value ?? questionItem.unitOption?.[0]
     );
@@ -36,7 +33,6 @@ export function QuantityInput(props: QuestionItemProps) {
 
     const onValueChange = (inputValue: string) => {
         if (isValidDecimal(inputValue)) {
-            setNumericValue(inputValue);
             const parsedValue = parseFloat(inputValue);
             onChange({
                 value: !Number.isNaN(parsedValue) ? parsedValue : undefined,
@@ -50,7 +46,7 @@ export function QuantityInput(props: QuestionItemProps) {
     const onUnitChange = (unit: Coding) => {
         setSelectedUnit(unit);
         onChange({
-            value: parseFloat(numericValue) || undefined,
+            value: value?.value,
             unit: unit.display,
             system: unit.system,
             code: unit.code,
@@ -67,7 +63,7 @@ export function QuantityInput(props: QuestionItemProps) {
             <S.TextInput
                 ref={inputRef}
                 keyboardType={'decimal-pad'}
-                value={numericValue}
+                value={value?.value?.toString()}
                 onChangeText={onValueChange}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
