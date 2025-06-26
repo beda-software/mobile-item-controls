@@ -9,7 +9,7 @@ interface ChoiceOptionProps {
     isSelected: boolean;
     readOnly: boolean;
     multiselect: boolean;
-    onSelect: () => void;
+    onSelect: (value?: AnswerValue) => void;
     value?: AnswerValue;
 }
 
@@ -24,9 +24,10 @@ export const ChoiceOption = ({
 
     return (
         <S.InlineChoiceWrapper
-            onPress={onSelect}
+            onPress={() => onSelect(value)}
             $readOnly={readOnly}
             $active={isSelected}
+            activeOpacity={1}
         >
             <S.InlineChoiceCheckMark
                 $readOnly={readOnly}
