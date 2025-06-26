@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 
 export const S = {
     Container: styled.View`
-        margin: 8px;
+        margin: 8px 0;
         gap: 8px;
         position: relative;
     `,

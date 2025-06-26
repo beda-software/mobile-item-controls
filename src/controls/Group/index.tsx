@@ -5,6 +5,7 @@ import { Text, View, TouchableOpacity } from 'react-native';
 
 import { renderText } from '../../components/TextRender';
 import { styles } from '../styles';
+import { S as GroupStyles } from './styles';
 
 export function Group({
     questionItem,
@@ -19,7 +20,7 @@ export function Group({
     const isRemovable = repeats && childrenArray.length > 1;
 
     return (
-        <View style={styles.container}>
+        <GroupStyles.Container>
             <View style={styles.textContainer}>
                 {renderText(text, styles.text)}
                 {renderText(helpText)}
@@ -52,6 +53,6 @@ export function Group({
                     <Text style={styles.addButtonText}>{addButtonText}</Text>
                 </TouchableOpacity>
             )}
-        </View>
+        </GroupStyles.Container>
     );
 }
