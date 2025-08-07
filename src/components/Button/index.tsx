@@ -12,6 +12,7 @@ import { ButtonProps, ButtonType } from './types';
 export function Button(props: ButtonProps) {
     const {
         style,
+        componentStyles,
         type = 'default',
         loading = false,
         ghost = false,
@@ -44,7 +45,7 @@ export function Button(props: ButtonProps) {
         },
     };
 
-    const S = stylesMap[type].styles;
+    const S = componentStyles ?? stylesMap[type].styles;
 
     const renderIcon = () => {
         if (!icon) {
