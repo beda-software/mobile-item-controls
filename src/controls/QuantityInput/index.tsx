@@ -11,7 +11,10 @@ import { TextInput } from 'react-native';
 import { Select } from '../../components/Select';
 import { BaseControl } from '../BaseControl';
 import { S } from '../styles';
-import { isValidDecimal } from '../utils';
+
+function isFloat(str: string) {
+    return /^-?\d+\.?(\d+)?$/.test(str);
+}
 
 export function QuantityInput(props: QuestionItemProps) {
     const { questionItem, parentPath } = props;
@@ -22,13 +25,16 @@ export function QuantityInput(props: QuestionItemProps) {
     const { value, onChange, fieldState } = field;
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
     const firstOption = questionItem.unitOption?.[0];
+    const [inputValue, setInputValue] = useState(value?.value?.toString());
 
     const [selectedUnit, setSelectedUnit] = useState<Coding | undefined>(
-        value ? {
-            display: value.unit,
-            system: value.system,
-            code: value.code,
-        } : firstOption
+        value
+            ? {
+                  display: value.unit,
+                  system: value.system,
+                  code: value.code,
+              }
+            : firstOption
     );
     const [isFocused, setIsFocused] = useState(false);
 
@@ -36,16 +42,19 @@ export function QuantityInput(props: QuestionItemProps) {
         inputRef.current?.focus();
     }
 
-    const onValueChange = (inputValue: string) => {
-        if (isValidDecimal(inputValue)) {
-            const parsedValue = parseFloat(inputValue);
-            onChange({
-                value: !Number.isNaN(parsedValue) ? parsedValue : undefined,
-                unit: selectedUnit?.display,
-                system: selectedUnit?.system,
-                code: selectedUnit?.code,
-            });
+    const onValueChange = (newValue: string) => {
+        const parsedValue = parseFloat(newValue);
+
+        if (newValue === '' || isFloat(newValue)) {
+            setInputValue(newValue)
         }
+
+        onChange({
+            value: !Number.isNaN(parsedValue) ? parsedValue : undefined,
+            unit: selectedUnit?.display,
+            system: selectedUnit?.system,
+            code: selectedUnit?.code,
+        });
     };
 
     const onUnitChange = (unit: Coding) => {
@@ -68,7 +77,7 @@ export function QuantityInput(props: QuestionItemProps) {
             <S.TextInput
                 ref={inputRef}
                 keyboardType={'decimal-pad'}
-                value={value?.value?.toString()}
+                value={inputValue}
                 onChangeText={onValueChange}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
