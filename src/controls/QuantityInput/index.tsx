@@ -21,9 +21,14 @@ export function QuantityInput(props: QuestionItemProps) {
     const field = useFieldController<Quantity>(fieldName, questionItem);
     const { value, onChange, fieldState } = field;
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
+    const firstOption = questionItem.unitOption?.[0];
 
     const [selectedUnit, setSelectedUnit] = useState<Coding | undefined>(
-        value ?? questionItem.unitOption?.[0]
+        value ? {
+            display: value.unit,
+            system: value.system,
+            code: value.code,
+        } : firstOption
     );
     const [isFocused, setIsFocused] = useState(false);
 
