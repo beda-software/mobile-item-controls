@@ -1,4 +1,6 @@
-import { ImageSourcePropType, StyleProp, TouchableOpacityProps, ViewStyle } from 'react-native';
+import React from 'react';
+
+import { StyleProp, TouchableOpacityProps, ViewStyle } from 'react-native';
 
 export type ButtonType = 'default' | 'primary' | 'text' | 'link';
 export type ButtonSize = 'large' | 'middle' | 'small';
@@ -12,7 +14,7 @@ export interface ButtonProps extends TouchableOpacityProps {
     ghost?: boolean;
     danger?: boolean;
     disabled?: boolean;
-    icon?: ImageSourcePropType;
+    icon?: React.ReactNode;
     iconPosition?: IconPosition;
     size?: ButtonSize;
 }

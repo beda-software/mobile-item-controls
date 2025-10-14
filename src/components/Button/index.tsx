@@ -1,7 +1,7 @@
 import React from 'react';
 
 import _ from 'lodash';
-import { ActivityIndicator, Image } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
 import { DefaultButtonStyles } from './default-styles';
 import { LinkButtonStyles } from './link-styles';
@@ -52,7 +52,7 @@ export function Button(props: ButtonProps) {
             return null;
         }
 
-        return <Image source={icon} />;
+        return icon;
     };
 
     return (
