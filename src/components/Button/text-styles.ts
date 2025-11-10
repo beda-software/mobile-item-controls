@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 import { buttonContainerStyles, buttonTextStyles } from './styles';
-import { ButtonSize, ButtonType } from './types';
+import { ButtonSize, ButtonVariant } from './types';
 
 export const TextButtonStyles = {
     Container: styled.TouchableOpacity<{
@@ -12,7 +12,7 @@ export const TextButtonStyles = {
         ${buttonContainerStyles}
     `,
     Text: styled.Text<{
-        $type: ButtonType;
+        $variant: ButtonVariant;
         $ghost: boolean;
         $danger: boolean;
         $disabled: boolean;

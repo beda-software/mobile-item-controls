@@ -1,16 +1,6 @@
 import styled, { css } from 'styled-components/native';
 
-import { ButtonSize, ButtonType } from './types';
-
-// Design tokens
-export const COLORS = {
-    primary: '#1890ff',
-    danger: '#ff4d4f',
-    white: '#fff',
-    border: '#d9d9d9',
-    textPrimary: '#000000d9',
-    textDisabled: '#00000040',
-};
+import { ButtonSize, ButtonVariant } from './types';
 
 const SIZES = {
     large: {
@@ -58,8 +48,8 @@ export const buttonIconStyles = css<{
 `;
 
 export const S = {
-    Container: styled.TouchableOpacity<{
-        $type: ButtonType;
+    Container: styled.TouchableHighlight<{
+        $variant: ButtonVariant;
         $ghost: boolean;
         $danger: boolean;
         $size: ButtonSize;
@@ -71,64 +61,16 @@ export const S = {
         gap: 8px;
         border-radius: 4px;
         padding: ${(props) => SIZES[props.$size].padding};
-
-        background-color: ${(props) => {
-            if (props.$ghost) return 'transparent';
-
-            switch (props.$type) {
-                case 'primary':
-                    return props.$danger ? COLORS.danger : COLORS.primary;
-                case 'text':
-                case 'link':
-                    return 'transparent';
-                default:
-                    return COLORS.white;
-            }
-        }};
-
-        border: ${(props) => {
-            switch (props.$type) {
-                case 'primary':
-                    return `1px solid ${props.$danger ? COLORS.danger : COLORS.primary}`;
-                case 'text':
-                case 'link':
-                    return '0';
-                default:
-                    return `1px solid ${COLORS.border}`;
-            }
-        }};
-
         opacity: ${(props) => (props.disabled ? 0.5 : 1)};
     `,
     Text: styled.Text<{
-        $type: ButtonType;
+        $variant: ButtonVariant;
         $ghost: boolean;
         $danger: boolean;
         $disabled: boolean;
         $size: ButtonSize;
     }>`
         font-size: ${(props) => SIZES[props.$size].fontSize};
-
-        color: ${(props) => {
-            if (props.disabled) {
-                return props.$type === 'default' ? COLORS.textDisabled : COLORS.white;
-            }
-
-            if (props.$danger) {
-                return props.$type === 'primary' && !props.$ghost ? COLORS.white : COLORS.danger;
-            }
-
-            switch (props.$type) {
-                case 'primary':
-                    return props.$ghost ? COLORS.primary : COLORS.white;
-                case 'link':
-                    return COLORS.primary;
-                default:
-                    return COLORS.textPrimary;
-            }
-        }};
-
-        font-weight: ${(props) => (props.$type === 'primary' ? 'bold' : 'normal')};
-        text-decoration: ${(props) => (props.$type === 'link' ? 'underline' : 'none')};
+        font-weight: 500;
     `,
 };

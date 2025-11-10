@@ -3,16 +3,18 @@ import React from 'react';
 import _ from 'lodash';
 import { ActivityIndicator } from 'react-native';
 
-import { DefaultButtonStyles } from './default-styles';
+import { FilledButtonStyles } from './filled-styles';
 import { LinkButtonStyles } from './link-styles';
-import { PrimaryButtonStyles } from './primary-styles';
+import { OutlinedButtonStyles } from './outlined-styles';
+import { SolidButtonStyles } from './solid-styles';
 import { TextButtonStyles } from './text-styles';
-import { ButtonProps, ButtonType } from './types';
+import { ButtonProps, ButtonType, ButtonVariant } from './types';
 
 export function Button(props: ButtonProps) {
     const {
         style,
         componentStyles,
+        variant,
         type = 'default',
         loading = false,
         ghost = false,
@@ -26,16 +28,16 @@ export function Button(props: ButtonProps) {
     } = props;
     const isDisabled = disabled || loading;
 
-    const stylesMap: {
+    const typeStylesMap: {
         [key in ButtonType]: {
             styles: any;
         };
     } = {
         default: {
-            styles: DefaultButtonStyles,
+            styles: OutlinedButtonStyles,
         },
         primary: {
-            styles: PrimaryButtonStyles,
+            styles: SolidButtonStyles,
         },
         link: {
             styles: LinkButtonStyles,
@@ -45,7 +47,32 @@ export function Button(props: ButtonProps) {
         },
     };
 
-    const S = componentStyles ?? stylesMap[type].styles;
+    const variantStylesMap: {
+        [key in ButtonVariant]: {
+            styles: any;
+        };
+    } = {
+        solid: {
+            styles: SolidButtonStyles,
+        },
+        filled: {
+            styles: FilledButtonStyles,
+        },
+        outlined: {
+            styles: OutlinedButtonStyles,
+        },
+        link: {
+            styles: LinkButtonStyles,
+        },
+        text: {
+            styles: TextButtonStyles,
+        },
+    };
+
+    const S =
+        componentStyles ??
+        (variant ? variantStylesMap[variant].styles : undefined) ??
+        typeStylesMap[type].styles;
 
     const renderIcon = () => {
         if (!icon) {
@@ -58,7 +85,7 @@ export function Button(props: ButtonProps) {
     return (
         <S.Container
             style={style}
-            $type={type}
+            $variant={variant}
             $ghost={ghost}
             $danger={danger}
             $size={size}
@@ -72,7 +99,7 @@ export function Button(props: ButtonProps) {
 
             {_.isString(children) ? (
                 <S.Text
-                    $type={type}
+                    $variant={variant}
                     $ghost={ghost}
                     $danger={danger}
                     $disabled={isDisabled}
@@ -84,7 +111,7 @@ export function Button(props: ButtonProps) {
                 children
             )}
 
-            {!loading && iconPosition === 'end' && renderIcon()}
+            {iconPosition === 'end' && renderIcon()}
         </S.Container>
     );
 }
