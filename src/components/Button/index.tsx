@@ -25,6 +25,8 @@ export function Button(props: ButtonProps) {
         size = 'middle',
         onPress,
         children,
+        active,
+        ...rest
     } = props;
     const isDisabled = disabled || loading;
 
@@ -92,6 +94,8 @@ export function Button(props: ButtonProps) {
             disabled={isDisabled}
             onPress={isDisabled ? undefined : onPress}
             activeOpacity={isDisabled ? 1 : 0.7}
+            $active={active}
+            {...rest}
         >
             {loading && <ActivityIndicator size="small" />}
 

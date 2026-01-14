@@ -22,4 +22,5 @@ export interface ButtonProps extends TouchableOpacityProps {
     icon?: React.ReactNode;
     iconPosition?: IconPosition;
     size?: ButtonSize;
+    active?: boolean;
 }
