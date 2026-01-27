@@ -20,19 +20,26 @@ export function BaseControl({
     customLayout = false,
 }: BaseControlProps) {
     const { readOnly } = questionItem;
+    const hasText = questionItem.text !== undefined;
+    const hasHelpText = questionItem.helpText !== undefined;
+    const hasLabel = hasText || hasHelpText;
 
     return (
         <S.Container>
-            <S.ContainerQuestionTextWrapper>
-                <S.ContainerQuestionText>
-                    {questionItem.text}
-                </S.ContainerQuestionText>
-                {questionItem.helpText !== undefined ? (
-                    <S.ContainerQuestionHelpText>
-                        {questionItem.helpText}
-                    </S.ContainerQuestionHelpText>
-                ) : null}
-            </S.ContainerQuestionTextWrapper>
+            {hasLabel ? (
+                <S.ContainerQuestionTextWrapper>
+                    {hasText ? (
+                        <S.ContainerQuestionText>
+                            {questionItem.text}
+                        </S.ContainerQuestionText>
+                    ) : null}
+                    {hasHelpText ? (
+                        <S.ContainerQuestionHelpText>
+                            {questionItem.helpText}
+                        </S.ContainerQuestionHelpText>
+                    ) : null}
+                </S.ContainerQuestionTextWrapper>
+            ) : null}
             {customLayout ? (
                 children
             ) : (
