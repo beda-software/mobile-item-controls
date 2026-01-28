@@ -1,3 +1,5 @@
 export { Group as ReadonlyGroup } from './Group';
 export { IntegerInput as ReadonlyIntegerInput } from './IntegerInput';
-export { StringInput as ReadonlyStringInput } from './StringInput';
+export { StringControl as ReadonlyStringControl } from './StringControl';
+export { TextControl as ReadonlyTextControl } from './TextControl';
+export { ChoiceControl as ReadonlyChoiceControl } from './ChoiceControl';

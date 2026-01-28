@@ -3,7 +3,7 @@ import { GroupItemProps } from 'sdc-qrf';
 import { View } from 'react-native';
 import { Group } from '..';
 import { IntegerInput } from '../../IntegerInput';
-import { StringInput } from '../../StringInput';
+import { StringControl } from '../../StringControl';
 import { RepeatableGroups } from './RepeatableGroups';
 
 interface Props extends GroupItemProps {
@@ -35,7 +35,7 @@ export function QuestionItem({
     switch (subQuestionItem.type) {
         case 'string':
             return (
-                <StringInput
+                <StringControl
                     context={context[0]}
                     parentPath={fieldPath}
                     questionItem={subQuestionItem}
