@@ -177,6 +177,7 @@ export const S = {
     `,
     InlineChoiceOptionText: styled.Text`
         font-size: 16px;
+        flex: 1;
     `,
     SelectInputWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;
