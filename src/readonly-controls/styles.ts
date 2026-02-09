@@ -6,6 +6,10 @@ export const S = {
         gap: 8px;
         position: relative;
     `,
+    ContainerGroup: styled.View`
+        gap: 8px;
+        position: relative;
+    `,
     ContainerQuestionTextWrapper: styled.View`
         gap: 8px;
     `,
@@ -14,9 +18,6 @@ export const S = {
         font-weight: 600;
     `,
     ContainerQuestionHelpText: styled.Text``,
-    ContainerErrorText: styled.Text`
-        color: red;
-    `,
     ContentWrapper: styled.View``,
     ContentQuestionValue: styled.Text`
         font-size: 16px;
