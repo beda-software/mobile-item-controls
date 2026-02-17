@@ -14,6 +14,9 @@ export const S = {
         font-size: 16px;
         font-weight: 600;
     `,
+    ContainerQuestionAsterisk: styled.Text`
+        color: #ff4d4f;
+    `,
     ContainerQuestionHelpText: styled.Text``,
     ContainerErrorText: styled.Text`
         color: red;

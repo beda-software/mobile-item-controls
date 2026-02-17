@@ -19,7 +19,7 @@ export function BaseControl({
     error,
     customLayout = false,
 }: BaseControlProps) {
-    const { readOnly } = questionItem;
+    const { readOnly, required = false } = questionItem;
     const hasText = questionItem.text !== undefined;
     const hasHelpText = questionItem.helpText !== undefined;
     const hasLabel = hasText || hasHelpText;
@@ -30,6 +30,11 @@ export function BaseControl({
                 <S.ContainerQuestionTextWrapper>
                     {hasText ? (
                         <S.ContainerQuestionText>
+                            {required ? (
+                                <S.ContainerQuestionAsterisk>
+                                    *{' '}
+                                </S.ContainerQuestionAsterisk>
+                            ) : null}
                             {questionItem.text}
                         </S.ContainerQuestionText>
                     ) : null}
