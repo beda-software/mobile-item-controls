@@ -52,6 +52,23 @@ export const lightTheme: DefaultTheme = {
             paddingInline: 16,
             gap: 8,
         },
+        TimeSlots: {
+            Global: {
+                colorBgContainer: 'white',
+                colorBorder: '#F0F0F0',
+                borderRadius: 12,
+                fontSize: 14,
+            },
+            selectedBg: '#3366FF',
+            selectedBorderColor: '#3366FF',
+            selectedTextColor: 'white',
+            paddingBlock: 10,
+            paddingInline: 20,
+            gap: 8,
+            groupGap: 12,
+            groupHeaderFontSize: 14,
+            groupHeaderFontWeight: '600',
+        },
     },
 };
 
@@ -105,6 +122,23 @@ export const darkTheme: DefaultTheme = {
             paddingBlock: 16,
             paddingInline: 16,
             gap: 8,
+        },
+        TimeSlots: {
+            Global: {
+                colorBgContainer: 'white',
+                colorBorder: '#F0F0F0',
+                borderRadius: 12,
+                fontSize: 16,
+            },
+            selectedBg: '#3366FF',
+            selectedBorderColor: '#3366FF',
+            selectedTextColor: 'white',
+            paddingBlock: 12,
+            paddingInline: 20,
+            gap: 8,
+            groupGap: 12,
+            groupHeaderFontSize: 16,
+            groupHeaderFontWeight: '700',
         },
     },
 };

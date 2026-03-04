@@ -6,10 +6,10 @@ import {
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 
-import { CalendarControl } from '../../components/Calendar';
+import { Calendar  } from '../../components/Calendar';
 import { BaseControl } from '../BaseControl';
 
-export function CalendarInput(props: QuestionItemProps) {
+export function CalendarControl(props: QuestionItemProps) {
     const { questionItem, parentPath } = props;
     const { linkId, type } = questionItem;
     const fieldPath = [...parentPath, linkId, 0, 'value', type];
@@ -19,7 +19,7 @@ export function CalendarInput(props: QuestionItemProps) {
 
     return (
         <BaseControl {...props} error={error} customLayout>
-            <CalendarControl value={value} onChange={onChange} />
+            <Calendar value={value} onChange={onChange} />
         </BaseControl>
     );
 }

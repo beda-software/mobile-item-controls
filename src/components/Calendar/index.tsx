@@ -8,12 +8,12 @@ import {
     startOfWeek,
 } from 'date-fns';
 import { View } from 'react-native';
-import { Calendar, DateData } from 'react-native-calendars';
+import { Calendar as RNCalendar, DateData } from 'react-native-calendars';
 
 import { CalendarHeader } from './CalendarHeader';
 import { DayComponent } from './DayComponent';
 import { S } from './styles';
-import { CalendarControlProps, CalendarViewMode } from './types';
+import { CalendarProps, CalendarViewMode } from './types';
 import { getTodayString, getNextMonth, getPrevMonth, parseDateString, formatDateString } from './utils';
 
 const CALENDAR_THEME = {
@@ -69,13 +69,13 @@ function getWeekDates(referenceDate: string, firstDay: number): string[] {
     return dates;
 }
 
-export function CalendarControl({
+export function Calendar({
     value,
     onChange,
     firstDay = 1,
     minDate,
     maxDate,
-}: CalendarControlProps) {
+}: CalendarProps) {
     const today = getTodayString();
     const [currentMonth, setCurrentMonth] = useState(value || today);
     const [viewMode, setViewMode] = useState<CalendarViewMode>('month');
@@ -193,7 +193,7 @@ export function CalendarControl({
                 ))}
             </S.WeekDayNamesRow>
             {viewMode === 'month' ? (
-                <Calendar
+                <RNCalendar
                     key={currentMonth}
                     current={currentMonth}
                     firstDay={firstDay}

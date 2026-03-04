@@ -1,4 +1,4 @@
-export interface CalendarControlProps {
+export interface CalendarProps {
     /** Selected date in YYYY-MM-DD format */
     value?: string;
     /** Called when user selects a date, receives YYYY-MM-DD string */

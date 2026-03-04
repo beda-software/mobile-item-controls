@@ -10,4 +10,5 @@ export { DateTimeInput } from './DateTimeInput';
 export { BooleanInput } from './BooleanInput';
 export { TextControl } from './TextControl';
 export { ReferenceControl } from './ReferenceControl';
-export { CalendarInput } from './CalendarInput';
+export { CalendarControl } from './CalendarControl';
+export { TimeSlotsControl } from './TimeSlotsControl';
