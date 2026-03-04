@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Modal } from 'react-native';
 
+import { Icon } from '../Icon';
 import { S } from './styles';
 import { MONTH_NAMES, getYearFromDate, getMonthFromDate, buildDateString } from './utils';
 
@@ -37,11 +38,11 @@ export function MonthYearPicker({ visible, currentDate, onSelect, onClose }: Mon
                     {/* Year navigation */}
                     <S.PickerYearRow>
                         <S.PickerYearArrow onPress={handlePrevYear}>
-                            <S.PickerYearArrowText>{'‹'}</S.PickerYearArrowText>
+                            <Icon name="chevron_left" fontSize={24} fontWeight={300} color="rgba(0, 0, 0, 0.88)" />
                         </S.PickerYearArrow>
                         <S.PickerYearText>{pickerYear}</S.PickerYearText>
                         <S.PickerYearArrow onPress={handleNextYear}>
-                            <S.PickerYearArrowText>{'›'}</S.PickerYearArrowText>
+                            <Icon name="chevron_right" fontSize={24} fontWeight={300} color="rgba(0, 0, 0, 0.88)" />
                         </S.PickerYearArrow>
                     </S.PickerYearRow>
 

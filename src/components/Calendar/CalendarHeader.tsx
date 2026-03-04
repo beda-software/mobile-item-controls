@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { Icon } from '../Icon';
 import { MonthYearPicker } from './MonthYearPicker';
 import { S } from './styles';
 import { CalendarViewMode } from './types';
@@ -36,19 +37,24 @@ export function CalendarHeader({
     return (
         <S.HeaderContainer>
             <S.HeaderLeft>
-                <S.HeaderMonthText onPress={handleMonthYearPress}>
-                    {formatMonthYear(currentMonth)}
-                </S.HeaderMonthText>
+                <S.HeaderMonthButton onPress={handleMonthYearPress} activeOpacity={0.6}>
+                    <S.HeaderMonthText>{formatMonthYear(currentMonth)}</S.HeaderMonthText>
+                </S.HeaderMonthButton>
                 <S.HeaderCaretButton onPress={onToggleView} activeOpacity={0.6}>
-                    <S.HeaderCaret>{viewMode === 'month' ? '∧' : '∨'}</S.HeaderCaret>
+                    <Icon
+                        name={viewMode === 'month' ? 'expand_less' : 'expand_more'}
+                        fontSize={24}
+                        fontWeight={300}
+                        color="rgba(0, 0, 0, 0.45)"
+                    />
                 </S.HeaderCaretButton>
             </S.HeaderLeft>
             <S.HeaderRight>
                 <S.HeaderArrowButton onPress={onPressLeft} activeOpacity={0.6}>
-                    <S.HeaderArrow>{'‹'}</S.HeaderArrow>
+                    <Icon name="chevron_left" fontSize={24} fontWeight={300} color="rgba(0, 0, 0, 0.88)" />
                 </S.HeaderArrowButton>
                 <S.HeaderArrowButton onPress={onPressRight} activeOpacity={0.6}>
-                    <S.HeaderArrow>{'›'}</S.HeaderArrow>
+                    <Icon name="chevron_right" fontSize={24} fontWeight={300} color="rgba(0, 0, 0, 0.88)" />
                 </S.HeaderArrowButton>
             </S.HeaderRight>
 

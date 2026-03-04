@@ -4,6 +4,7 @@ export const S = {
     // Calendar container
     Container: styled.View`
         overflow: hidden;
+        padding-bottom: 16px;
     `,
 
     // Header
@@ -11,37 +12,36 @@ export const S = {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 4px;
+        height: 44px;
     `,
     HeaderLeft: styled.View`
         flex-direction: row;
         align-items: center;
-        gap: 4px;
     `,
-    HeaderMonthText: styled.Text`
-        font-size: 18px;
-        font-weight: 700;
-        color: #1a1a2e;
-    `,
-    HeaderCaretButton: styled.TouchableOpacity`
+    HeaderMonthButton: styled.TouchableOpacity`
         padding: 4px;
     `,
-    HeaderCaret: styled.Text`
-        font-size: 14px;
-        color: #1a1a2e;
+    HeaderMonthText: styled.Text`
+        font-size: 16px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.88);
+    `,
+    HeaderCaretButton: styled.TouchableOpacity`
+        width: 40px;
+        height: 40px;
+        justify-content: center;
+        align-items: center;
     `,
     HeaderRight: styled.View`
         flex-direction: row;
         align-items: center;
-        gap: 16px;
+        gap: 2px;
     `,
     HeaderArrowButton: styled.TouchableOpacity`
-        padding: 4px;
-    `,
-    HeaderArrow: styled.Text`
-        font-size: 18px;
-        color: #8f9bb3;
-        font-weight: 600;
+        width: 40px;
+        height: 40px;
+        justify-content: center;
+        align-items: center;
     `,
 
     // Day component
@@ -114,12 +114,10 @@ export const S = {
         color: #1a1a2e;
     `,
     PickerYearArrow: styled.TouchableOpacity`
-        padding: 8px;
-    `,
-    PickerYearArrowText: styled.Text`
-        font-size: 18px;
-        color: #8f9bb3;
-        font-weight: 600;
+        width: 40px;
+        height: 40px;
+        justify-content: center;
+        align-items: center;
     `,
     PickerMonthGrid: styled.View`
         flex-direction: row;
