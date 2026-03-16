@@ -1,5 +1,7 @@
 import styled from 'styled-components/native';
 
+import { Icon } from '../Icon';
+
 export const S = {
     Container: styled.View`
         width: 100%;
@@ -82,5 +84,17 @@ export const S = {
             $selected
                 ? (theme.components.TimeSlots?.selectedTextColor ?? 'white')
                 : theme.components.Global.colorText};
+    `,
+
+    NoSlotsContainer: styled.View`
+        padding-top: 9px;
+        align-items: center;
+        justify-content: center;
+    `,
+    NoSlotsIcon: styled(Icon).attrs(() => ({
+        fontSize: 24,
+        fontWeight: 300,
+    }))`
+        color: rgba(0, 0, 0, 0.25);
     `,
 };

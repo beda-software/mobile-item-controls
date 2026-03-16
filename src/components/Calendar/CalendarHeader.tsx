@@ -13,6 +13,9 @@ interface CalendarHeaderProps {
     onPressRight: () => void;
     onToggleView: () => void;
     onMonthYearSelect: (dateString: string) => void;
+    canGoBack?: boolean;
+    canGoForward?: boolean;
+    showMonthYearPicker?: boolean;
 }
 
 export function CalendarHeader({
@@ -22,11 +25,16 @@ export function CalendarHeader({
     onPressRight,
     onToggleView,
     onMonthYearSelect,
+    canGoBack = true,
+    canGoForward = true,
+    showMonthYearPicker = true,
 }: CalendarHeaderProps) {
     const [pickerVisible, setPickerVisible] = useState(false);
 
     const handleMonthYearPress = () => {
-        setPickerVisible(true);
+        if (showMonthYearPicker) {
+            setPickerVisible(true);
+        }
     };
 
     const handlePickerSelect = (dateString: string) => {
@@ -37,7 +45,11 @@ export function CalendarHeader({
     return (
         <S.HeaderContainer>
             <S.HeaderLeft>
-                <S.HeaderMonthButton onPress={handleMonthYearPress} activeOpacity={0.6}>
+                <S.HeaderMonthButton
+                    onPress={handleMonthYearPress}
+                    activeOpacity={showMonthYearPicker ? 0.6 : 1}
+                    disabled={!showMonthYearPicker}
+                >
                     <S.HeaderMonthText>{formatMonthYear(currentMonth)}</S.HeaderMonthText>
                 </S.HeaderMonthButton>
                 <S.HeaderCaretButton onPress={onToggleView} activeOpacity={0.6}>
@@ -50,20 +62,30 @@ export function CalendarHeader({
                 </S.HeaderCaretButton>
             </S.HeaderLeft>
             <S.HeaderRight>
-                <S.HeaderArrowButton onPress={onPressLeft} activeOpacity={0.6}>
-                    <Icon name="chevron_left" fontSize={24} fontWeight={300} color="rgba(0, 0, 0, 0.88)" />
+                <S.HeaderArrowButton
+                    onPress={onPressLeft}
+                    activeOpacity={0.6}
+                    disabled={!canGoBack}
+                >
+                    <S.HeaderArrowIcon name="chevron_left" $disabled={!canGoBack} />
                 </S.HeaderArrowButton>
-                <S.HeaderArrowButton onPress={onPressRight} activeOpacity={0.6}>
-                    <Icon name="chevron_right" fontSize={24} fontWeight={300} color="rgba(0, 0, 0, 0.88)" />
+                <S.HeaderArrowButton
+                    onPress={onPressRight}
+                    activeOpacity={0.6}
+                    disabled={!canGoForward}
+                >
+                    <S.HeaderArrowIcon name="chevron_right" $disabled={!canGoForward} />
                 </S.HeaderArrowButton>
             </S.HeaderRight>
 
-            <MonthYearPicker
-                visible={pickerVisible}
-                currentDate={currentMonth}
-                onSelect={handlePickerSelect}
-                onClose={() => setPickerVisible(false)}
-            />
+            {showMonthYearPicker && (
+                <MonthYearPicker
+                    visible={pickerVisible}
+                    currentDate={currentMonth}
+                    onSelect={handlePickerSelect}
+                    onClose={() => setPickerVisible(false)}
+                />
+            )}
         </S.HeaderContainer>
     );
 }

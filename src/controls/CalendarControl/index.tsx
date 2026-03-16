@@ -6,7 +6,7 @@ import {
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 
-import { Calendar  } from '../../components/Calendar';
+import { Calendar } from '../../components/Calendar';
 import { BaseControl } from '../BaseControl';
 
 export function CalendarControl(props: QuestionItemProps) {

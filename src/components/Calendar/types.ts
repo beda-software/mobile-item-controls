@@ -9,6 +9,8 @@ export interface CalendarProps {
     minDate?: string;
     /** Maximum selectable date in YYYY-MM-DD format */
     maxDate?: string;
+    /** Whether tapping the header month/year title opens the picker modal (default: true) */
+    showMonthYearPicker?: boolean;
 }
 
 export type CalendarViewMode = 'month' | 'week';

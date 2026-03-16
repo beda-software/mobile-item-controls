@@ -40,14 +40,20 @@ function SlotsList({
 
     return (
         <Wrapper>
-            {slots.map((slot) => (
-                <SlotButton
-                    key={slot.value}
-                    slot={slot}
-                    isSelected={slot.value === value}
-                    onPress={() => onChange(slot.value)}
-                />
-            ))}
+            {slots.length > 0 ? (
+                slots.map((slot) => (
+                    <SlotButton
+                        key={slot.value}
+                        slot={slot}
+                        isSelected={slot.value === value}
+                        onPress={() => onChange(slot.value)}
+                    />
+                ))
+            ) : (
+                <S.NoSlotsContainer>
+                    <S.NoSlotsIcon name="event_busy" />
+                </S.NoSlotsContainer>
+            )}
         </Wrapper>
     );
 }

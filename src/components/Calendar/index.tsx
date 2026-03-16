@@ -75,6 +75,7 @@ export function Calendar({
     firstDay = 1,
     minDate,
     maxDate,
+    showMonthYearPicker = true,
 }: CalendarProps) {
     const today = getTodayString();
     const [currentMonth, setCurrentMonth] = useState(value || today);
@@ -166,6 +167,22 @@ export function Calendar({
         return getWeekDates(anchor, firstDay);
     }, [viewMode, weekAnchor, selectedDate, today, firstDay]);
 
+    const canGoBack = useMemo(() => {
+        if (viewMode === 'week') {
+            if (!weekDates.length) return true;
+            return !minDate || weekDates[0] > minDate;
+        }
+        return !minDate || currentMonth.slice(0, 7) > minDate.slice(0, 7);
+    }, [viewMode, weekDates, currentMonth, minDate]);
+
+    const canGoForward = useMemo(() => {
+        if (viewMode === 'week') {
+            if (!weekDates.length) return true;
+            return !maxDate || weekDates[6] < maxDate;
+        }
+        return !maxDate || currentMonth.slice(0, 7) < maxDate.slice(0, 7);
+    }, [viewMode, weekDates, currentMonth, maxDate]);
+
     // In week view, derive the displayed month from the week's dates
     const displayedMonth = useMemo(() => {
         if (viewMode === 'week' && weekDates.length > 0) {
@@ -185,6 +202,9 @@ export function Calendar({
                 onPressRight={handlePressRight}
                 onToggleView={handleToggleView}
                 onMonthYearSelect={handleMonthYearSelect}
+                canGoBack={canGoBack}
+                canGoForward={canGoForward}
+                showMonthYearPicker={showMonthYearPicker}
             />
             {/* Day name headers — shared for both views */}
             <S.WeekDayNamesRow>

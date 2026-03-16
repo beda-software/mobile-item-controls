@@ -1,4 +1,6 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
+
+import { Icon } from '../Icon';
 
 export const S = {
     // Calendar container
@@ -42,6 +44,18 @@ export const S = {
         height: 40px;
         justify-content: center;
         align-items: center;
+    `,
+    HeaderArrowIcon: styled(Icon).attrs(() => ({
+        fontSize: 24,
+        fontWeight: 300,
+    }))<{ $disabled?: boolean }>`
+        color: rgba(0, 0, 0, 0.88);
+
+        ${({ $disabled }) =>
+            $disabled &&
+            css`
+                color: rgba(0, 0, 0, 0.45);
+            `}
     `,
 
     // Day component
