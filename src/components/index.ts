@@ -6,6 +6,9 @@ export type { CalendarProps, CalendarViewMode } from './Calendar/types';
 export { Icon } from './Icon';
 export type { IconProps } from './Icon';
 
+export { Tag } from './Tag';
+export type { TagProps, TagColor, TagType } from './Tag';
+
 export { TimeSlots } from './TimeSlots';
 export type {
     TimeSlotsProps,
