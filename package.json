@@ -10,6 +10,8 @@
         "@beda.software/fhir-questionnaire": "*",
         "sdc-qrf": "*",
         "react-native-date-picker": "*",
+        "react-native-calendars": "*",
+        "date-fns": "*",
         "styled-components": "*"
     }
 }

@@ -70,6 +70,23 @@ declare module 'styled-components/native' {
                 paddingInline: number;
                 gap: number;
             };
+            TimeSlots?: {
+                Global?: {
+                    colorBgContainer?: string;
+                    colorBorder?: string;
+                    borderRadius?: number;
+                    fontSize?: number;
+                };
+                selectedBg?: string;
+                selectedBorderColor?: string;
+                selectedTextColor?: string;
+                paddingBlock?: number;
+                paddingInline?: number;
+                gap?: number;
+                groupGap?: number;
+                groupHeaderFontSize?: number;
+                groupHeaderFontWeight?: string;
+            };
         };
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     getFieldErrorMessage,
@@ -23,6 +23,12 @@ export function DateTimeInput(props: QuestionItemProps) {
     const [date, setDate] = useState(
         value !== undefined ? parseDateValue(value, type) : undefined
     );
+
+    useEffect(() => {
+        if (value !== undefined) {
+            setDate(parseDateValue(value, type));
+        }
+    }, [value, type]);
 
     const onConfirm = (selectedDate: Date) => {
         setDate(selectedDate);
