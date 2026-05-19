@@ -13,7 +13,7 @@ import { S } from '../styles';
 export function StringInput(props: QuestionItemProps) {
     const { questionItem, parentPath } = props;
     const inputRef = useRef<TextInput>(null);
-    const { linkId, readOnly = false } = questionItem;
+    const { linkId, readOnly = false, entryFormat } = questionItem;
 
     const [isFocused, setIsFocused] = useState(false);
 
@@ -44,6 +44,7 @@ export function StringInput(props: QuestionItemProps) {
                 onBlur={() => setIsFocused(false)}
                 editable={!readOnly}
                 $readOnly={readOnly}
+                placeholder={entryFormat}
             />
         </BaseControl>
     );

@@ -13,7 +13,7 @@ import { S } from '../styles';
 export function TextControl(props: QuestionItemProps) {
     const { questionItem, parentPath } = props;
     const inputRef = useRef<TextInput>(null);
-    const { linkId, rowsNumber = 3, readOnly = false } = questionItem;
+    const { linkId, rowsNumber = 3, readOnly = false, entryFormat } = questionItem;
     const fieldName = [...parentPath, linkId, 0, 'value', 'string'];
 
     const [isFocused, setIsFocused] = useState(false);
@@ -47,6 +47,7 @@ export function TextControl(props: QuestionItemProps) {
                 multiline
                 editable={!readOnly}
                 $readOnly={readOnly}
+                placeholder={entryFormat}
             />
         </BaseControl>
     );
