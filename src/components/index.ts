@@ -1,5 +1,7 @@
 export { Button } from './Button';
 
+export * from './Document';
+
 export { Calendar} from './Calendar';
 export type { CalendarProps, CalendarViewMode } from './Calendar/types';
 

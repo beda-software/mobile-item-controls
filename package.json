@@ -12,6 +12,8 @@
         "react-native-date-picker": "*",
         "react-native-calendars": "*",
         "date-fns": "*",
-        "styled-components": "*"
+        "styled-components": "*",
+        "expo-print": "*",
+        "expo-file-system": "*"
     }
 }
