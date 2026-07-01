@@ -47,6 +47,28 @@ export const buttonIconStyles = css<{
 }>`
 `;
 
+// Keeps the button's footprint identical between idle and loading states: the
+// content stays laid out (only faded out) while the spinner is overlaid on top,
+// so the button never resizes/"jumps" when `loading` toggles.
+export const ButtonLayout = {
+    ContentWrapper: styled.View<{ $hidden: boolean }>`
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        opacity: ${(props) => (props.$hidden ? 0 : 1)};
+    `,
+    LoadingOverlay: styled.View`
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        align-items: center;
+        justify-content: center;
+    `,
+};
+
 export const S = {
     Container: styled.TouchableHighlight<{
         $variant: ButtonVariant;

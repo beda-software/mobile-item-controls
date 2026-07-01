@@ -7,6 +7,7 @@ import { FilledButtonStyles } from './filled-styles';
 import { LinkButtonStyles } from './link-styles';
 import { OutlinedButtonStyles } from './outlined-styles';
 import { SolidButtonStyles } from './solid-styles';
+import { ButtonLayout } from './styles';
 import { TextButtonStyles } from './text-styles';
 import { ButtonProps, ButtonType, ButtonVariant } from './types';
 
@@ -97,25 +98,31 @@ export function Button(props: ButtonProps) {
             $active={active}
             {...rest}
         >
-            {loading && <ActivityIndicator size="small" />}
+            <ButtonLayout.ContentWrapper $hidden={loading}>
+                {iconPosition === 'start' && renderIcon()}
 
-            {!loading && iconPosition === 'start' && renderIcon()}
+                {_.isString(children) ? (
+                    <S.Text
+                        $variant={variant}
+                        $ghost={ghost}
+                        $danger={danger}
+                        $disabled={isDisabled}
+                        $size={size}
+                    >
+                        {children}
+                    </S.Text>
+                ) : (
+                    children
+                )}
 
-            {_.isString(children) ? (
-                <S.Text
-                    $variant={variant}
-                    $ghost={ghost}
-                    $danger={danger}
-                    $disabled={isDisabled}
-                    $size={size}
-                >
-                    {children}
-                </S.Text>
-            ) : (
-                children
+                {iconPosition === 'end' && renderIcon()}
+            </ButtonLayout.ContentWrapper>
+
+            {loading && (
+                <ButtonLayout.LoadingOverlay>
+                    <ActivityIndicator size="small" />
+                </ButtonLayout.LoadingOverlay>
             )}
-
-            {iconPosition === 'end' && renderIcon()}
         </S.Container>
     );
 }
