@@ -14,6 +14,8 @@
         "date-fns": "*",
         "styled-components": "*",
         "expo-print": "*",
-        "expo-file-system": "*"
+        "expo-file-system": "*",
+        "expo-document-picker": "*",
+        "expo-image-picker": "*"
     }
 }
