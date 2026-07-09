@@ -59,33 +59,49 @@ interface NativeSourceOverlayProps {
     placement: 'below' | 'above';
     onSelect: (source: FileSource) => void;
     onClose: () => void;
+    // Fired (iOS) after the Modal has fully dismissed — the only point at which
+    // the presenter is free, so a picker can be launched without racing dismissal.
+    onDismiss?: () => void;
 }
 
 // Native variant: renders the popover in a transparent RN Modal positioned at
 // the measured anchor, with a screen-spanning Overlay for reliable tap-to-close.
 // Use only where NOT nested inside another modal (e.g. the visit sidebar).
-export function NativeSourceOverlay({ visible, anchor, placement, onSelect, onClose }: NativeSourceOverlayProps) {
-    if (!visible || !anchor) {
-        return null;
+//
+// The Modal is kept mounted (toggled via `visible`, never unmounted) so its
+// onDismiss callback is actually delivered — RN routes onDismiss to the still-
+// mounted component, so returning null on close would drop it.
+export function NativeSourceOverlay({
+    visible,
+    anchor,
+    placement,
+    onSelect,
+    onClose,
+    onDismiss,
+}: NativeSourceOverlayProps) {
+    let left = 0;
+    let top = 0;
+    if (anchor) {
+        // Right-align the popover to the anchor, clamped to the screen edge.
+        left = Math.max(EDGE_MARGIN, anchor.x + anchor.width - POPOVER_WIDTH);
+        top =
+            placement === 'above'
+                ? anchor.y - ESTIMATED_SOURCE_BOX_HEIGHT - GAP_FROM_ANCHOR
+                : anchor.y + anchor.height + GAP_FROM_ANCHOR;
     }
 
-    // Right-align the popover to the anchor, clamped to the screen edge.
-    const left = Math.max(EDGE_MARGIN, anchor.x + anchor.width - POPOVER_WIDTH);
-    const top =
-        placement === 'above'
-            ? anchor.y - ESTIMATED_SOURCE_BOX_HEIGHT - GAP_FROM_ANCHOR
-            : anchor.y + anchor.height + GAP_FROM_ANCHOR;
-
     return (
-        <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <S.NativeOverlay onPress={onClose}>
-                <S.NativePopover style={{ left, top }}>
-                    {/* Swallow taps inside the popover so they don't reach the overlay. */}
-                    <Pressable onPress={() => undefined}>
-                        <SourceOptions onSelect={onSelect} />
-                    </Pressable>
-                </S.NativePopover>
-            </S.NativeOverlay>
+        <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose} onDismiss={onDismiss}>
+            {visible && anchor ? (
+                <S.NativeOverlay onPress={onClose}>
+                    <S.NativePopover style={{ left, top }}>
+                        {/* Swallow taps inside the popover so they don't reach the overlay. */}
+                        <Pressable onPress={() => undefined}>
+                            <SourceOptions onSelect={onSelect} />
+                        </Pressable>
+                    </S.NativePopover>
+                </S.NativeOverlay>
+            ) : null}
         </Modal>
     );
 }

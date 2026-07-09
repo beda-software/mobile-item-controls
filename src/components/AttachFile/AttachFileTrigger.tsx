@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 
 import { Attachment } from 'fhir/r4b';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, Platform, View } from 'react-native';
 
 import { NativeSourceOverlay, SourceBox } from './SourceBox';
 import { S } from './styles';
@@ -43,9 +43,22 @@ export function AttachFileTrigger({
     const [sourceBoxVisible, setSourceBoxVisible] = useState(false);
     const [placement, setPlacement] = useState<'below' | 'above'>('below');
     const [anchor, setAnchor] = useState<AnchorPosition | null>(null);
+    // In native/iOS mode the pick is deferred until the overlay Modal has fully
+    // dismissed (see handleOverlayDismiss) — presenting a picker mid-dismiss fails.
+    const [pendingSource, setPendingSource] = useState<FileSource | null>(null);
     const anchorRef = useRef<View>(null);
 
     const closeSourceBox = useCallback(() => setSourceBoxVisible(false), []);
+
+    const runPick = useCallback(
+        async (source: FileSource) => {
+            const attachment = await pickFromSource(source);
+            if (attachment) {
+                onAttachment(attachment);
+            }
+        },
+        [pickFromSource, onAttachment],
+    );
 
     // Measure the trigger in the window on open: decide above/below placement and
     // capture anchor coords (the native overlay positions itself from them).
@@ -71,15 +84,29 @@ export function AttachFileTrigger({
     }, [disabled, sourceBoxVisible]);
 
     const handleSelect = useCallback(
-        async (source: FileSource) => {
+        (source: FileSource) => {
             setSourceBoxVisible(false);
-            const attachment = await pickFromSource(source);
-            if (attachment) {
-                onAttachment(attachment);
+            // The iOS native overlay is an RN Modal; presenting a picker before it
+            // finishes dismissing races the dismissal and silently fails (the
+            // document picker especially, since — unlike the image picker — it has
+            // no permission round-trip to delay it). Defer to the Modal's onDismiss.
+            // Inline mode and Android have no such conflict, so pick right away.
+            if (overlay === 'native' && Platform.OS === 'ios') {
+                setPendingSource(source);
+            } else {
+                runPick(source);
             }
         },
-        [pickFromSource, onAttachment],
+        [overlay, runPick],
     );
+
+    const handleOverlayDismiss = useCallback(() => {
+        if (pendingSource) {
+            const source = pendingSource;
+            setPendingSource(null);
+            runPick(source);
+        }
+    }, [pendingSource, runPick]);
 
     return (
         <View ref={anchorRef} collapsable={false}>
@@ -96,6 +123,7 @@ export function AttachFileTrigger({
                     placement={placement}
                     onSelect={handleSelect}
                     onClose={closeSourceBox}
+                    onDismiss={handleOverlayDismiss}
                 />
             ) : null}
         </View>
