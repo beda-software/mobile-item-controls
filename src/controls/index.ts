@@ -13,4 +13,3 @@ export { ReferenceControl } from './ReferenceControl';
 export { CalendarControl } from './CalendarControl';
 export { TimeSlotsControl } from './TimeSlotsControl';
 export { UploadFileControl } from './UploadFileControl';
-export type { UploadFileService, PickedFile } from './UploadFileControl/types';

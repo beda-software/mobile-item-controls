@@ -1,5 +1,8 @@
 export { Button } from './Button';
 
+export { AttachFileTrigger, SourceBox, useAttachFile, pickFile } from './AttachFile';
+export type { PickedFile, UploadFileService, FileSource } from './AttachFile';
+
 export * from './Document';
 
 export { Calendar} from './Calendar';
