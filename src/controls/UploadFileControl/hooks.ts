@@ -1,6 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { QuestionItemProps, useFieldController } from '@beda.software/fhir-questionnaire';
+import {
+    getFieldErrorMessage,
+    QuestionItemProps,
+    useFieldController,
+} from '@beda.software/fhir-questionnaire';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
@@ -10,54 +14,61 @@ import { PickedFile, UploadFileService } from './types';
 
 export type FileSource = 'camera' | 'library' | 'document';
 
-export interface PendingFile {
-    id: string;
-    file: PickedFile;
-    filename: string;
-    description: string;
-}
-
-let pendingIdCounter = 0;
-function nextPendingId() {
-    pendingIdCounter += 1;
-    return `pending-${Date.now()}-${pendingIdCounter}`;
-}
-
 export function useUploadFileControl(props: QuestionItemProps, service: UploadFileService) {
     const { parentPath, questionItem } = props;
     const { linkId, repeats } = questionItem;
-    const { value, onChange, disabled } = useFieldController<FormAnswerItems[]>(
-        [...parentPath, linkId],
-        questionItem
-    );
+    const field = useFieldController<FormAnswerItems[]>([...parentPath, linkId], questionItem);
+    const { value, onChange, disabled, fieldState } = field;
+
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     const attachments = useMemo(() => value ?? [], [value]);
+    const hasAttachments = attachments.length > 0;
+    const showButton = Boolean(repeats) || !hasAttachments;
+    const buttonTitle = hasAttachments ? 'Add another file' : 'Add file';
 
-    const [sourceSheetVisible, setSourceSheetVisible] = useState(false);
-    const [detailsModalVisible, setDetailsModalVisible] = useState(false);
-    const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
+    const [sourceBoxVisible, setSourceBoxVisible] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
-    const openSourceSheet = useCallback(() => {
+    const toggleSourceBox = useCallback(() => {
         if (disabled) {
             return;
         }
-        setSourceSheetVisible(true);
+        setSourceBoxVisible((prev) => !prev);
     }, [disabled]);
 
-    const closeSourceSheet = useCallback(() => setSourceSheetVisible(false), []);
+    const closeSourceBox = useCallback(() => setSourceBoxVisible(false), []);
 
-    const addPendingFile = useCallback((file: PickedFile) => {
-        setPendingFiles((prev) => [
-            ...prev,
-            { id: nextPendingId(), file, filename: file.name, description: '' },
-        ]);
-        setDetailsModalVisible(true);
-    }, []);
+    const uploadPicked = useCallback(
+        async (file: PickedFile) => {
+            setIsUploading(true);
+            try {
+                const key = await service.uploadFile(file);
+                const uploaded: FormAnswerItems = {
+                    value: {
+                        Attachment: {
+                            url: key,
+                            title: file.name,
+                            contentType: file.mimeType,
+                        },
+                    },
+                };
+                onChange(repeats ? [...attachments, uploaded] : [uploaded]);
+            } catch (error) {
+                Alert.alert(
+                    'Upload failed',
+                    error instanceof Error ? error.message : 'Could not upload the file.'
+                );
+            } finally {
+                setIsUploading(false);
+            }
+        },
+        [service, repeats, attachments, onChange]
+    );
 
     const pickFromSource = useCallback(
         async (source: FileSource) => {
-            setSourceSheetVisible(false);
+            setSourceBoxVisible(false);
             try {
                 if (source === 'camera') {
                     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -71,7 +82,7 @@ export function useUploadFileControl(props: QuestionItemProps, service: UploadFi
                     });
                     const asset = result.canceled ? undefined : result.assets[0];
                     if (asset) {
-                        addPendingFile({
+                        await uploadPicked({
                             uri: asset.uri,
                             name: asset.fileName ?? `photo_${Date.now()}.jpg`,
                             mimeType: asset.mimeType ?? 'image/jpeg',
@@ -92,7 +103,7 @@ export function useUploadFileControl(props: QuestionItemProps, service: UploadFi
                     });
                     const asset = result.canceled ? undefined : result.assets[0];
                     if (asset) {
-                        addPendingFile({
+                        await uploadPicked({
                             uri: asset.uri,
                             name: asset.fileName ?? `image_${Date.now()}.jpg`,
                             mimeType: asset.mimeType ?? 'image/jpeg',
@@ -106,7 +117,7 @@ export function useUploadFileControl(props: QuestionItemProps, service: UploadFi
                     });
                     const asset = result.canceled ? undefined : result.assets[0];
                     if (asset) {
-                        addPendingFile({
+                        await uploadPicked({
                             uri: asset.uri,
                             name: asset.name,
                             mimeType: asset.mimeType,
@@ -117,58 +128,8 @@ export function useUploadFileControl(props: QuestionItemProps, service: UploadFi
                 Alert.alert('Error', error instanceof Error ? error.message : 'Could not pick the file.');
             }
         },
-        [addPendingFile]
+        [uploadPicked]
     );
-
-    const updatePendingDescription = useCallback((id: string, description: string) => {
-        setPendingFiles((prev) => prev.map((p) => (p.id === id ? { ...p, description } : p)));
-    }, []);
-
-    const removePendingFile = useCallback((id: string) => {
-        setPendingFiles((prev) => {
-            const next = prev.filter((p) => p.id !== id);
-            if (next.length === 0) {
-                setDetailsModalVisible(false);
-            }
-            return next;
-        });
-    }, []);
-
-    const cancelDetails = useCallback(() => {
-        setPendingFiles([]);
-        setDetailsModalVisible(false);
-    }, []);
-
-    const confirmUpload = useCallback(async () => {
-        if (pendingFiles.length === 0) {
-            return;
-        }
-        setIsUploading(true);
-        try {
-            const uploaded: FormAnswerItems[] = [];
-            for (const pending of pendingFiles) {
-                const key = await service.uploadFile(pending.file);
-                uploaded.push({
-                    value: {
-                        Attachment: {
-                            url: key,
-                            title: pending.description.trim() || pending.filename,
-                        },
-                    },
-                });
-            }
-            onChange(repeats ? [...attachments, ...uploaded] : uploaded.slice(-1));
-            setPendingFiles([]);
-            setDetailsModalVisible(false);
-        } catch (error) {
-            Alert.alert(
-                'Upload failed',
-                error instanceof Error ? error.message : 'Could not upload the file(s).'
-            );
-        } finally {
-            setIsUploading(false);
-        }
-    }, [pendingFiles, service, repeats, onChange, attachments]);
 
     const removeAttachment = useCallback(
         (index: number) => {
@@ -180,17 +141,14 @@ export function useUploadFileControl(props: QuestionItemProps, service: UploadFi
     return {
         attachments,
         disabled,
-        sourceSheetVisible,
-        detailsModalVisible,
-        pendingFiles,
+        error,
+        showButton,
+        buttonTitle,
+        sourceBoxVisible,
         isUploading,
-        openSourceSheet,
-        closeSourceSheet,
+        toggleSourceBox,
+        closeSourceBox,
         pickFromSource,
-        updatePendingDescription,
-        removePendingFile,
-        cancelDetails,
-        confirmUpload,
         removeAttachment,
     };
 }

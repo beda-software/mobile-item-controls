@@ -1,174 +1,153 @@
-import { ScrollView, TextInput } from 'react-native';
-import styled from 'styled-components/native';
+import { BlurView } from 'expo-blur';
+import { SymbolView } from 'expo-symbols';
+import styled, { css } from 'styled-components/native';
+
+import { Icon } from '../../components/Icon';
 
 export const S = {
     FileList: styled.View`
         gap: 8px;
+        margin-bottom: 8px;
     `,
     FileRow: styled.View`
         flex-direction: row;
         align-items: center;
         gap: 12px;
-        padding: 12px;
+        padding: 8px 16px;
         border-radius: 12px;
         border-width: 1px;
-        border-color: #f0f0f0;
+        border-color: rgba(22, 25, 28, 0.1);
         background-color: white;
     `,
-    FileInfo: styled.View`
-        flex: 1;
-        gap: 2px;
+    FilePreview: styled.View`
+        width: 40px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background-color: rgba(22, 25, 28, 0.05);
     `,
-    FileName: styled.Text`
-        font-size: 15px;
-        font-weight: 600;
-        color: rgba(0, 0, 0, 0.88);
-    `,
-    FileDescription: styled.Text`
-        font-size: 13px;
+    FileIcon: styled(Icon).attrs({
+        fontSize: 24,
+        fontWeight: 300,
+    })`
         color: rgba(0, 0, 0, 0.5);
     `,
-    RemoveButton: styled.TouchableOpacity`
-        padding: 4px;
-    `,
-    EmptyText: styled.Text`
-        font-size: 14px;
-        color: rgba(0, 0, 0, 0.45);
-        padding-vertical: 8px;
-    `,
-    AttachButton: styled.TouchableOpacity`
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 14px;
-        border-radius: 12px;
-        background-color: rgba(0, 0, 0, 0.88);
-    `,
-    AttachButtonText: styled.Text`
-        color: white;
-        font-size: 15px;
-        font-weight: 600;
-    `,
-
-    // Source selection sheet
-    SheetOverlay: styled.TouchableOpacity`
+    FileName: styled.Text`
         flex: 1;
-        background-color: rgba(0, 0, 0, 0.35);
-        justify-content: flex-end;
-    `,
-    SheetCard: styled.View`
-        background-color: white;
-        border-top-left-radius: 16px;
-        border-top-right-radius: 16px;
-        padding: 16px;
-        padding-bottom: 32px;
-        gap: 8px;
-    `,
-    SheetOption: styled.TouchableOpacity`
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-        padding: 16px;
-        border-radius: 12px;
-        background-color: #f7f7f7;
-    `,
-    SheetOptionText: styled.Text`
         font-size: 16px;
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.88);
-    `,
-
-    // Add file details modal
-    ModalOverlay: styled.View`
-        flex: 1;
-        background-color: rgba(0, 0, 0, 0.35);
-        justify-content: center;
-        padding: 20px;
-    `,
-    ModalCard: styled.View`
-        background-color: white;
-        border-radius: 16px;
-        padding: 16px;
-        gap: 12px;
-        max-height: 80%;
-    `,
-    ModalHeader: styled.View`
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-    `,
-    ModalTitle: styled.Text`
-        font-size: 17px;
         font-weight: 700;
         color: rgba(0, 0, 0, 0.88);
     `,
-    CloseButton: styled.TouchableOpacity`
-        padding: 4px;
+    RemoveButton: styled.TouchableOpacity`
+        width: 24px;
+        height: 24px;
+        align-items: center;
+        justify-content: center;
     `,
-    PendingListScroll: styled(ScrollView)`
-        flex-grow: 0;
+    RemoveIcon: styled(Icon).attrs({
+        fontSize: 24,
+        fontWeight: 300,
+    })`
+        line-height: 26px;
+        color: rgba(0, 0, 0, 0.88);
     `,
-    PendingListInner: styled.View`
-        gap: 12px;
+    // Constrains the loading spinner to the same 24px box the add icon occupies,
+    // so swapping icon -> spinner keeps the button label from shifting.
+    AddSpinnerBox: styled.View`
+        width: 24px;
+        height: 24px;
+        align-items: center;
+        justify-content: center;
     `,
-    PendingCard: styled.View`
-        border-width: 1px;
-        border-color: #f0f0f0;
+    AddIcon: styled(Icon).attrs({
+        fontSize: 24,
+        fontWeight: 300,
+    })<{ $disabled?: boolean }>`
+        color: #fff;
+
+        ${({ $disabled }) =>
+            $disabled &&
+            css`
+                color: #adb5bd;
+            `}
+    `,
+    // Anchors the absolutely-positioned source box directly below the button.
+    ButtonAnchor: styled.View`
+        position: relative;
+        z-index: 10;
+    `,
+    // Full-area transparent layer that closes the box on an outside tap.
+    // Oversized negative insets so it covers the surrounding form without an RN Modal.
+    Backdrop: styled.TouchableOpacity`
+        position: absolute;
+        top: -2000px;
+        left: -2000px;
+        width: 4000px;
+        height: 4000px;
+        z-index: 15;
+    `,
+    // Shadow wrapper: carries the drop shadow and placement, no clipping so the
+    // shadow renders. The blurred surface is clipped by SourceBoxContent inside.
+    SourceBox: styled.View<{ $placement?: 'below' | 'above' }>`
+        position: absolute;
+        right: 0;
+        width: 250px;
         border-radius: 12px;
-        padding: 12px;
-        gap: 8px;
+        z-index: 20;
+        elevation: 8;
+        shadow-color: rgba(0, 0, 0, 0.2);
+        shadow-opacity: 1;
+        shadow-radius: 16px;
+        shadow-offset: 0px 0px;
+
+        ${({ $placement }) =>
+            $placement === 'above'
+                ? css`
+                      bottom: 100%;
+                      margin-bottom: 6px;
+                  `
+                : css`
+                      top: 100%;
+                      margin-top: 6px;
+                  `}
     `,
-    PendingHeader: styled.View`
+    // iOS "Material Blur" (systemThickMaterialLight ≈ 25px radius). The exact
+    // color-dodge blend in the design can't be reproduced in RN; the native
+    // material tint is the faithful equivalent. Background tint is a fallback
+    // for platforms without native blur (web/Android).
+    SourceBoxContent: styled(BlurView).attrs(() => ({
+        intensity: 50,
+        tint: 'systemThickMaterialLight',
+    }))`
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: rgba(255, 255, 255, 0.6);
+    `,
+    SourceOption: styled.TouchableOpacity<{ $last?: boolean }>`
+        height: 44px;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        gap: 8px;
-    `,
-    PendingName: styled.Text`
-        flex: 1;
-        font-size: 15px;
-        font-weight: 600;
-        color: rgba(0, 0, 0, 0.88);
-    `,
-    DescriptionInput: styled(TextInput)`
-        border-width: 1px;
-        border-color: #f0f0f0;
-        border-radius: 8px;
-        padding: 10px;
-        font-size: 15px;
-        min-height: 72px;
-        color: rgba(0, 0, 0, 0.88);
-    `,
-    SecondaryButton: styled.TouchableOpacity`
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 12px;
-        border-radius: 12px;
-        background-color: rgba(0, 0, 0, 0.88);
-    `,
-    SecondaryButtonText: styled.Text`
-        color: white;
-        font-size: 15px;
-        font-weight: 600;
-    `,
-    ModalFooter: styled.View`
-        flex-direction: row;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 12px;
-    `,
-    FooterButton: styled.TouchableOpacity<{ $primary?: boolean }>`
-        padding-vertical: 10px;
         padding-horizontal: 16px;
-        border-radius: 8px;
-        background-color: ${({ $primary }) => ($primary ? 'rgba(0, 0, 0, 0.88)' : 'transparent')};
+        border-bottom-width: ${({ $last }) => ($last ? '0px' : '0.5px')};
+        border-bottom-color: rgba(128, 128, 128, 0.55);
     `,
-    FooterButtonText: styled.Text<{ $primary?: boolean }>`
-        font-size: 15px;
-        font-weight: 600;
-        color: ${({ $primary }) => ($primary ? 'white' : 'rgba(0, 0, 0, 0.6)')};
+    SourceOptionText: styled.Text`
+        font-size: 17px;
+        line-height: 22px;
+        letter-spacing: -0.43px;
+        color: #000;
+    `,
+    // Size by a uniform square frame with aspect-fit rather than point size, so
+    // symbols with differing intrinsic metrics (e.g. the tall text.document vs
+    // the wide photo.on.rectangle) render at a visually consistent size.
+    OptionSymbol: styled(SymbolView).attrs(() => ({
+        tintColor: '#000',
+        weight: 'regular',
+        resizeMode: 'scaleAspectFit',
+    }))`
+        width: 22px;
+        height: 22px;
     `,
 };

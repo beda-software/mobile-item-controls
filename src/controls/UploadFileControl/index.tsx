@@ -1,166 +1,142 @@
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import { QuestionItemProps } from '@beda.software/fhir-questionnaire';
-import { ActivityIndicator, Modal } from 'react-native';
+import { ActivityIndicator, Dimensions, View } from 'react-native';
 
 import { useUploadFileControl } from './hooks';
 import { S } from './styles';
-import { UploadFileService } from './types';
-import { Icon } from '../../components/Icon';
+import { Button as DefaultButton } from '../../components/Button';
+import { ButtonProps } from '../../components/Button/types';
 import { BaseControl } from '../BaseControl';
+import { UploadFileService } from '../UploadFileControl1/types';
 
-export function UploadFileControl(props: QuestionItemProps, service: UploadFileService) {
-    return <UploadFileControlInner {...props} service={service} />;
+type UploadFileControlOptions = {
+    Button?: React.ComponentType<ButtonProps>;
+};
+
+export function UploadFileControl(
+    props: QuestionItemProps,
+    service: UploadFileService,
+    options?: UploadFileControlOptions
+) {
+    return <UploadFileControlInner {...props} service={service} options={options} />;
 }
 
-type UploadFileControlInnerProps = QuestionItemProps & { service: UploadFileService };
+type UploadFileControlInnerProps = QuestionItemProps & {
+    service: UploadFileService;
+    options?: UploadFileControlOptions;
+};
+
+// Estimated height of the three-option source box (3 x 44px rows + margin);
+// used only to decide whether there is room to drop below the trigger.
+const ESTIMATED_SOURCE_BOX_HEIGHT = 140;
 
 function UploadFileControlInner(props: UploadFileControlInnerProps) {
-    const { service, ...itemProps } = props;
+    const { service, options, ...itemProps } = props;
+    const Button = options?.Button ?? DefaultButton;
     const {
         attachments,
         disabled,
-        sourceSheetVisible,
-        detailsModalVisible,
-        pendingFiles,
+        error,
+        showButton,
+        buttonTitle,
+        sourceBoxVisible,
         isUploading,
-        openSourceSheet,
-        closeSourceSheet,
+        toggleSourceBox,
+        closeSourceBox,
         pickFromSource,
-        updatePendingDescription,
-        removePendingFile,
-        cancelDetails,
-        confirmUpload,
         removeAttachment,
     } = useUploadFileControl(itemProps, service);
 
+    const anchorRef = useRef<View>(null);
+    const [placement, setPlacement] = useState<'below' | 'above'>('below');
+
+    // Measure the trigger in the window on open: if it doesn't fit below, flip above.
+    const handleToggle = useCallback(() => {
+        if (sourceBoxVisible) {
+            toggleSourceBox();
+            return;
+        }
+        const node = anchorRef.current;
+        if (!node) {
+            toggleSourceBox();
+            return;
+        }
+        node.measureInWindow((_x, y, _width, height) => {
+            const spaceBelow = Dimensions.get('window').height - (y + height);
+            setPlacement(spaceBelow < ESTIMATED_SOURCE_BOX_HEIGHT ? 'above' : 'below');
+            toggleSourceBox();
+        });
+    }, [sourceBoxVisible, toggleSourceBox]);
+
     return (
-        <BaseControl {...itemProps} customLayout>
-            <S.FileList>
-                {attachments.length === 0 ? (
-                    <S.EmptyText>No files attached yet</S.EmptyText>
-                ) : (
-                    attachments.map((item, index) => {
+        <BaseControl {...itemProps} customLayout error={error}>
+            {attachments.length > 0 ? (
+                <S.FileList>
+                    {attachments.map((item, index) => {
                         const attachment = item.value?.Attachment;
                         const title = attachment?.title || attachment?.url || 'File';
+                        const isImage = Boolean(attachment?.contentType?.startsWith('image/'));
                         return (
                             <S.FileRow key={`${attachment?.url ?? 'file'}-${index}`}>
-                                <Icon name="description" fontSize={20} color="#3366FF" />
-                                <S.FileInfo>
-                                    <S.FileName numberOfLines={1}>{title}</S.FileName>
-                                    {attachment?.url ? (
-                                        <S.FileDescription numberOfLines={1}>
-                                            {attachment.url}
-                                        </S.FileDescription>
-                                    ) : null}
-                                </S.FileInfo>
+                                <S.FilePreview>
+                                    <S.FileIcon name={isImage ? 'image' : 'description'} />
+                                </S.FilePreview>
+                                <S.FileName numberOfLines={1}>{title}</S.FileName>
                                 {!disabled ? (
                                     <S.RemoveButton onPress={() => removeAttachment(index)}>
-                                        <Icon name="close" fontSize={20} color="rgba(0,0,0,0.5)" />
+                                        <S.RemoveIcon name="close_small" />
                                     </S.RemoveButton>
                                 ) : null}
                             </S.FileRow>
                         );
-                    })
-                )}
-            </S.FileList>
-
-            {!disabled ? (
-                <S.AttachButton onPress={openSourceSheet}>
-                    <Icon name="attach_file" fontSize={18} color="white" />
-                    <S.AttachButtonText>Attach File</S.AttachButtonText>
-                </S.AttachButton>
+                    })}
+                </S.FileList>
             ) : null}
 
-            <Modal
-                visible={sourceSheetVisible}
-                transparent
-                animationType="slide"
-                onRequestClose={closeSourceSheet}
-            >
-                <S.SheetOverlay activeOpacity={1} onPress={closeSourceSheet}>
-                    <S.SheetCard onStartShouldSetResponder={() => true}>
-                        <S.SheetOption onPress={() => pickFromSource('camera')}>
-                            <Icon name="photo_camera" fontSize={22} />
-                            <S.SheetOptionText>Take Photo</S.SheetOptionText>
-                        </S.SheetOption>
-                        <S.SheetOption onPress={() => pickFromSource('library')}>
-                            <Icon name="photo_library" fontSize={22} />
-                            <S.SheetOptionText>Choose from Library</S.SheetOptionText>
-                        </S.SheetOption>
-                        <S.SheetOption onPress={() => pickFromSource('document')}>
-                            <Icon name="folder" fontSize={22} />
-                            <S.SheetOptionText>Choose Document</S.SheetOptionText>
-                        </S.SheetOption>
-                    </S.SheetCard>
-                </S.SheetOverlay>
-            </Modal>
-
-            <Modal
-                visible={detailsModalVisible}
-                transparent
-                animationType="fade"
-                onRequestClose={cancelDetails}
-            >
-                <S.ModalOverlay>
-                    <S.ModalCard>
-                        <S.ModalHeader>
-                            <S.ModalTitle>Add file details</S.ModalTitle>
-                            <S.CloseButton onPress={cancelDetails}>
-                                <Icon name="close" fontSize={22} color="rgba(0,0,0,0.6)" />
-                            </S.CloseButton>
-                        </S.ModalHeader>
-
-                        <S.PendingListScroll>
-                            <S.PendingListInner>
-                                {pendingFiles.map((pending) => (
-                                    <S.PendingCard key={pending.id}>
-                                        <S.PendingHeader>
-                                            <S.PendingName numberOfLines={1}>
-                                                {pending.filename}
-                                            </S.PendingName>
-                                            <S.CloseButton onPress={() => removePendingFile(pending.id)}>
-                                                <Icon
-                                                    name="close"
-                                                    fontSize={20}
-                                                    color="rgba(0,0,0,0.5)"
-                                                />
-                                            </S.CloseButton>
-                                        </S.PendingHeader>
-                                        <S.DescriptionInput
-                                            placeholder="Add description..."
-                                            value={pending.description}
-                                            onChangeText={(text) =>
-                                                updatePendingDescription(pending.id, text)
-                                            }
-                                            maxLength={160}
-                                            multiline
-                                            editable={!isUploading}
-                                        />
-                                    </S.PendingCard>
-                                ))}
-                            </S.PendingListInner>
-                        </S.PendingListScroll>
-
-                        <S.SecondaryButton onPress={openSourceSheet} disabled={isUploading}>
-                            <Icon name="add" fontSize={18} color="white" />
-                            <S.SecondaryButtonText>Add another file</S.SecondaryButtonText>
-                        </S.SecondaryButton>
-
-                        <S.ModalFooter>
-                            {isUploading ? <ActivityIndicator size="small" /> : null}
-                            <S.FooterButton onPress={cancelDetails} disabled={isUploading}>
-                                <S.FooterButtonText>Cancel</S.FooterButtonText>
-                            </S.FooterButton>
-                            <S.FooterButton $primary onPress={confirmUpload} disabled={isUploading}>
-                                <S.FooterButtonText $primary>
-                                    {pendingFiles.length > 1 ? 'Attach files' : 'Attach file'}
-                                </S.FooterButtonText>
-                            </S.FooterButton>
-                        </S.ModalFooter>
-                    </S.ModalCard>
-                </S.ModalOverlay>
-            </Modal>
+            {showButton ? (
+                <View ref={anchorRef} collapsable={false}>
+                    <S.ButtonAnchor>
+                        <Button
+                            variant="solid"
+                            disabled={disabled || isUploading}
+                            onPress={handleToggle}
+                            icon={
+                                isUploading ? (
+                                    <S.AddSpinnerBox>
+                                        <ActivityIndicator size="small" color="#adb5bd" />
+                                    </S.AddSpinnerBox>
+                                ) : (
+                                    <S.AddIcon name="add" $disabled={disabled} />
+                                )
+                            }
+                        >
+                            {buttonTitle}
+                        </Button>
+                        {sourceBoxVisible ? (
+                            <>
+                                <S.Backdrop activeOpacity={1} onPress={closeSourceBox} />
+                                <S.SourceBox $placement={placement}>
+                                    <S.SourceBoxContent>
+                                        <S.SourceOption onPress={() => pickFromSource('library')}>
+                                            <S.SourceOptionText>Photo</S.SourceOptionText>
+                                            <S.OptionSymbol name="photo.on.rectangle" />
+                                        </S.SourceOption>
+                                        <S.SourceOption onPress={() => pickFromSource('camera')}>
+                                            <S.SourceOptionText>Camera</S.SourceOptionText>
+                                            <S.OptionSymbol name="camera" />
+                                        </S.SourceOption>
+                                        <S.SourceOption $last onPress={() => pickFromSource('document')}>
+                                            <S.SourceOptionText>Files</S.SourceOptionText>
+                                            <S.OptionSymbol name="text.document" />
+                                        </S.SourceOption>
+                                    </S.SourceBoxContent>
+                                </S.SourceBox>
+                            </>
+                        ) : null}
+                    </S.ButtonAnchor>
+                </View>
+            ) : null}
         </BaseControl>
     );
 }
