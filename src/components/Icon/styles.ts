@@ -12,6 +12,17 @@ export const S = {
     Icon: styled.Text<{ $fontSize: number; $fontWeight: number; $color?: string }>`
         color: ${({ $color }) => $color ?? 'rgba(0, 0, 0, 0.88)'};
         font-size: ${({ $fontSize }) => $fontSize}px;
-        font-family: ${({ $fontWeight }) => FONT_FAMILIES[$fontWeight] ?? FONT_FAMILIES[400]};
+        font-family: ${({ $fontWeight, theme }) => {
+            const themed = theme?.components?.Icon?.fontFamily as
+                | Record<number, string | undefined>
+                | undefined;
+
+            return (
+                themed?.[$fontWeight] ??
+                themed?.[400] ??
+                FONT_FAMILIES[$fontWeight] ??
+                FONT_FAMILIES[400]
+            );
+        }};
     `,
 };

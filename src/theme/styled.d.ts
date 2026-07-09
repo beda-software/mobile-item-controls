@@ -87,6 +87,9 @@ declare module 'styled-components/native' {
                 groupHeaderFontSize?: number;
                 groupHeaderFontWeight?: string;
             };
+            Icon?: {
+                fontFamily?: Partial<Record<300 | 400 | 500 | 600 | 700, string>>;
+            };
         };
     }
 }
