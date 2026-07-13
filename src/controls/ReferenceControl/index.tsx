@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+    getFieldErrorMessage,
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
@@ -38,13 +39,15 @@ function ReferenceInput(
 
     const fieldName = [...parentPath, linkId];
 
-    const { value, onMultiChange } = useFieldController<FormAnswerItems[]>(
+    const field = useFieldController<FormAnswerItems[]>(
         fieldName,
         questionItem
     );
+    const { value, onMultiChange, fieldState } = field;
+    const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     return (
-        <BaseControl {...props}>
+        <BaseControl {...props} error={error}>
             <ReferenceInputSelect
                 loadOptions={references.loadOptions}
                 value={value}

@@ -114,15 +114,27 @@ export function Select<T = any>(props: SelectProps<T>) {
                             keyExtractor={(item) => JSON.stringify(item)}
                             // eslint-disable-next-line react-native/no-inline-styles
                             style={{ flex: 1 }}
-                            renderItem={({ item }: { item: T }) => (
-                                <S.SelectModalContentItem
-                                    onPress={() => handleOptionSelect(item)}
-                                >
-                                    <S.SelectModalContentItemText>
-                                        {getOptionLabel?.(item)}
-                                    </S.SelectModalContentItemText>
-                                </S.SelectModalContentItem>
-                            )}
+                            renderItem={({ item }: { item: T }) => {
+                                const isSelected = value?.some(
+                                    (o) =>
+                                        JSON.stringify(o) === JSON.stringify(item)
+                                );
+
+                                return (
+                                    <S.SelectModalContentItem
+                                        onPress={() => handleOptionSelect(item)}
+                                    >
+                                        <S.SelectModalContentItemText>
+                                            {getOptionLabel?.(item)}
+                                        </S.SelectModalContentItemText>
+                                        {isSelected ? (
+                                            <S.SelectModalContentItemCheck>
+                                                ✓
+                                            </S.SelectModalContentItemCheck>
+                                        ) : null}
+                                    </S.SelectModalContentItem>
+                                );
+                            }}
                         />
 
                         <S.SelectModalFooterCloseButton

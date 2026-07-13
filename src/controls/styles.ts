@@ -266,9 +266,19 @@ export const S = {
         padding: 15px 10px;
         border-bottom-width: 1px;
         border-bottom-color: #eee;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
     `,
     SelectModalContentItemText: styled.Text`
         font-size: 16px;
+        color: #333;
+        flex: 1;
+    `,
+    SelectModalContentItemCheck: styled.Text`
+        font-size: 16px;
+        font-weight: 600;
         color: #333;
     `,
     SelectModalFooterCloseButton: styled.TouchableOpacity`
