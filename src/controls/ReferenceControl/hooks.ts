@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { getFieldErrorMessage, useFieldController } from '@beda.software/fhir-questionnaire';
 import {
     extractBundleResources,
     getReference,
@@ -9,11 +10,13 @@ import {
 } from '@beda.software/fhir-react';
 import { isSuccess, RemoteDataResult } from '@beda.software/remote-data';
 import { Bundle, Resource } from 'fhir/r4b';
+import _ from 'lodash';
 import {
     FormAnswerItems,
     parseFhirQueryExpression,
     QuestionItemProps,
 } from 'sdc-qrf';
+import { getDisplay } from 'src/utils';
 
 import { evaluate } from './utils';
 
@@ -103,4 +106,72 @@ async function loadOptions<R extends Resource, IR extends Resource = any>(
             },
         },
     }));
+}
+
+export function useReferenceControl(
+    props: QuestionItemProps,
+    getFHIRResources: GetFHIRResources
+) {
+    const { questionItem, parentPath } = props;
+    const { linkId, choiceColumn, text, entryFormat } = questionItem;
+
+    const { loadOptions } = useReferences(props, getFHIRResources);
+
+    const field = useFieldController<FormAnswerItems[]>(
+        [...parentPath, linkId],
+        questionItem
+    );
+    const { value, onMultiChange, fieldState } = field;
+    const error = getFieldErrorMessage(field, fieldState, text);
+
+    const [options, setOptions] = useState<FormAnswerItems[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const loadOptionsRef = useRef(loadOptions);
+    loadOptionsRef.current = loadOptions;
+
+    const fetchOptions = useCallback((searchText: string) => {
+        setIsLoading(true);
+        loadOptionsRef
+            .current(searchText)
+            .then(setOptions)
+            .catch(() => setOptions([]))
+            .finally(() => setIsLoading(false));
+    }, []);
+
+    const debouncedFetch = useMemo(
+        () => _.debounce(fetchOptions, 500),
+        [fetchOptions]
+    );
+
+    const onSearch = useCallback(
+        (searchText: string) => {
+            setIsLoading(true);
+            debouncedFetch(searchText);
+        },
+        [debouncedFetch]
+    );
+
+    useEffect(() => {
+        fetchOptions('');
+        return () => debouncedFetch.cancel();
+    }, [fetchOptions, debouncedFetch]);
+
+    const getLabel = (item: FormAnswerItems) =>
+        (getDisplay(item.value, choiceColumn) as string) || '';
+
+    const isSelected = (item: FormAnswerItems) =>
+        (value ?? []).some((v) => _.isEqual(v.value, item.value));
+
+    return {
+        placeholder: entryFormat,
+        value,
+        options,
+        isLoading,
+        toggle: onMultiChange,
+        onSearch,
+        isSelected,
+        getLabel,
+        error,
+    };
 }
