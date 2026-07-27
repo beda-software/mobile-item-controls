@@ -75,7 +75,9 @@ export function Select<T = any>(props: SelectProps<T>) {
                         <S.SelectInputText>{placeholder}</S.SelectInputText>
                     )}
                 </S.SelectInput>
-                <S.SelectInputDropdownIcon />
+                <S.SelectInputDropdownIconWrapper>
+                    <S.SelectInputDropdownIcon name="arrow_drop_down" />
+                </S.SelectInputDropdownIconWrapper>
             </S.SelectInputWrapper>
 
             <Modal
@@ -117,7 +119,8 @@ export function Select<T = any>(props: SelectProps<T>) {
                             renderItem={({ item }: { item: T }) => {
                                 const isSelected = value?.some(
                                     (o) =>
-                                        JSON.stringify(o) === JSON.stringify(item)
+                                        JSON.stringify(o) ===
+                                        JSON.stringify(item)
                                 );
 
                                 return (

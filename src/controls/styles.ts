@@ -1,6 +1,8 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import styled from 'styled-components/native';
 
+import { Icon } from '../components/Icon';
+
 export const S = {
     Container: styled.View`
         margin: 8px 0;
@@ -192,13 +194,17 @@ export const S = {
         justify-content: space-between;
         align-items: center;
     `,
-    SelectInput: styled.View``,
+    SelectInput: styled.View`
+        flex: 1;
+    `,
     SelectInputMultipleOptionsWrapper: styled.View`
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 4px;
     `,
     SelectInputMultipleOptionsItem: styled.View`
         flex-direction: row;
+        flex-shrink: 1;
         gap: 8px;
         align-items: center;
         padding: 6px 8px;
@@ -207,19 +213,24 @@ export const S = {
     `,
     SelectInputText: styled.Text`
         font-size: 16px;
+        line-height: 18px;
         color: #333;
+        flex-shrink: 1;
     `,
-    SelectInputDropdownIcon: styled.View`
-        width: 0;
-        height: 0;
-        background-color: transparent;
-        border-style: solid;
-        border-left-width: 6px;
-        border-right-width: 6px;
-        border-top-width: 6px;
-        border-left-color: transparent;
-        border-right-color: transparent;
-        border-top-color: #333;
+    SelectInputDropdownIconWrapper: styled.View`
+        width: 24px;
+        height: 18px;
+        align-items: center;
+        justify-content: center;
+    `,
+    SelectInputDropdownIcon: styled(Icon).attrs(() => ({
+        fontSize: 24,
+        fontWeight: 300,
+    }))`
+        flex-shrink: 0;
+        line-height: 24px;
+        text-align: center;
+        color: #16191c;
     `,
     SelectModalWrapper: styled.View`
         flex: 1;
