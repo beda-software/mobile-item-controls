@@ -1,43 +1,26 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import {
     getFieldErrorMessage,
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import { Coding } from 'fhir/r4b';
 import { FormAnswerItems, toAnswerValue } from 'sdc-qrf';
 
 import { ChoiceOption } from './ChoiceOption';
-import {
-    extractAnswerOptionValueKey,
-    getValuePath,
-    isAnswerSelected,
-} from './utils';
+import { isAnswerSelected } from './utils';
 import { BaseControl } from '../BaseControl';
 
 export function InlineChoiceControl(props: QuestionItemProps) {
     const { questionItem, parentPath } = props;
     const { repeats, answerOption, linkId, readOnly } = questionItem;
 
-    const field = useFieldController<FormAnswerItems[] | Coding>(
-        repeats
-            ? [...parentPath, linkId]
-            : getValuePath(questionItem, parentPath),
+    const field = useFieldController<FormAnswerItems[]>(
+        [...parentPath, linkId],
         questionItem
     );
-    const { value, onChange, onMultiChange, fieldState } = field;
+    const { value, onMultiChange, fieldState } = field;
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
-
-    const onSelect = useCallback(
-        (option: FormAnswerItems) => {
-            const key = extractAnswerOptionValueKey(option);
-            repeats
-                ? onMultiChange(option)
-                : onChange(option.value?.[key] as Coding);
-        },
-        [onChange, onMultiChange, repeats]
-    );
 
     return (
         <BaseControl {...props} error={error} customLayout={true}>
@@ -53,11 +36,10 @@ export function InlineChoiceControl(props: QuestionItemProps) {
                             {
                                 value: answer,
                             },
-                            value,
-                            repeats
+                            value
                         )}
                         onSelect={() =>
-                            onSelect({
+                            onMultiChange({
                                 value: answer,
                             })
                         }

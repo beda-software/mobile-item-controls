@@ -1,10 +1,5 @@
 import { Coding } from 'fhir/r4b';
-import {
-    FormAnswerItems,
-    AnswerValue,
-    FCEQuestionnaireItem,
-    toAnswerValue,
-} from 'sdc-qrf';
+import { FormAnswerItems, AnswerValue } from 'sdc-qrf';
 
 export function extractAnswerOptionValueKey(option: FormAnswerItems) {
     return Object.keys(option.value || {})[0] as keyof AnswerValue;
@@ -14,44 +9,21 @@ export function extractKeyFromValue(value: AnswerValue) {
     return Object.keys(value)[0] as keyof AnswerValue;
 }
 
-export function getValuePath(item: FCEQuestionnaireItem, parentPath: string[]) {
-    if (!item.answerOption?.[0]) {
-        return [];
-    }
-    const value = toAnswerValue(item.answerOption[0], 'value');
-    if (!value) return [];
-    const key = extractKeyFromValue(value);
-    return [...parentPath, item.linkId, '0', 'value', key];
-}
-
-function isCoding(
-    value?: FormAnswerItems[] | Coding
-): value is Coding{
-    return typeof value === 'object' && 'code' in value;
-}
-
 export function isAnswerSelected(
     option: FormAnswerItems,
-    value?: FormAnswerItems[] | Coding,
-    repeats?: boolean
+    value?: FormAnswerItems[]
 ): boolean {
     const key = extractAnswerOptionValueKey(option);
     const optionValue = option.value?.[key];
-    if (key === 'Coding') {
-        const code = (optionValue as Coding)?.code;
-        if (repeats) {
-            return (value as FormAnswerItems[]).some((v) => {
-                const value = v.value?.[key];
-                return isCoding(value) && value.code === code;
-            });
-        }
-        return isCoding(value) && value.code === code;
-    }
-    return repeats
-        ? (value as FormAnswerItems[]).some(
-              (option) => option.value?.[key] === optionValue
-          )
-        : value === optionValue;
+
+    return (value ?? []).some((answer) => {
+        const answerValue = answer.value?.[key];
+
+        return key === 'Coding'
+            ? (answerValue as Coding | undefined)?.code ===
+                  (optionValue as Coding).code
+            : answerValue === optionValue;
+    });
 }
 
 export function getAnswerDisplay(
