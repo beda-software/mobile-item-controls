@@ -1,4 +1,5 @@
 export { Group } from './Group';
+export { RowGroup } from './RowGroup';
 export { IntegerInput } from './IntegerInput';
 export { StringInput } from './StringInput';
 export { QuantityInput } from './QuantityInput';

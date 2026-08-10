@@ -5,24 +5,33 @@ import {
     QuestionItemProps,
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
-import { Text } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
+import { formatValueForDisplay, useControlConfig } from '../../control-config';
 import { BaseControl } from '../BaseControl';
-import { styles } from '../styles';
+import { S } from '../styles';
 
 export function DateTimeInput(props: QuestionItemProps) {
     const { questionItem, parentPath } = props;
-    const { linkId, type } = questionItem;
+    const { linkId, type, readOnly = false } = questionItem;
     const fieldPath = [...parentPath, linkId, 0, 'value', type];
     const field = useFieldController<string>(fieldPath, questionItem);
     const { value, onChange, fieldState } = field;
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
+    const config = useControlConfig();
+
     const [showPicker, setShowPicker] = useState(false);
     const [date, setDate] = useState(
         value !== undefined ? parseDateValue(value, type) : undefined
     );
+
+    const storedValue =
+        date !== undefined ? formatDateValue(date, type) : undefined;
+    const displayValue =
+        storedValue !== undefined
+            ? formatValueForDisplay(storedValue, type, config)
+            : undefined;
 
     useEffect(() => {
         if (value !== undefined) {
@@ -39,13 +48,18 @@ export function DateTimeInput(props: QuestionItemProps) {
     return (
         <BaseControl
             {...props}
-            onFocus={() => setShowPicker(true)}
+            onFocus={() => !readOnly && setShowPicker(true)}
             isActive={showPicker}
             error={error}
         >
-            <Text style={styles.inputText}>
-                {date !== undefined ? formatDateValue(date, type) : undefined}
-            </Text>
+            <S.InputContentRow>
+                <S.SelectInput>
+                    <S.SelectInputText>{displayValue}</S.SelectInputText>
+                </S.SelectInput>
+                <S.SelectInputDropdownIconWrapper>
+                    <S.SelectInputDropdownIcon />
+                </S.SelectInputDropdownIconWrapper>
+            </S.InputContentRow>
             {showPicker && (
                 <DatePicker
                     modal

@@ -76,7 +76,7 @@ export function Select<T = any>(props: SelectProps<T>) {
                     )}
                 </S.SelectInput>
                 <S.SelectInputDropdownIconWrapper>
-                    <S.SelectInputDropdownIcon name="arrow_drop_down" />
+                    <S.SelectInputDropdownIcon />
                 </S.SelectInputDropdownIconWrapper>
             </S.SelectInputWrapper>
 

@@ -3,25 +3,51 @@ import styled from 'styled-components/native';
 
 import { Icon } from '../components/Icon';
 
+// Defaults reproduce the pre-token rendering.
+const DEFAULT_GAP = 4;
+const DEFAULT_ROW_GAP = 16;
+const DEFAULT_SELECT_LINE_HEIGHT = 18;
+const DEFAULT_SELECT_COLOR = '#333';
+const DEFAULT_DROPDOWN_ICON_NAME = 'arrow_drop_down';
+const DEFAULT_DROPDOWN_ICON_SIZE = 24;
+const DEFAULT_DROPDOWN_ICON_BOX_HEIGHT = 18;
+const DEFAULT_DROPDOWN_ICON_LINE_HEIGHT = 24;
+const DEFAULT_DROPDOWN_ICON_COLOR = '#16191c';
+
+// Omitted when untokened, so RN keeps its own default.
+const lineHeight = (value?: number) =>
+    value !== undefined ? `line-height: ${value}px;` : '';
+
 export const S = {
-    Container: styled.View`
-        margin: 8px 0;
+    // Spacing between fields is the parent's gap, never a margin here.
+    Container: styled.View<{ $inRow?: boolean }>`
         gap: 8px;
         position: relative;
+        ${({ $inRow }) => ($inRow ? 'flex: 1;' : '')}
+    `,
+    Row: styled.View`
+        flex-direction: row;
+        align-items: flex-end;
+        gap: ${DEFAULT_ROW_GAP}px;
+        width: 100%;
     `,
     ContainerQuestionTextWrapper: styled.View`
         gap: 8px;
     `,
     ContainerQuestionText: styled.Text`
-        font-size: 16px;
+        font-size: ${({ theme }) => theme.components.Global.fontSize}px;
+        ${({ theme }) => lineHeight(theme.components.Global.lineHeight)}
         font-weight: 600;
+        color: ${({ theme }) => theme.components.Global.colorText};
     `,
     ContainerQuestionAsterisk: styled.Text`
-        color: #ff4d4f;
+        color: ${({ theme }) => theme.components.Global.colorErrorText};
     `,
-    ContainerQuestionHelpText: styled.Text``,
+    ContainerQuestionHelpText: styled.Text`
+        color: ${({ theme }) => theme.components.Global.colorTextDescription};
+    `,
     ContainerErrorText: styled.Text`
-        color: red;
+        color: ${({ theme }) => theme.components.Global.colorErrorText};
     `,
     InputWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;
@@ -113,7 +139,8 @@ export const S = {
         border-width: ${({ theme }) => theme.components.Global.borderWidth}px;
         border-color: ${({ theme, $readOnly, $active }) =>
             ($active
-                ? theme.components.InlineChoice?.selectedBorderColor
+                ? (theme.components.InlineChoice?.selectedRowBorderColor ??
+                  theme.components.InlineChoice?.selectedBorderColor)
                 : undefined) ??
             ($readOnly
                 ? theme.components.Global.colorBorderDisabled
@@ -140,13 +167,16 @@ export const S = {
         width: 16px;
         border-radius: ${({ $radio }) => ($radio ? 8 : 4)}px;
         border-width: 1px;
-        border-color: ${({ theme, $readOnly, $active }) =>
+        border-color: ${({ theme, $readOnly, $active, $radio }) =>
             ($active
                 ? theme.components.InlineChoice?.selectedBorderColor
                 : undefined) ??
             ($readOnly
                 ? theme.components.Global.colorBorderDisabled
-                : (theme.components.InlineChoice?.Global?.colorBorder ??
+                : ((!$radio
+                      ? theme.components.InlineChoice?.checkboxBorderColor
+                      : undefined) ??
+                  theme.components.InlineChoice?.Global?.colorBorder ??
                   theme.components.Global.colorBorder))};
         background-color: ${({ theme, $readOnly, $active, $radio }) =>
             ($active && $radio
@@ -181,7 +211,17 @@ export const S = {
                 : theme.components.Global.colorBgContainer)};
     `,
     InlineChoiceOptionText: styled.Text`
-        font-size: 16px;
+        font-size: ${({ theme }) =>
+            theme.components.InlineChoice?.Global?.fontSize ??
+            theme.components.Global.fontSize}px;
+        ${({ theme }) =>
+            lineHeight(
+                theme.components.InlineChoice?.Global?.lineHeight ??
+                    theme.components.Global.lineHeight
+            )}
+        color: ${({ theme }) =>
+            theme.components.InlineChoice?.Global?.colorText ??
+            theme.components.Global.colorText};
         flex: 1;
     `,
     SelectInputWrapper: styled.TouchableOpacity<{
@@ -189,7 +229,15 @@ export const S = {
         $active?: boolean;
     }>`
         flex-grow: 1;
-        gap: 4px;
+        gap: ${({ theme }) => theme.components.Input?.gap ?? DEFAULT_GAP}px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    `,
+    // Non-pressable twin of SelectInputWrapper.
+    InputContentRow: styled.View`
+        flex: 1;
+        gap: ${({ theme }) => theme.components.Input?.gap ?? DEFAULT_GAP}px;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
@@ -212,25 +260,45 @@ export const S = {
         background-color: #f0f0f0;
     `,
     SelectInputText: styled.Text`
-        font-size: 16px;
-        line-height: 18px;
-        color: #333;
+        font-size: ${({ theme }) =>
+            theme.components.Input?.Global?.fontSize ??
+            theme.components.Global.fontSize}px;
+        line-height: ${({ theme }) =>
+            theme.components.Input?.Global?.lineHeight ??
+            theme.components.Global.lineHeight ??
+            DEFAULT_SELECT_LINE_HEIGHT}px;
+        color: ${({ theme }) =>
+            theme.components.Input?.Global?.colorText ??
+            DEFAULT_SELECT_COLOR};
         flex-shrink: 1;
     `,
     SelectInputDropdownIconWrapper: styled.View`
-        width: 24px;
-        height: 18px;
+        width: ${({ theme }) =>
+            theme.components.Input?.dropdownIconSize ??
+            DEFAULT_DROPDOWN_ICON_SIZE}px;
+        height: ${({ theme }) =>
+            theme.components.Input?.dropdownIconSize ??
+            DEFAULT_DROPDOWN_ICON_BOX_HEIGHT}px;
         align-items: center;
         justify-content: center;
     `,
-    SelectInputDropdownIcon: styled(Icon).attrs(() => ({
-        fontSize: 24,
-        fontWeight: 300,
+    SelectInputDropdownIcon: styled(Icon).attrs(({ theme }) => ({
+        name:
+            theme.components.Input?.dropdownIconName ??
+            DEFAULT_DROPDOWN_ICON_NAME,
+        fontSize:
+            theme.components.Input?.dropdownIconSize ??
+            DEFAULT_DROPDOWN_ICON_SIZE,
+        fontWeight: 300 as const,
     }))`
         flex-shrink: 0;
-        line-height: 24px;
         text-align: center;
-        color: #16191c;
+        line-height: ${({ theme }) =>
+            theme.components.Input?.dropdownIconLineHeight ??
+            DEFAULT_DROPDOWN_ICON_LINE_HEIGHT}px;
+        color: ${({ theme }) =>
+            theme.components.Input?.dropdownIconColor ??
+            DEFAULT_DROPDOWN_ICON_COLOR};
     `,
     SelectModalWrapper: styled.View`
         flex: 1;

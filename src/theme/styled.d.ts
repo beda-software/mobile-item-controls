@@ -31,6 +31,7 @@ declare module 'styled-components/native' {
                 borderRadius: number;
                 borderWidth: number;
                 fontSize: number;
+                lineHeight?: number;
             };
             Input?: {
                 Global?: {
@@ -44,12 +45,18 @@ declare module 'styled-components/native' {
                     borderRadius?: number;
                     borderWidth?: number;
                     fontSize?: number;
+                    lineHeight?: number;
                 };
                 activeBg?: string;
                 activeBorderColor?: string;
                 addonBg?: string;
                 paddingBlock: number;
                 paddingInline: number;
+                gap?: number;
+                dropdownIconName?: string;
+                dropdownIconSize?: number;
+                dropdownIconLineHeight?: number;
+                dropdownIconColor?: string;
             };
             InlineChoice?: {
                 Global?: {
@@ -63,9 +70,12 @@ declare module 'styled-components/native' {
                     borderRadius?: number;
                     borderWidth?: number;
                     fontSize?: number;
+                    lineHeight?: number;
                 };
                 selectedBg?: string;
                 selectedBorderColor?: string;
+                selectedRowBorderColor?: string;
+                checkboxBorderColor?: string;
                 paddingBlock: number;
                 paddingInline: number;
                 gap: number;
