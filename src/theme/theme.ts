@@ -30,6 +30,7 @@ export const lightTheme: DefaultTheme = {
             borderRadius: 16,
             borderWidth: 1,
             fontSize: 16,
+            lineHeight: 24,
         },
         Input: {
             Global: {
@@ -101,6 +102,7 @@ export const darkTheme: DefaultTheme = {
             borderRadius: 16,
             borderWidth: 1,
             fontSize: 16,
+            lineHeight: 24,
         },
         Input: {
             Global: {

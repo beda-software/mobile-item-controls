@@ -1,11 +1,11 @@
 import { FormAnswerItems } from 'sdc-qrf';
 
-import { ReadonlyControlConfig } from '../context';
+import { ControlConfig } from '../../control-config';
 
 export function formatAnswerValue(
     answer: FormAnswerItems,
     type: string,
-    config: Required<ReadonlyControlConfig>,
+    config: Required<ControlConfig>
 ): string {
     const value = answer.value;
     if (!value) {
@@ -58,7 +58,9 @@ export function formatAnswerValue(
                 return config.formatTime(value.time);
             }
             if (value.Reference) {
-                return value.Reference.display || value.Reference.reference || '';
+                return (
+                    value.Reference.display || value.Reference.reference || ''
+                );
             }
             return '';
         }
@@ -97,10 +99,12 @@ export function formatAnswerValue(
         default:
             // Fallback: try to find any non-empty value
             if (value.string) return value.string;
-            if (value.Coding) return value.Coding.display || value.Coding.code || '';
+            if (value.Coding)
+                return value.Coding.display || value.Coding.code || '';
             if (value.integer !== undefined) return String(value.integer);
             if (value.decimal !== undefined) return String(value.decimal);
-            if (value.boolean !== undefined) return value.boolean ? 'Yes' : 'No';
+            if (value.boolean !== undefined)
+                return value.boolean ? 'Yes' : 'No';
             if (value.date) return config.formatDate(value.date);
             if (value.dateTime) return config.formatDateTime(value.dateTime);
             if (value.time) return config.formatTime(value.time);
@@ -111,7 +115,7 @@ export function formatAnswerValue(
 export function formatAnswers(
     answers: FormAnswerItems[] | undefined,
     type: string,
-    config: Required<ReadonlyControlConfig>,
+    config: Required<ControlConfig>
 ): string {
     if (!answers || answers.length === 0) {
         return '';

@@ -6,6 +6,7 @@ import {
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 
+import { useRowLayout } from '../RowGroup';
 import { S } from '../styles';
 
 export function BooleanInput(props: QuestionItemProps) {
@@ -17,9 +18,10 @@ export function BooleanInput(props: QuestionItemProps) {
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     const isChecked = Boolean(value);
+    const inRow = useRowLayout();
 
     return (
-        <S.Container>
+        <S.Container $inRow={inRow}>
             <S.InlineChoiceWrapper
                 onPress={() => onChange(!value)}
                 $readOnly={readOnly}

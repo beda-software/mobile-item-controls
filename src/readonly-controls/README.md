@@ -47,17 +47,17 @@ import {
 
 ### With Custom Date/Time Formatting
 
-By default, date/time values are displayed as raw ISO strings. To customize formatting, wrap your form in `ReadonlyControlConfigProvider`:
+By default, date/time values are displayed as raw ISO strings. To customize formatting, wrap your form in `ControlConfigProvider`:
 
 ```tsx
 import {
-    ReadonlyControlConfigProvider,
+    ControlConfigProvider,
     readonlyQuestionnaireControls,
     ReadonlyGroup,
 } from '@beda.software/mobile-item-controls';
 import moment from 'moment';
 
-<ReadonlyControlConfigProvider
+<ControlConfigProvider
     formatDate={(isoString) => moment(isoString).format('DD MMM YYYY')}
     formatDateTime={(isoString) => moment(isoString).format('DD MMM YYYY HH:mm')}
     formatTime={(isoString) => moment(isoString).format('HH:mm')}
@@ -68,7 +68,7 @@ import moment from 'moment';
         readOnly={true}
         {...otherProps}
     />
-</ReadonlyControlConfigProvider>
+</ControlConfigProvider>
 ```
 
 ### Complete Example
@@ -78,14 +78,14 @@ import { QuestionnaireResponseForm } from '@beda.software/fhir-questionnaire';
 import {
     Group,
     ReadonlyGroup,
-    ReadonlyControlConfigProvider,
+    ControlConfigProvider,
     readonlyQuestionnaireControls,
 } from '@beda.software/mobile-item-controls';
 import { formatHumanDate, formatHumanDateTime, formatHumanTime } from '@/utils';
 
 function MyQuestionnaireForm({ readOnly, ...props }) {
     return (
-        <ReadonlyControlConfigProvider
+        <ControlConfigProvider
             formatDate={formatHumanDate}
             formatDateTime={formatHumanDateTime}
             formatTime={formatHumanTime}
@@ -100,7 +100,7 @@ function MyQuestionnaireForm({ readOnly, ...props }) {
                 readOnly={readOnly}
                 {...props}
             />
-        </ReadonlyControlConfigProvider>
+        </ControlConfigProvider>
     );
 }
 ```
@@ -127,7 +127,7 @@ For custom readonly controls, you can import and use the building blocks:
 import {
     ReadonlyControl,
     ReadonlyGroup,
-    useReadonlyControlConfig,
+    useControlConfig,
     formatAnswerValue,
 } from '@beda.software/mobile-item-controls';
 
@@ -140,17 +140,17 @@ const customMapping = {
 
 // Or create a custom readonly control using the utilities
 function CustomReadonlyControl(props: QuestionItemProps) {
-    const config = useReadonlyControlConfig();
+    const config = useControlConfig();
     // ... your custom logic
 }
 ```
 
 ## API Reference
 
-### `ReadonlyControlConfig`
+### `ControlConfig`
 
 ```typescript
-interface ReadonlyControlConfig {
+interface ControlConfig {
     formatDate?: (isoString: string) => string;
     formatDateTime?: (isoString: string) => string;
     formatTime?: (isoString: string) => string;
@@ -165,9 +165,9 @@ Formats a single answer value based on question type. Returns a string.
 
 Formats an array of answers, joining multiple values with commas. Returns a string.
 
-### `useReadonlyControlConfig()`
+### `useControlConfig()`
 
-Hook to access the current readonly control configuration (date/time formatters).
+Hook to access the current control configuration (date/time formatters). Shared with editable controls.
 
 ## Notes
 

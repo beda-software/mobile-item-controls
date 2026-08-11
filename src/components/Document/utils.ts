@@ -1,4 +1,8 @@
-import { ParametersParameter, Questionnaire, QuestionnaireResponse } from 'fhir/r4b';
+import {
+    ParametersParameter,
+    Questionnaire,
+    QuestionnaireResponse,
+} from 'fhir/r4b';
 import _ from 'lodash';
 import {
     calcInitialContext,
@@ -10,7 +14,8 @@ import {
     toFirstClassExtension,
 } from 'sdc-qrf';
 
-import { formatAnswers, ReadonlyControlConfig } from '../../readonly-controls';
+import { ControlConfig } from '../../control-config';
+import { formatAnswers } from '../../readonly-controls';
 
 /**
  * Output-agnostic document model of a rendered QuestionnaireResponse.
@@ -21,7 +26,10 @@ import { formatAnswers, ReadonlyControlConfig } from '../../readonly-controls';
  * (HTML, React Native, plain text, …) can then consume the tree — see
  * `documentToHtml` for the bundled HTML renderer.
  */
-export type DocumentNode = DocumentGroupNode | DocumentFieldNode | DocumentDisplayNode;
+export type DocumentNode =
+    | DocumentGroupNode
+    | DocumentFieldNode
+    | DocumentDisplayNode;
 
 export interface DocumentGroupNode {
     kind: 'group';
@@ -56,7 +64,7 @@ export interface QuestionnaireResponseToDocumentParams {
      * utilities. Pass the same formatters the readonly form uses to keep the
      * output byte-identical; omitted formatters fall back to the raw ISO string.
      */
-    config?: ReadonlyControlConfig;
+    config?: ControlConfig;
 }
 
 const identity = (isoString: string): string => isoString;
@@ -67,7 +75,7 @@ export function questionnaireResponseToDocument({
     launchContext = [],
     config,
 }: QuestionnaireResponseToDocumentParams): DocumentNode[] {
-    const resolvedConfig: Required<ReadonlyControlConfig> = {
+    const resolvedConfig: Required<ControlConfig> = {
         formatDate: config?.formatDate ?? identity,
         formatDateTime: config?.formatDateTime ?? identity,
         formatTime: config?.formatTime ?? identity,
@@ -82,14 +90,19 @@ export function questionnaireResponseToDocument({
             questionnaireResponse,
             launchContextParameters: launchContext,
         },
-        formValues,
+        formValues
     );
 
     // Mirrors sdc-qrf's QuestionItems/GroupComponent: read answers from the global
     // formValues by path, and use getEnabledQuestions (+ item.hidden) so the exact
     // same items the form shows are the ones we emit.
-    function buildField(item: FCEQuestionnaireItem, parentPath: string[]): DocumentFieldNode {
-        const answers = _.get(formValues, [...parentPath, item.linkId!]) as FormAnswerItems[] | undefined;
+    function buildField(
+        item: FCEQuestionnaireItem,
+        parentPath: string[]
+    ): DocumentFieldNode {
+        const answers = _.get(formValues, [...parentPath, item.linkId!]) as
+            | FormAnswerItems[]
+            | undefined;
         return {
             kind: 'field',
             linkId: item.linkId!,
@@ -99,19 +112,37 @@ export function questionnaireResponseToDocument({
         };
     }
 
-    function buildGroup(item: FCEQuestionnaireItem, parentPath: string[]): DocumentGroupNode {
+    function buildGroup(
+        item: FCEQuestionnaireItem,
+        parentPath: string[]
+    ): DocumentGroupNode {
         // Repeating groups store an array of FormItems (one per repeat) under `items`;
         // non-repeating groups store a single FormItems. Build child parentPaths
         // verbatim from GroupComponent so value lookups line up with the form.
         const childPaths: string[][] = item.repeats
-            ? ((_.get(formValues, [...parentPath, item.linkId!, 'items']) as FormItems[] | undefined)?.length
-                  ? (_.get(formValues, [...parentPath, item.linkId!, 'items']) as FormItems[])
+            ? ((
+                  _.get(formValues, [...parentPath, item.linkId!, 'items']) as
+                      | FormItems[]
+                      | undefined
+              )?.length
+                  ? (_.get(formValues, [
+                        ...parentPath,
+                        item.linkId!,
+                        'items',
+                    ]) as FormItems[])
                   : [{}]
-              ).map((_group, index) => [...parentPath, item.linkId!, 'items', String(index)])
+              ).map((_group, index) => [
+                  ...parentPath,
+                  item.linkId!,
+                  'items',
+                  String(index),
+              ])
             : [[...parentPath, item.linkId!, 'items']];
 
         const children = item.item?.length
-            ? childPaths.flatMap((childPath) => buildItems(item.item!, childPath))
+            ? childPaths.flatMap((childPath) =>
+                  buildItems(item.item!, childPath)
+              )
             : [];
 
         return {
@@ -123,7 +154,10 @@ export function questionnaireResponseToDocument({
         };
     }
 
-    function buildItems(items: FCEQuestionnaireItem[], parentPath: string[]): DocumentNode[] {
+    function buildItems(
+        items: FCEQuestionnaireItem[],
+        parentPath: string[]
+    ): DocumentNode[] {
         return getEnabledQuestions(items, parentPath, formValues, context)
             .filter((item) => !item.hidden)
             .map((item) => {
@@ -131,7 +165,11 @@ export function questionnaireResponseToDocument({
                     return buildGroup(item, parentPath);
                 }
                 if (item.type === 'display') {
-                    return { kind: 'display', linkId: item.linkId!, text: item.text } satisfies DocumentDisplayNode;
+                    return {
+                        kind: 'display',
+                        linkId: item.linkId!,
+                        text: item.text,
+                    } satisfies DocumentDisplayNode;
                 }
                 return buildField(item, parentPath);
             });

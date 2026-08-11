@@ -21,14 +21,16 @@ export function Group({
 
     return (
         <GroupStyles.Container>
-            <View style={styles.textContainer}>
-                {renderText(text, styles.text)}
-                {renderText(helpText)}
-            </View>
+            {text || helpText ? (
+                <View style={styles.textContainer}>
+                    {renderText(text, styles.text)}
+                    {renderText(helpText)}
+                </View>
+            ) : null}
 
             {item &&
                 childrenArray.map((child, index) => (
-                    <View key={index}>
+                    <GroupStyles.Instance key={index}>
                         {isRemovable ? (
                             <TouchableOpacity
                                 activeOpacity={1}
@@ -37,11 +39,9 @@ export function Group({
                             >
                                 <Text style={{ textAlign: 'right' }}>X</Text>
                             </TouchableOpacity>
-                        ) : (
-                            <View style={{ height: 14 }} />
-                        )}
+                        ) : null}
                         {child}
-                    </View>
+                    </GroupStyles.Instance>
                 ))}
 
             {repeats && (

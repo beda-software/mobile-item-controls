@@ -2,6 +2,7 @@ import React, { PropsWithChildren } from 'react';
 
 import { QuestionItemProps } from '@beda.software/fhir-questionnaire';
 
+import { useRowLayout } from '../RowGroup';
 import { S } from '../styles';
 
 export interface BaseControlProps extends PropsWithChildren<QuestionItemProps> {
@@ -23,9 +24,10 @@ export function BaseControl({
     const hasText = questionItem.text !== undefined;
     const hasHelpText = questionItem.helpText !== undefined;
     const hasLabel = hasText || hasHelpText;
+    const inRow = useRowLayout();
 
     return (
-        <S.Container>
+        <S.Container $inRow={inRow}>
             {hasLabel ? (
                 <S.ContainerQuestionTextWrapper>
                     {hasText ? (
