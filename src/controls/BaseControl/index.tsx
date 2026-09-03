@@ -55,6 +55,10 @@ export function BaseControl({
                     onPress={onFocus}
                     $readOnly={readOnly}
                     $active={isActive}
+                    accessibilityRole="button"
+                    accessibilityLabel={questionItem.text}
+                    accessibilityState={{ disabled: readOnly }}
+                    testID={`control-${questionItem.linkId}`}
                 >
                     {children}
                 </S.InputWrapper>

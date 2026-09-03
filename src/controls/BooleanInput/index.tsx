@@ -27,6 +27,9 @@ export function BooleanInput(props: QuestionItemProps) {
                 $readOnly={readOnly}
                 $active={isChecked}
                 activeOpacity={1}
+                accessibilityRole="button"
+                accessibilityState={{ checked: isChecked, disabled: readOnly }}
+                testID={`boolean-input-${linkId}`}
             >
                 <S.InlineChoiceCheckMark
                     $readOnly={readOnly}

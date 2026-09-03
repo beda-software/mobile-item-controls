@@ -49,7 +49,12 @@ export function Select<T = any>(props: SelectProps<T>) {
 
     return (
         <>
-            <S.SelectInputWrapper onPress={() => setModalVisible(true)}>
+            <S.SelectInputWrapper
+                onPress={() => setModalVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel={label}
+                testID={`select-${label}`}
+            >
                 <S.SelectInput>
                     {value?.length ? (
                         <>
@@ -126,6 +131,11 @@ export function Select<T = any>(props: SelectProps<T>) {
                                 return (
                                     <S.SelectModalContentItem
                                         onPress={() => handleOptionSelect(item)}
+                                        accessibilityRole="button"
+                                        accessibilityState={{
+                                            selected: isSelected,
+                                        }}
+                                        testID={`select-option-${getOptionLabel?.(item)}`}
                                     >
                                         <S.SelectModalContentItemText>
                                             {getOptionLabel?.(item)}
@@ -142,6 +152,8 @@ export function Select<T = any>(props: SelectProps<T>) {
 
                         <S.SelectModalFooterCloseButton
                             onPress={() => setModalVisible(false)}
+                            accessibilityRole="button"
+                            testID="select-close"
                         >
                             <S.SelectModalFooterCloseButtonText>
                                 Close

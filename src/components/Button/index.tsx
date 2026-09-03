@@ -96,6 +96,9 @@ export function Button(props: ButtonProps) {
             onPress={isDisabled ? undefined : onPress}
             activeOpacity={isDisabled ? 1 : 0.7}
             $active={active}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: isDisabled, busy: loading }}
+            accessibilityLabel={_.isString(children) ? children : undefined}
             {...rest}
         >
             <ButtonLayout.ContentWrapper $hidden={loading}>

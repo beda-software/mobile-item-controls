@@ -21,6 +21,7 @@ export const ChoiceOption = ({
     value,
 }: ChoiceOptionProps) => {
     const key = value ? extractKeyFromValue(value) : undefined;
+    const display = key ? getAnswerDisplay(key, value) : '';
 
     return (
         <S.InlineChoiceWrapper
@@ -28,6 +29,9 @@ export const ChoiceOption = ({
             $readOnly={readOnly}
             $active={isSelected}
             activeOpacity={1}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isSelected, disabled: readOnly }}
+            testID={`choice-option-${display}`}
         >
             <S.InlineChoiceCheckMark
                 $readOnly={readOnly}
@@ -40,9 +44,7 @@ export const ChoiceOption = ({
                     $radio={!multiselect}
                 />
             </S.InlineChoiceCheckMark>
-            <S.InlineChoiceOptionText>
-                {key ? getAnswerDisplay(key, value) : ''}
-            </S.InlineChoiceOptionText>
+            <S.InlineChoiceOptionText>{display}</S.InlineChoiceOptionText>
         </S.InlineChoiceWrapper>
     );
 };
