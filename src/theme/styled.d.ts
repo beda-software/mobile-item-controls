@@ -27,6 +27,8 @@ declare module 'styled-components/native' {
                 colorErrorText: string;
                 colorText: string;
                 colorTextDescription: string;
+                fontSizeDescription?: number;
+                lineHeightDescription?: number;
                 colorTextDisabled: string;
                 borderRadius: number;
                 borderWidth: number;
@@ -75,6 +77,12 @@ declare module 'styled-components/native' {
                 selectedBg?: string;
                 selectedBorderColor?: string;
                 selectedRowBorderColor?: string;
+                helpTextGap?: number;
+                helpTextIndent?: number;
+                disabledBg?: string;
+                disabledBorderColor?: string;
+                disabledMarkColor?: string;
+                disabledTextColor?: string;
                 checkboxBorderColor?: string;
                 paddingBlock: number;
                 paddingInline: number;
@@ -98,7 +106,9 @@ declare module 'styled-components/native' {
                 groupHeaderFontWeight?: string;
             };
             Icon?: {
-                fontFamily?: Partial<Record<300 | 400 | 500 | 600 | 700, string>>;
+                fontFamily?: Partial<
+                    Record<300 | 400 | 500 | 600 | 700, string>
+                >;
             };
         };
     }

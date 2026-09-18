@@ -16,6 +16,7 @@
         "expo-print": "*",
         "expo-file-system": "*",
         "expo-document-picker": "*",
-        "expo-image-picker": "*"
+        "expo-image-picker": "*",
+        "react-native-svg": "*"
     }
 }

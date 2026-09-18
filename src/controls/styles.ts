@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { DefaultTheme } from 'styled-components/native';
 
 import { Icon } from '../components/Icon';
 
@@ -13,10 +13,48 @@ const DEFAULT_DROPDOWN_ICON_SIZE = 24;
 const DEFAULT_DROPDOWN_ICON_BOX_HEIGHT = 18;
 const DEFAULT_DROPDOWN_ICON_LINE_HEIGHT = 24;
 const DEFAULT_DROPDOWN_ICON_COLOR = '#16191c';
+const DEFAULT_HELP_TEXT_GAP = 8;
+const DEFAULT_HELP_TEXT_INDENT = 0;
 
 // Omitted when untokened, so RN keeps its own default.
 const lineHeight = (value?: number) =>
     value !== undefined ? `line-height: ${value}px;` : '';
+
+function inlineChoicePalette(theme: DefaultTheme, readOnly?: boolean) {
+    const { InlineChoice, Global } = theme.components;
+    if (readOnly) {
+        const border =
+            InlineChoice?.disabledBorderColor ??
+            InlineChoice?.Global?.colorBorderDisabled ??
+            Global.colorBorderDisabled;
+        const bg =
+            InlineChoice?.disabledBg ??
+            InlineChoice?.Global?.colorBgContainerDisabled ??
+            Global.colorBgContainerDisabled;
+        const text =
+            InlineChoice?.disabledTextColor ??
+            InlineChoice?.Global?.colorTextDisabled ??
+            Global.colorTextDisabled;
+        return {
+            selected: InlineChoice?.disabledMarkColor ?? text,
+            selectedRowBorder: border,
+            selectedBg: bg,
+            border,
+            bg,
+            text,
+        };
+    }
+    return {
+        selected: InlineChoice?.selectedBorderColor,
+        selectedRowBorder:
+            InlineChoice?.selectedRowBorderColor ??
+            InlineChoice?.selectedBorderColor,
+        selectedBg: InlineChoice?.selectedBg,
+        border: InlineChoice?.Global?.colorBorder ?? Global.colorBorder,
+        bg: Global.colorBgContainer,
+        text: InlineChoice?.Global?.colorText ?? Global.colorText,
+    };
+}
 
 export const S = {
     // Spacing between fields is the parent's gap, never a margin here.
@@ -45,6 +83,12 @@ export const S = {
     `,
     ContainerQuestionHelpText: styled.Text`
         color: ${({ theme }) => theme.components.Global.colorTextDescription};
+        ${({ theme }) =>
+            theme.components.Global.fontSizeDescription !== undefined
+                ? `font-size: ${theme.components.Global.fontSizeDescription}px;`
+                : ''}
+        ${({ theme }) =>
+            lineHeight(theme.components.Global.lineHeightDescription)}
     `,
     ContainerErrorText: styled.Text`
         color: ${({ theme }) => theme.components.Global.colorErrorText};
@@ -137,24 +181,21 @@ export const S = {
             theme.components.InlineChoice?.Global?.borderRadius ??
             theme.components.Global.borderRadius}px;
         border-width: ${({ theme }) => theme.components.Global.borderWidth}px;
-        border-color: ${({ theme, $readOnly, $active }) =>
-            ($active
-                ? (theme.components.InlineChoice?.selectedRowBorderColor ??
-                  theme.components.InlineChoice?.selectedBorderColor)
-                : undefined) ??
-            ($readOnly
-                ? theme.components.Global.colorBorderDisabled
-                : (theme.components.InlineChoice?.Global?.colorBorder ??
-                  theme.components.Global.colorBorder))};
+        border-color: ${({ theme, $readOnly, $active }) => {
+            const palette = inlineChoicePalette(theme, $readOnly);
+            return (
+                ($active ? palette.selectedRowBorder : undefined) ??
+                palette.border
+            );
+        }};
         padding-block: ${({ theme }) =>
             theme.components.InlineChoice?.paddingBlock}px;
         padding-inline: ${({ theme }) =>
             theme.components.InlineChoice?.paddingInline}px;
-        background-color: ${({ theme, $readOnly, $active }) =>
-            ($active ? theme.components.InlineChoice?.selectedBg : undefined) ??
-            ($readOnly
-                ? theme.components.Global.colorBgContainerDisabled
-                : theme.components.Global.colorBgContainer)};
+        background-color: ${({ theme, $readOnly, $active }) => {
+            const palette = inlineChoicePalette(theme, $readOnly);
+            return ($active ? palette.selectedBg : undefined) ?? palette.bg;
+        }};
     `,
     InlineChoiceCheckMark: styled(View)<{
         $readOnly?: boolean;
@@ -165,26 +206,23 @@ export const S = {
         justify-content: center;
         height: 16px;
         width: 16px;
+        overflow: hidden;
         border-radius: ${({ $radio }) => ($radio ? 8 : 4)}px;
         border-width: 1px;
-        border-color: ${({ theme, $readOnly, $active, $radio }) =>
-            ($active
-                ? theme.components.InlineChoice?.selectedBorderColor
-                : undefined) ??
-            ($readOnly
-                ? theme.components.Global.colorBorderDisabled
-                : ((!$radio
-                      ? theme.components.InlineChoice?.checkboxBorderColor
-                      : undefined) ??
-                  theme.components.InlineChoice?.Global?.colorBorder ??
-                  theme.components.Global.colorBorder))};
-        background-color: ${({ theme, $readOnly, $active, $radio }) =>
-            ($active && $radio
-                ? theme.components.InlineChoice?.selectedBorderColor
-                : undefined) ??
-            ($readOnly
-                ? theme.components.Global.colorBgContainerDisabled
-                : theme.components.Global.colorBgContainer)};
+        border-color: ${({ theme, $readOnly, $active, $radio }) => {
+            const palette = inlineChoicePalette(theme, $readOnly);
+            return (
+                ($active ? palette.selected : undefined) ??
+                (!$radio
+                    ? theme.components.InlineChoice?.checkboxBorderColor
+                    : undefined) ??
+                palette.border
+            );
+        }};
+        background-color: ${({ theme, $readOnly, $active }) => {
+            const palette = inlineChoicePalette(theme, $readOnly);
+            return ($active ? palette.selected : undefined) ?? palette.bg;
+        }};
     `,
     InlineChoiceCheckMarkChecked: styled(View)<{
         $readOnly?: boolean;
@@ -195,22 +233,29 @@ export const S = {
         width: 8px;
         border-radius: ${({ $radio }) => ($radio ? 8 : 0)}px;
         border-width: 1px;
-        border-color: ${({ theme, $readOnly, $active }) =>
-            ($active
-                ? theme.components.InlineChoice?.selectedBorderColor
-                : undefined) ??
-            ($readOnly
-                ? theme.components.Global.colorBgContainerDisabled
-                : theme.components.Global.colorBgContainer)};
-        background-color: ${({ theme, $readOnly, $active, $radio }) =>
-            ($active && !$radio
-                ? theme.components.InlineChoice?.selectedBorderColor
-                : undefined) ??
-            ($readOnly
-                ? theme.components.Global.colorBgContainerDisabled
-                : theme.components.Global.colorBgContainer)};
+        border-color: ${({ theme, $readOnly, $active }) => {
+            const palette = inlineChoicePalette(theme, $readOnly);
+            return ($active ? palette.selected : undefined) ?? palette.bg;
+        }};
+        background-color: ${({ theme, $readOnly, $active, $radio }) => {
+            const palette = inlineChoicePalette(theme, $readOnly);
+            return (
+                ($active && !$radio ? palette.selected : undefined) ??
+                palette.bg
+            );
+        }};
     `,
-    InlineChoiceOptionText: styled.Text`
+    InlineChoiceGroup: styled.View`
+        gap: ${({ theme }) =>
+            theme.components.InlineChoice?.helpTextGap ??
+            DEFAULT_HELP_TEXT_GAP}px;
+    `,
+    InlineChoiceHelpTextWrapper: styled.View`
+        padding-left: ${({ theme }) =>
+            theme.components.InlineChoice?.helpTextIndent ??
+            DEFAULT_HELP_TEXT_INDENT}px;
+    `,
+    InlineChoiceOptionText: styled.Text<{ $readOnly?: boolean }>`
         font-size: ${({ theme }) =>
             theme.components.InlineChoice?.Global?.fontSize ??
             theme.components.Global.fontSize}px;
@@ -219,9 +264,8 @@ export const S = {
                 theme.components.InlineChoice?.Global?.lineHeight ??
                     theme.components.Global.lineHeight
             )}
-        color: ${({ theme }) =>
-            theme.components.InlineChoice?.Global?.colorText ??
-            theme.components.Global.colorText};
+        color: ${({ theme, $readOnly }) =>
+            inlineChoicePalette(theme, $readOnly).text};
         flex: 1;
     `,
     SelectInputWrapper: styled.TouchableOpacity<{
@@ -268,8 +312,7 @@ export const S = {
             theme.components.Global.lineHeight ??
             DEFAULT_SELECT_LINE_HEIGHT}px;
         color: ${({ theme }) =>
-            theme.components.Input?.Global?.colorText ??
-            DEFAULT_SELECT_COLOR};
+            theme.components.Input?.Global?.colorText ?? DEFAULT_SELECT_COLOR};
         flex-shrink: 1;
     `,
     SelectInputDropdownIconWrapper: styled.View`

@@ -13,13 +13,14 @@ import { BaseControl } from '../BaseControl';
 
 export function InlineChoiceControl(props: QuestionItemProps) {
     const { questionItem, parentPath } = props;
-    const { repeats, answerOption, linkId, readOnly } = questionItem;
+    const { repeats, answerOption, linkId } = questionItem;
 
     const field = useFieldController<FormAnswerItems[]>(
         [...parentPath, linkId],
         questionItem
     );
-    const { value, onMultiChange, fieldState } = field;
+    // `disabled` folds the item's readOnly with the form-level one; the item flag alone misses a read-only form.
+    const { value, onMultiChange, fieldState, disabled } = field;
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
 
     return (
@@ -30,7 +31,7 @@ export function InlineChoiceControl(props: QuestionItemProps) {
                 return (
                     <ChoiceOption
                         key={index}
-                        readOnly={!!readOnly}
+                        readOnly={!!disabled}
                         multiselect={!!repeats}
                         isSelected={isAnswerSelected(
                             {
