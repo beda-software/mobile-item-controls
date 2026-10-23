@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
     getFieldErrorMessage,
@@ -37,6 +37,26 @@ export function QuantityInput(props: QuestionItemProps) {
             : firstOption
     );
     const [isFocused, setIsFocused] = useState(false);
+
+    // Redraw a value set from outside (a reset); keep typing such as "12.".
+    useEffect(() => {
+        setInputValue((current) =>
+            (current ? parseFloat(current) : undefined) === value?.value
+                ? current
+                : value?.value?.toString()
+        );
+        if (value?.code !== undefined) {
+            setSelectedUnit((current) =>
+                current?.code === value.code
+                    ? current
+                    : {
+                          display: value.unit,
+                          system: value.system,
+                          code: value.code,
+                      }
+            );
+        }
+    }, [value]);
 
     function focusRef() {
         inputRef.current?.focus();
