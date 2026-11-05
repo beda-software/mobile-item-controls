@@ -9,6 +9,7 @@ import { Coding, Quantity } from 'fhir/r4b';
 import { TextInput } from 'react-native';
 
 import { Select } from '../../components/Select';
+import { useIsFieldHighlighted } from '../../highlighted-fields';
 import { BaseControl } from '../BaseControl';
 import { S } from '../styles';
 
@@ -24,6 +25,7 @@ export function QuantityInput(props: QuestionItemProps) {
     const field = useFieldController<Quantity>(fieldName, questionItem);
     const { value, onChange, fieldState } = field;
     const error = getFieldErrorMessage(field, fieldState, questionItem.text);
+    const highlighted = useIsFieldHighlighted([...parentPath, linkId]);
     const firstOption = questionItem.unitOption?.[0];
     const [inputValue, setInputValue] = useState(value?.value?.toString());
 
@@ -66,7 +68,7 @@ export function QuantityInput(props: QuestionItemProps) {
         const parsedValue = parseFloat(newValue);
 
         if (newValue === '' || isFloat(newValue)) {
-            setInputValue(newValue)
+            setInputValue(newValue);
         }
 
         onChange({
@@ -104,7 +106,7 @@ export function QuantityInput(props: QuestionItemProps) {
                 editable={!readOnly}
                 $readOnly={readOnly}
             />
-            <S.TextInputAddon $readOnly={readOnly}>
+            <S.TextInputAddon $readOnly={readOnly} $highlighted={highlighted}>
                 {(questionItem.unitOption?.length ?? 0) > 1 ? (
                     <Select<Coding>
                         value={

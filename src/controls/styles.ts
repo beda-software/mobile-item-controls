@@ -56,6 +56,17 @@ function inlineChoicePalette(theme: DefaultTheme, readOnly?: boolean) {
     };
 }
 
+// Undefined unless the theme sets it, so a highlighted field renders as before.
+function highlightedBg(
+    theme: DefaultTheme,
+    component: 'Input' | 'InlineChoice'
+) {
+    return (
+        theme.components[component]?.highlightedBg ??
+        theme.components.Global.colorBgHighlighted
+    );
+}
+
 export const S = {
     // Spacing between fields is the parent's gap, never a margin here.
     Container: styled.View<{ $inRow?: boolean }>`
@@ -96,6 +107,7 @@ export const S = {
     InputWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;
         $active?: boolean;
+        $highlighted?: boolean;
     }>`
         display: flex;
         flex-direction: row;
@@ -115,7 +127,8 @@ export const S = {
         padding-block: ${({ theme }) => theme.components.Input?.paddingBlock}px;
         padding-inline: ${({ theme }) =>
             theme.components.Input?.paddingInline}px;
-        background-color: ${({ theme, $readOnly, $active }) =>
+        background-color: ${({ theme, $readOnly, $active, $highlighted }) =>
+            ($highlighted ? highlightedBg(theme, 'Input') : undefined) ??
             ($active ? theme.components.Input?.activeBg : undefined) ??
             ($readOnly
                 ? (theme.components.Input?.Global?.colorBgContainerDisabled ??
@@ -135,7 +148,10 @@ export const S = {
                 : (theme.components.Input?.Global?.colorText ??
                   theme.components.Global.colorText)};
     `,
-    TextInputAddon: styled(View)<{ $readOnly?: boolean }>`
+    TextInputAddon: styled(View)<{
+        $readOnly?: boolean;
+        $highlighted?: boolean;
+    }>`
         align-items: center;
         justify-content: center;
         margin-top: -${({ theme }) => theme.components.Input?.paddingBlock}px;
@@ -144,13 +160,16 @@ export const S = {
         padding-block: ${({ theme }) => theme.components.Input?.paddingBlock}px;
         padding-inline: ${({ theme }) =>
             theme.components.Input?.paddingInline}px;
-        background-color: ${({ theme, $readOnly }) =>
-            $readOnly
-                ? (theme.components.Input?.Global?.colorBgContainerDisabled ??
-                  theme.components.Global?.colorBgContainerDisabled)
-                : (theme.components.Input?.addonBg ??
-                  theme.components.Input?.Global?.colorBgContainer ??
-                  theme.components.Global.colorBgContainer)};
+        background-color: ${({ theme, $readOnly, $highlighted }) =>
+            // Transparent shows the field's own highlight; a second translucent layer would darken it.
+            $highlighted && highlightedBg(theme, 'Input') !== undefined
+                ? 'transparent'
+                : $readOnly
+                  ? (theme.components.Input?.Global?.colorBgContainerDisabled ??
+                    theme.components.Global?.colorBgContainerDisabled)
+                  : (theme.components.Input?.addonBg ??
+                    theme.components.Input?.Global?.colorBgContainer ??
+                    theme.components.Global.colorBgContainer)};
         border-top-right-radius: ${({ theme }) =>
             theme.components.Input?.Global?.borderRadius ??
             theme.components.Global.borderRadius}px;
@@ -172,6 +191,7 @@ export const S = {
     InlineChoiceWrapper: styled.TouchableOpacity<{
         $readOnly?: boolean;
         $active?: boolean;
+        $highlighted?: boolean;
     }>`
         display: flex;
         flex-direction: row;
@@ -192,9 +212,15 @@ export const S = {
             theme.components.InlineChoice?.paddingBlock}px;
         padding-inline: ${({ theme }) =>
             theme.components.InlineChoice?.paddingInline}px;
-        background-color: ${({ theme, $readOnly, $active }) => {
+        background-color: ${({ theme, $readOnly, $active, $highlighted }) => {
             const palette = inlineChoicePalette(theme, $readOnly);
-            return ($active ? palette.selectedBg : undefined) ?? palette.bg;
+            return (
+                ($highlighted
+                    ? highlightedBg(theme, 'InlineChoice')
+                    : undefined) ??
+                ($active ? palette.selectedBg : undefined) ??
+                palette.bg
+            );
         }};
     `,
     InlineChoiceCheckMark: styled(View)<{

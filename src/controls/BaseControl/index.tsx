@@ -2,6 +2,7 @@ import React, { PropsWithChildren } from 'react';
 
 import { QuestionItemProps } from '@beda.software/fhir-questionnaire';
 
+import { useIsFieldHighlighted } from '../../highlighted-fields';
 import { useRowLayout } from '../RowGroup';
 import { S } from '../styles';
 
@@ -14,6 +15,7 @@ export interface BaseControlProps extends PropsWithChildren<QuestionItemProps> {
 
 export function BaseControl({
     questionItem,
+    parentPath,
     onFocus,
     isActive,
     children,
@@ -25,6 +27,10 @@ export function BaseControl({
     const hasHelpText = questionItem.helpText !== undefined;
     const hasLabel = hasText || hasHelpText;
     const inRow = useRowLayout();
+    const highlighted = useIsFieldHighlighted([
+        ...parentPath,
+        questionItem.linkId,
+    ]);
 
     return (
         <S.Container $inRow={inRow}>
@@ -55,6 +61,7 @@ export function BaseControl({
                     onPress={onFocus}
                     $readOnly={readOnly}
                     $active={isActive}
+                    $highlighted={highlighted}
                     accessibilityRole="button"
                     accessibilityLabel={questionItem.text}
                     accessibilityState={{ disabled: readOnly }}

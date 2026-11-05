@@ -34,6 +34,7 @@ declare module 'styled-components/native' {
                 borderWidth: number;
                 fontSize: number;
                 lineHeight?: number;
+                colorBgHighlighted?: string;
             };
             Input?: {
                 Global?: {
@@ -52,6 +53,7 @@ declare module 'styled-components/native' {
                 activeBg?: string;
                 activeBorderColor?: string;
                 addonBg?: string;
+                highlightedBg?: string;
                 paddingBlock: number;
                 paddingInline: number;
                 gap?: number;
@@ -77,6 +79,7 @@ declare module 'styled-components/native' {
                 selectedBg?: string;
                 selectedBorderColor?: string;
                 selectedRowBorderColor?: string;
+                highlightedBg?: string;
                 helpTextGap?: number;
                 helpTextIndent?: number;
                 disabledBg?: string;

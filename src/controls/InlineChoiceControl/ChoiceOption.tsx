@@ -8,6 +8,7 @@ import { extractKeyFromValue, getAnswerDisplay } from './utils';
 
 interface ChoiceOptionProps {
     isSelected: boolean;
+    highlighted?: boolean;
     readOnly: boolean;
     multiselect: boolean;
     onSelect: (value?: AnswerValue) => void;
@@ -16,6 +17,7 @@ interface ChoiceOptionProps {
 
 export const ChoiceOption = ({
     isSelected,
+    highlighted,
     readOnly,
     multiselect,
     onSelect,
@@ -30,6 +32,7 @@ export const ChoiceOption = ({
             disabled={readOnly}
             $readOnly={readOnly}
             $active={isSelected}
+            $highlighted={highlighted}
             activeOpacity={1}
             accessibilityRole="button"
             accessibilityLabel={display}

@@ -6,6 +6,7 @@ import {
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 
+import { useIsFieldHighlighted } from '../../highlighted-fields';
 import { InlineChoiceMark } from '../InlineChoiceMark';
 import { useRowLayout } from '../RowGroup';
 import { S } from '../styles';
@@ -21,6 +22,8 @@ export function BooleanInput(props: QuestionItemProps) {
 
     const isChecked = Boolean(value);
     const inRow = useRowLayout();
+    // Highlighted whether checked or not: an unchecked box is an answer too.
+    const highlighted = useIsFieldHighlighted([...parentPath, linkId]);
 
     return (
         <S.Container $inRow={inRow}>
@@ -30,6 +33,7 @@ export function BooleanInput(props: QuestionItemProps) {
                     disabled={disabled}
                     $readOnly={disabled}
                     $active={isChecked}
+                    $highlighted={highlighted}
                     activeOpacity={1}
                     accessibilityRole="button"
                     accessibilityLabel={questionItem.text}
