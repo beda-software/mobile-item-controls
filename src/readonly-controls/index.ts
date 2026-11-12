@@ -11,6 +11,6 @@ export { formatAnswerValue, formatAnswers } from './ReadonlyControl/utils';
 export {
     ControlConfigProvider as ReadonlyControlConfigProvider,
     useControlConfig as useReadonlyControlConfig,
-} from '../control-config';
+} from '../contexts/control-config';
 /** @deprecated Use `ControlConfig` from `control-config`. */
-export type { ControlConfig as ReadonlyControlConfig } from '../control-config';
+export type { ControlConfig as ReadonlyControlConfig } from '../contexts/control-config';

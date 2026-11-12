@@ -2,7 +2,8 @@ import React, { PropsWithChildren } from 'react';
 
 import { QuestionItemProps } from '@beda.software/fhir-questionnaire';
 
-import { useIsFieldHighlighted } from '../../highlighted-fields';
+import { useFieldAccessory } from '../../contexts/field-accessory';
+import { useIsFieldHighlighted } from '../../contexts/highlighted-fields';
 import { useRowLayout } from '../RowGroup';
 import { S } from '../styles';
 
@@ -27,10 +28,9 @@ export function BaseControl({
     const hasHelpText = questionItem.helpText !== undefined;
     const hasLabel = hasText || hasHelpText;
     const inRow = useRowLayout();
-    const highlighted = useIsFieldHighlighted([
-        ...parentPath,
-        questionItem.linkId,
-    ]);
+    const fieldPath = [...parentPath, questionItem.linkId];
+    const highlighted = useIsFieldHighlighted(fieldPath);
+    const accessory = useFieldAccessory(fieldPath);
 
     return (
         <S.Container $inRow={inRow}>
@@ -53,23 +53,28 @@ export function BaseControl({
                     ) : null}
                 </S.ContainerQuestionTextWrapper>
             ) : null}
-            {customLayout ? (
-                children
-            ) : (
-                <S.InputWrapper
-                    activeOpacity={1}
-                    onPress={onFocus}
-                    $readOnly={readOnly}
-                    $active={isActive}
-                    $highlighted={highlighted}
-                    accessibilityRole="button"
-                    accessibilityLabel={questionItem.text}
-                    accessibilityState={{ disabled: readOnly }}
-                    testID={`control-${questionItem.linkId}`}
-                >
-                    {children}
-                </S.InputWrapper>
-            )}
+            <S.AnswerRow>
+                <S.AnswerColumn>
+                    {customLayout ? (
+                        children
+                    ) : (
+                        <S.InputWrapper
+                            activeOpacity={1}
+                            onPress={onFocus}
+                            $readOnly={readOnly}
+                            $active={isActive}
+                            $highlighted={highlighted}
+                            accessibilityRole="button"
+                            accessibilityLabel={questionItem.text}
+                            accessibilityState={{ disabled: readOnly }}
+                            testID={`control-${questionItem.linkId}`}
+                        >
+                            {children}
+                        </S.InputWrapper>
+                    )}
+                </S.AnswerColumn>
+                {accessory}
+            </S.AnswerRow>
             {error && <S.ContainerErrorText>{error}</S.ContainerErrorText>}
         </S.Container>
     );

@@ -9,7 +9,7 @@ import { Coding, Quantity } from 'fhir/r4b';
 import { TextInput } from 'react-native';
 
 import { Select } from '../../components/Select';
-import { useIsFieldHighlighted } from '../../highlighted-fields';
+import { useIsFieldHighlighted } from '../../contexts/highlighted-fields';
 import { BaseControl } from '../BaseControl';
 import { S } from '../styles';
 

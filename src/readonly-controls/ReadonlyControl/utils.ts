@@ -1,6 +1,6 @@
 import { FormAnswerItems } from 'sdc-qrf';
 
-import { ControlConfig } from '../../control-config';
+import { ControlConfig } from '../../contexts/control-config';
 
 export function formatAnswerValue(
     answer: FormAnswerItems,

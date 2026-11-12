@@ -7,7 +7,7 @@ import {
 } from '@beda.software/fhir-questionnaire';
 import DatePicker from 'react-native-date-picker';
 
-import { formatValueForDisplay, useControlConfig } from '../../control-config';
+import { formatValueForDisplay, useControlConfig } from '../../contexts/control-config';
 import { BaseControl } from '../BaseControl';
 import { S } from '../styles';
 

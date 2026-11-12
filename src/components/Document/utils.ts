@@ -14,7 +14,7 @@ import {
     toFirstClassExtension,
 } from 'sdc-qrf';
 
-import { ControlConfig } from '../../control-config';
+import { ControlConfig } from '../../contexts/control-config';
 import { formatAnswers } from '../../readonly-controls';
 
 /**

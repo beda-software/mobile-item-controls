@@ -9,7 +9,7 @@ import { FormAnswerItems, toAnswerValue } from 'sdc-qrf';
 
 import { ChoiceOption } from './ChoiceOption';
 import { isAnswerSelected } from './utils';
-import { useIsFieldHighlighted } from '../../highlighted-fields';
+import { useIsFieldHighlighted } from '../../contexts/highlighted-fields';
 import { BaseControl } from '../BaseControl';
 
 export function InlineChoiceControl(props: QuestionItemProps) {

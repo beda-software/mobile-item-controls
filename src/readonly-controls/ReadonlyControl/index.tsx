@@ -6,7 +6,7 @@ import {
 } from '@beda.software/fhir-questionnaire';
 import { FormAnswerItems } from 'sdc-qrf';
 
-import { useControlConfig } from '../../control-config';
+import { useControlConfig } from '../../contexts/control-config';
 import { BaseControl, emptyText } from '../BaseControl';
 import { S } from '../styles';
 import { formatAnswers } from './utils';

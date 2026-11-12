@@ -74,6 +74,17 @@ export const S = {
         position: relative;
         ${({ $inRow }) => ($inRow ? 'flex: 1;' : '')}
     `,
+    // The field's answers beside whatever the form puts to their right; present even when nothing is,
+    // so an input keeps its focus when that node comes or goes.
+    AnswerRow: styled.View`
+        flex-direction: row;
+        align-items: flex-start;
+    `,
+    // Repeats the Container's gap for controls that render several answer rows.
+    AnswerColumn: styled.View`
+        flex: 1;
+        gap: 8px;
+    `,
     Row: styled.View`
         flex-direction: row;
         align-items: flex-end;
