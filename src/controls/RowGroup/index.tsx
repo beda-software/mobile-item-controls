@@ -16,9 +16,10 @@ export function useRowLayout() {
 export function RowGroup(props: GroupItemProps) {
     const { questionItem, parentPath, context } = props;
     const { linkId, item, text, helpText } = questionItem;
+    const inRow = useRowLayout();
 
     return (
-        <GroupStyles.Container>
+        <GroupStyles.Container $inRow={inRow}>
             {text || helpText ? (
                 <View style={styles.textContainer}>
                     {renderText(text, styles.text)}
