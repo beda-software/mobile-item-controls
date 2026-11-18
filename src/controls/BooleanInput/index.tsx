@@ -6,9 +6,9 @@ import {
     useFieldController,
 } from '@beda.software/fhir-questionnaire';
 
+import { CheckboxRow } from '../../components/CheckboxRow';
 import { useFieldAccessory } from '../../contexts/field-accessory';
 import { useIsFieldHighlighted } from '../../contexts/highlighted-fields';
-import { InlineChoiceMark } from '../InlineChoiceMark';
 import { useRowLayout } from '../RowGroup';
 import { S } from '../styles';
 
@@ -32,30 +32,14 @@ export function BooleanInput(props: QuestionItemProps) {
             <S.AnswerRow>
                 <S.AnswerColumn>
                     <S.InlineChoiceGroup>
-                        <S.InlineChoiceWrapper
+                        <CheckboxRow
+                            checked={isChecked}
+                            label={questionItem.text ?? ''}
                             onPress={() => onChange(!value)}
                             disabled={disabled}
-                            $readOnly={disabled}
-                            $active={isChecked}
-                            $highlighted={highlighted}
-                            activeOpacity={1}
-                            accessibilityRole="button"
-                            accessibilityLabel={questionItem.text}
-                            accessibilityState={{
-                                checked: isChecked,
-                                disabled,
-                            }}
+                            highlighted={highlighted}
                             testID={`boolean-input-${linkId}`}
-                        >
-                            <InlineChoiceMark
-                                active={isChecked}
-                                readOnly={!!disabled}
-                                radio={false}
-                            />
-                            <S.InlineChoiceOptionText $readOnly={disabled}>
-                                {questionItem.text}
-                            </S.InlineChoiceOptionText>
-                        </S.InlineChoiceWrapper>
+                        />
                         {questionItem.helpText !== undefined ? (
                             <S.InlineChoiceHelpTextWrapper>
                                 <S.ContainerQuestionHelpText>

@@ -5,6 +5,9 @@ export type { PickedFile, UploadFileService, FileSource } from './AttachFile';
 
 export * from './Document';
 
+export { CheckboxRow } from './CheckboxRow';
+export type { CheckboxRowProps } from './CheckboxRow';
+
 export { Calendar} from './Calendar';
 export type { CalendarProps, CalendarViewMode } from './Calendar/types';
 
